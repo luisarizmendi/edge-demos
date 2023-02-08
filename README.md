@@ -50,7 +50,7 @@ dnf install -y ansible
 
 * Download the `infra.osbuild` Ansible collection
 ```
-ansible-galaxy collection install git+https://github.com/redhat-cop/infra.osbuild
+ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osbuild
 ```
 
 * Modify the Ansible `inventory` file with your values
@@ -95,7 +95,7 @@ It will:
 * Create the OSTree Image v3
 * Create a RHEL custom ISO that will be used to deploy the RHEL OSTree edge system pointing to the OSTree repo published in the Image Builder (v1)
 
-Once the Ansible Playbook is finished, you will see the URL where the *custom* ISO is published. Download it to the system where you will create the Edge device VM.
+Once the Ansible Playbook is finished, you will see the URL where the *custom* ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
 
 
 ## Demo steps
@@ -155,12 +155,15 @@ Meanwhile the system is installing, you can comment that:
 
 * Instead using the ISO directly system by system, you could also host the ISO in an HTTP server centrally and boot systems from network by using UEFI HTTP boot, so the person at the edge location will only need to boot the system (if HTTP Boot has been enable in the device).
 * The ISO is a regular RHEL 9 boot ISO with just a change, we introduced in the Kernel Args that makes the system download a kickstart from the Image Builder and execute it (you can review the Kickstar in http://<image_builder_IP>/demo_upgrade/kickstart.ks). This kickstart could be also be injected directly into the ISO instead of downloading it from the Image Builder every time that we deploy a new system.
-* We are using a kickstart to automate the OSTree image deployment along with the different customizations. This is a simple way to customize the deployment but it could introduce risks if we need to include "secrets" such as passwords or certificates in the configuration. In order to perform a secure device deployment you could use FIDO Device Onboarding (FDO). This is not part of this demo but you can learn more about it by running this [FDO workshop](https://luisarizmendi.github.io/tutorial-secure-onboarding).
+* We are using a kickstart to automate the OSTree image deployment (the OSTree repo is downloaded from the Image Builder in this case, but it could be also injected in the ISO) along with the different customizations. This is a simple way to customize the deployment but it could introduce risks if we need to include "secrets" such as passwords or certificates in the configuration. In order to perform a secure device deployment you could use FIDO Device Onboarding (FDO). This is not part of this demo but you can learn more about it by running this [FDO workshop](https://luisarizmendi.github.io/tutorial-secure-onboarding).
 * All the deployed applications are root-less in order to have an improved security in our system.
 
 Once the deployment finished you can get the system IP and:
+
+**_NOTE:_** Depending on your Internet connection, downloading the images could take some time.
+
 * Test the application at `http://<edge_device_IP>:8081`
-* Connect to the system by SSH using the user configured in the Blueprint (`admin`)
+* Connect to the system by SSH using the user configured in the Blueprint (`admin`). You shouldn't need password if you used the same laptop from where you ran the demo preparation since the SSH public key was injected into the OSTree image, otherwise you can use the password configured in the Blueprint (`R3dh4t1!`).
 * Review the configured systemd service with the root-less contanerized application (`systemctl --user status container-app1.service`) and show the systemd unit file that runs the container (`cat /var/home/admin/.config/systemd/user/container-app1.service`).
 
 ### Step 2 - OS lifecycle: Upgrade to OSTree image v2 (with error)
@@ -170,6 +173,15 @@ Once the deployment finished you can get the system IP and:
 .
 
 ---
+
+
+
+
+
+error: Bus owner changed, aborting. This likely means the daemon crashed; check logs with `journalctl -xe`
+
+https://github.com/coreos/fedora-coreos-tracker/issues/423
+
 
 ### Step 3 - OS lifecycle: Upgrade to OSTree image v3 (OK)
 ---
