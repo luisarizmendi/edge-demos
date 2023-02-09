@@ -91,7 +91,7 @@ Then:
 ansible-playbook -vvi inventory  -e "registry_user=<your registry user>" -e "registry_password=<your registry password>"   playbooks/00-preparation-apps.yml
 ```
 
-Check that you have images in your Registry and that the `prod` image tags are pointing the APP `v1`.
+Check that you have images in your Registry and that *the `prod` image tags are pointing the APP `v1`*.
 
 **_NOTE:_** In case that you want to make any changes to the provided APP examples, you can [build your own images using the provided Containerfiles](APPs/README.md).
 
@@ -122,15 +122,51 @@ This is the summarized list of the steps to demonstrate the RHEL OSTree and Podm
     1. Describe the use case: hands-off deployment + self-healing upgrades in the OS and APPs
     2. Log into the Image Builder and show the images
     3. Show the published OSTree repo and ISO in the HTTP server
+
 1. Step 1 - OS lifecycle: Deploy the edge device using the ISO
     1. Boot the Edge Device from the ISO and watch auto-deployment
     2. Explain how the automation is performed (Kickstart in this case)
     3. SSH to the Edge Device using the admin user
     4. Test the application on `http://<edge_device_IP>:8081`
 
+2. Step 2 - OS lifecycle: Upgrade to OSTree image v2 (with error)
+    1. Show default upgrade policy in `/etc/rpm-ostreed.conf`
+    2. Check current status with `rpm-ostree status` 
+    3. Publish OSTree image v2 with `ansible-playbook -vvi inventory playbooks/01-publish-image-v2.yml `
+    4. Check the new update with `rpm-ostree upgrade --check` and `rpm-ostree upgrade --preview`
+    5. Explain Greenboot and the script that check GIT in `/etc/greenboot/check/required.d/01_check_git.sh`
+    6. Perform the upgrade with `sudo rpm-ostree upgrade`
+    7. Review again the status with `rpm-ostree status` and reboot
+    8. Watch the three reboots and how in the last one the first version of the image is selected
+    9. SSH to the Edge Device and check that there is a Rollback message
+    10. Review the status with `rpm-ostree status`
+
+3. Step 3 - OS lifecycle: Upgrade to OSTree image v3 (OK)
+    1. Publish the OSTree image version 3 with `ansible-playbook -vvi inventory playbooks/01-publish-image-v3.yml `
+    2. Check that the new upgrade is available with `rpm-ostree upgrade --check` and `rpm-ostree upgrade --preview`
+    3. Perform and upgrade with automatic reboot with `sudo rpm-ostree upgrade -r`
+    4. Watch the reboot
+    5. SSH to the Edge Device and check the status with `rpm-ostree status`
+    
+4. Step 4 - APP lifecycle: Upgrade to  APP v2 (with error)
+    1. Open the application in `http://<edge_device_IP>:8081`
+    2. Watch the application update status with `watch "podman auto-update --dry-run; echo '';podman ps"`
+    3. Move the `prod` tag from `v1` to `v2` in the registry
+    4. Review the application update status and check again the application in `http://<edge_device_IP>:8081`
+
+5. Step 5 - APP lifecycle: Upgrade to  APP v3 (OK)
+    1. Move the `prod` tag to `v3` in the registry
+    2. Review the application update status and check again the application in `http://<edge_device_IP>:8081`
 
 
+If you have more time and want to explore more cool features that could be used in Edge Computing use cases, you can go through the "Bonus" demo steps:
 
+6. BONUS - Serverless service with Podman
+    1. Check how the configured systemd unit has pre-downloaded the container image 
+    2. Watch the current running containers with `watch podman ps` (the `simple-http` app is not there)
+    3. Reach out to the service in `http://<edge-device-ip>:8080`
+    4. See how a new container is created and how it's serving the `simple-http` app in `http://<edge-device-ip>:8080`
+    5. Wait 10 seconds and see how the service is scaled down to zero replicas
 
 
 
@@ -578,20 +614,89 @@ Deployments:
 ---
 **Summary**
 
-.
+Show how Podman auto-update not only simplifies the contenerized workloads lifecycle at edge but also how its self-healing feature could prevent a service disruption by automatically rollback to the previous container image version.
 
 ---
+
+Go to `http://<edge_device_IP>:8081` and check your application. In the provided example it is a 2048 board game. 
+
+In our use case we would like to update this application to a new version where we include a big image with the RHEL logo. 
+
+We already created the new container image, which is tagged as `v2` and pushed it to the registry. 
+
+
+**_NOTE:_** Now it's a good time to open the registry and see the container image and its tags.
+
+
+If you check the registry you will see that you don't have just `v1` and `v2` tags, you also have the `prod` tag that is pointing to the "active" container image version, in this case it is pointing to `v1`, but you also have a `v3` image, why?
+
+You find three tags/images because we want to demonstrate during this step not only how podman can autoupdate the image with just changing where the `prod` tag is pointing, but also how Podman can rollback if the updated image does not work.
+
+In this case we simulated that, due to a mistake, the image v2 introduces an error that makes that the application is unable to start (you can check how we included the logo but also how we misspelled `nginx` in the used [Containerfile for the version 2](../../APPs/2048/Containerfile.v2-error)). That mistake is solved in image `v3`.
+
+
+Let's update the image in the Edge Device by just changing the `prod` tag in the registry but before than, in order to see what's going on in the device run:
+
+```
+watch "podman auto-update --dry-run; echo '';podman ps"
+
+```
+
+This command will permit you to see the changes in the Edge Device after "updating" the container image by moving the `prod` tag. The first lines show if Podman detects that there is a new version of the image, and in the second part of the output the running containers. Here is an example of the output before the update:
+
+```
+UNIT                    CONTAINER            IMAGE                            POLICY      UPDATED
+container-app1.service  dc3dead35d5b (app1)  quay.io/luisarizmendi/2048:prod  registry    false
+
+CONTAINER ID  IMAGE                            COMMAND     CREATED        STATUS            PORTS                         NAMES
+dc3dead35d5b  quay.io/luisarizmendi/2048:prod              9 minutes ago  Up 9 minutes ago  192.168.122.4:8081->8081/tcp  app1
+```
+
+It is a good idea to keep this output visible while you change the tag in the registry, so you see the effect on the Edge Device right away.
+
+If you are using [Quay.io](quay.io) moving the tag is easy, you just need to follow the steps shown in the following GIF:
+
+![Moving prod tag](DOCs/images/container_to_v2.gif)
+
+
+If you are using any other registry, or if you want to do it using Podman (include your `registry/repository`):
+
+```
+podman tag <registry>/2048:v2 <registry>/2048:prod
+
+podman push <registry>/2048:prod
+```
+
+Right after changing the `prod` tag you will see how the command output changes into "UPDATED = pending":
+
+```
+UNIT                    CONTAINER            IMAGE                            POLICY      UPDATED
+container-app1.service  e252a5db31f8 (app1)  quay.io/luisarizmendi/2048:prod  registry    pending
+```
+
+And how the system tries to start the new version... but since it fails what Podman does is to re-start the old version. You can check that if you visit again `http://<edge_device_IP>:8081` and see how the new image does not appear.
+
+This makes that, even with a wrong image, the service at the Edge Device keeps working.
+
 
 ### Step 5 - APP lifecycle: Upgrade to  APP v3 (OK)
 ---
 **Summary**
 
-.
+Show a successful Edge Device upgrade.
 
 ---
 
+Change the `prod` tag to point to `v3` while you have open the console which is running `watch "podman auto-update --dry-run; echo '';podman ps"`.
 
-### BONUS
+You will see similar changes to the previous step, but this time it stabilizes because the new version (`v3`) works.
+
+Check again `http://<edge_device_IP>:8081` and see how the RHEL logo appears in the page (remember to clean the browser cache if it's necessary).
+
+
+
+
+### BONUS - Serverless service with Podman
 ---
 **Summary**
 
