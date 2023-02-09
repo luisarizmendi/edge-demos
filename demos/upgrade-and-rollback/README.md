@@ -342,7 +342,7 @@ AvailableUpdate:
           Added: zsh-5.8-9.el9.x86_64
 ```
 
-So `zsh` will be added and `git` (and its dependancies) will be removed if we upgrade the image.
+So `zsh` will be added and `git` (and its dependencies) will be removed if we upgrade the image.
 
 
 In our use case, we said that we have to imagine that the services running on this Edge Device rely on GIT to fetch files from different repositories, so if we remove GIT from our system, the services won't work as expected. 
@@ -361,7 +361,7 @@ cat /etc/greenboot/check/required.d/01_check_git.sh
 git --help
 ```
 
-This script will fail if we upgrade to the image shown above.... so let's upgrade the system see what happens. 
+This script will fail if we upgrade to the image shown above.... let's upgrade the system and see what happens. 
 
 Let's start by downloading the new image and configuring it to be used in the next reboot:
 
@@ -434,7 +434,7 @@ Added:
 Run "systemctl reboot" to start a reboot
 ```
 
-You can check that in the next reboot, the new image will be used bu running again `rpm-ostree status`. Take a look that the current running version has a dot (`●`) and that the version that is placed in the first place (the one that will be selected by default in the next boot) is the new image:
+You can check that in the next reboot, the new image will be used by running again `rpm-ostree status`. Take a look that the current running version has a dot (`●`) and that the version that is placed in the first place (the one that will be selected by default in the next boot) is the new image:
 
 ```
 rpm-ostree status
@@ -491,7 +491,7 @@ Deployments:
 ---
 **Summary**
 
-Show a sucessful Edge Device upgrade.
+Show a successful Edge Device upgrade.
 
 ---
 
