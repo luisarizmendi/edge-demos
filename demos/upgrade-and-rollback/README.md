@@ -85,10 +85,10 @@ Then:
 
 2. Log in to your Registry (`podman login -u <registry_user> <registry>`) 
 
-3. Run the playbook that will use `skopeo` to copy the images from quay.io/luisarizmendi to your own Registry:
+3. Run the playbook that will use `skopeo` to copy the images from quay.io/luisarizmendi to your own Registry (remember to include your user and password):
 
 ```
-ansible-playbook -vvi inventory playbooks/00-preparation-apps.yml
+ansible-playbook -vvi inventory  -e "registry_user=<your registry user>" -e "registry_password=<your registry password>"   playbooks/00-preparation-apps.yml
 ```
 
 Check that you have images in your Registry and that the `prod` image tags are pointing the APP `v1`.
