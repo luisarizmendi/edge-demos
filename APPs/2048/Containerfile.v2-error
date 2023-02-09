@@ -3,7 +3,7 @@
 FROM registry.redhat.io/rhel9/nginx-120
 MAINTAINER ---YOUR NAME--- <YOUR EM@IL>
 COPY files/src /opt/app-root/src
-COPY files/logo-v2.png /opt/app-root/src/logo.png
+COPY files/logo.png /opt/app-root/src/logo.png
 COPY files/nginx.conf /etc/nginx/nginx.conf
 EXPOSE 8081
 ENTRYPOINT ["njinx", "-g", "daemon off;"]
