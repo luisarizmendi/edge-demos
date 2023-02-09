@@ -1,6 +1,6 @@
 # Edge Computing demos with Red Hat Portfolio
 
-This repository contains guided demos of Red Hat portfolio can help with different Edge Computing use cases.
+This repository contains guided demos where you can see how Red Hat portfolio can help with different Edge Computing use cases.
 
 ## Available demos
 
