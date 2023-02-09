@@ -8,6 +8,7 @@
 
         - name: Copy APP image files to my registry
           shell: |
+            skopeo login -u {{ registry_user }} -p {{ registry_password }} {{ apps.app1.registry }}
             skopeo copy docker://quay.io/luisarizmendi/2048:v1 docker://{{ apps.app1.registry }}/{{ apps.app1.image }}:v1
             skopeo copy docker://quay.io/luisarizmendi/2048:v2 docker://{{ apps.app1.registry }}/{{ apps.app1.image }}:v2
             skopeo copy docker://quay.io/luisarizmendi/2048:v3 docker://{{ apps.app1.registry }}/{{ apps.app1.image }}:v3
