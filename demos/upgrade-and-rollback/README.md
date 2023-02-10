@@ -490,7 +490,7 @@ Deployments:
 It's time to reboot, but before running the following command, be sure that you are showing the Edge Device console to being able so see what happens during the reboot process:
 
 ```
-systemctl reboot
+sudo systemctl reboot
 ```
 
 While rebooting you can explain that the system will try to boot three times, the first two starting from `ostree:0` (shown in the Grub menu) and the last one will turn back to `ostree:1` which is the second entry that we show in `rpm-ostree status`, so the previous image.
