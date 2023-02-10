@@ -383,7 +383,7 @@ So `zsh` will be added and `git` (and its dependencies) will be removed if we up
 
 In our use case, we said that we have to imagine that the services running on this Edge Device rely on GIT to fetch files from different repositories, so if we remove GIT from our system, the services won't work as expected. 
 
-We wouldn't like to be checking manually every single image change, so OSTree provides a useful too that you can use to check your system or apps right after the upgrade: Greenboot.
+We wouldn't like to be checking manually every single image change, so OSTree provides a useful tool that you can use to check your system or apps right after the upgrade: Greenboot.
 
 With Greenboot you can write your own check scripts that can, for example, make requests to the running applications, check connectivity to external resources such as databases, or asure that certain tools are available in the system.
 
