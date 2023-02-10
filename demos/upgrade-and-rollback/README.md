@@ -77,7 +77,7 @@ In this demo we will be using a couple of simple APPs but you can use your own a
 
 You will need to have access to your own Container Image Repository since during the demo we will need to change published container image tags. In my example I use [Quay.io](https://quay.io). 
 
-Once you have access to your Container Image Registry, create a couple of *public* namespaces/repositories, in my example I used `2048` and `simple-http`.
+Once you have access to your Container Image Registry, create a couple of **public** namespaces/repositories, in my example I used `2048` and `simple-http`.
 
 Then:
 
@@ -91,7 +91,7 @@ Then:
 ansible-playbook -vvi inventory  -e "registry_user=<your registry user>" -e "registry_password=<your registry password>"   playbooks/00-preparation-apps.yml
 ```
 
-Check that you have images in your Registry and that *the `prod` image tags are pointing the APP `v1`*.
+Check that you have images in your Registry and that **the `prod` image tags are pointing the APP `v1`**.
 
 **_NOTE:_** In case that you want to make any changes to the provided APP examples, you can [build your own images using the provided Containerfiles](APPs/README.md).
 
@@ -111,7 +111,7 @@ It will:
 * Create the OSTree Image v3
 * Create a RHEL custom ISO that will be used to deploy the RHEL OSTree edge system pointing to the OSTree repo published in the Image Builder (v1)
 
-Once the Ansible Playbook is finished, you will see the URL where the *custom* ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
+Once the Ansible Playbook is finished, you will see the URL where the **custom** ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
 
 
 ## Demo steps
@@ -719,7 +719,7 @@ quay.io/luisarizmendi/simple-http  prod        7af8b56b6d83  24 hours ago  296 M
 quay.io/luisarizmendi/2048         prod        21bbdd4e9419  25 hours ago  444 MB
 ```
 
-3. Now let's prepare for the service request, run a continuous command that check which containers are running on the system with `watch podman ps` and check that you only have one single container running, the one with the service used in the lifecycle demo, but you don't have the one with the Serverless service (`simple-http` in the example). Remember to *let visible the output of the `watch` command* during the next step, so you can notice when the container starts running).
+3. Now let's prepare for the service request, run a continuous command that check which containers are running on the system with `watch podman ps` and check that you only have one single container running, the one with the service used in the lifecycle demo, but you don't have the one with the Serverless service (`simple-http` in the example). Remember to **let visible the output of the `watch` command** during the next step, so you can notice when the container starts running).
 
 ```
 CONTAINER ID  IMAGE                            COMMAND     CREATED        STATUS            PORTS                           NAMES
