@@ -6,6 +6,12 @@
   - ../vars/main.yml
   tasks:
 
+        - name: Install skopeo
+          become: true
+          ansible.builtin.dnf:
+            state: latest
+            name: skopeo
+
         - name: Copy APP image files to my registry
           shell: |
             skopeo login -u {{ registry_user }} -p {{ registry_password }} {{ apps.app1.registry }}
