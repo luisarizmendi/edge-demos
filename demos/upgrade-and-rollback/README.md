@@ -131,22 +131,22 @@ This is the summarized list of the steps to demonstrate the RHEL OSTree and Podm
 
 2. Step 2 - OS lifecycle: Upgrade to OSTree image v2 (with error)
     1. Show default upgrade policy in `/etc/rpm-ostreed.conf`
-    2. Check current status with `rpm-ostree status` 
+    2. Check current status with `sudo rpm-ostree status` 
     3. Publish OSTree image v2 with `ansible-playbook -vvi inventory playbooks/01-publish-image-v2.yml `
-    4. Check the new update with `rpm-ostree upgrade --check` and `rpm-ostree upgrade --preview`
+    4. Check the new update with `sudo rpm-ostree upgrade --check` and `sudo rpm-ostree upgrade --preview`
     5. Explain Greenboot and the script that check GIT in `/etc/greenboot/check/required.d/01_check_git.sh`
     6. Perform the upgrade with `sudo rpm-ostree upgrade`
-    7. Review again the status with `rpm-ostree status` and reboot
+    7. Review again the status with `sudo rpm-ostree status` and reboot
     8. Watch the three reboots and how in the last one the first version of the image is selected
     9. SSH to the Edge Device and check that there is a Rollback message
-    10. Review the status with `rpm-ostree status`
+    10. Review the status with `sudo rpm-ostree status`
 
 3. Step 3 - OS lifecycle: Upgrade to OSTree image v3 (OK)
     1. Publish the OSTree image version 3 with `ansible-playbook -vvi inventory playbooks/01-publish-image-v3.yml `
-    2. Check that the new upgrade is available with `rpm-ostree upgrade --check` and `rpm-ostree upgrade --preview`
+    2. Check that the new upgrade is available with `sudo rpm-ostree upgrade --check` and `sudo rpm-ostree upgrade --preview`
     3. Perform and upgrade with automatic reboot with `sudo rpm-ostree upgrade -r`
     4. Watch the reboot
-    5. SSH to the Edge Device and check the status with `rpm-ostree status`
+    5. SSH to the Edge Device and check the status with `sudo rpm-ostree status`
     
 4. Step 4 - APP lifecycle: Upgrade to  APP v2 (with error)
     1. Open the application in `http://<edge_device_IP>:8081`
@@ -263,7 +263,7 @@ You can also check the running and the current available image versions:
 
 
 ```
-rpm-ostree status
+sudo rpm-ostree status
 
 
 State: idle
@@ -276,7 +276,7 @@ Also check that, at this moment, there are no available upgrades:
 
 
 ```
-rpm-ostree upgrade --check
+sudo rpm-ostree upgrade --check
 
 
 1 metadata, 0 content objects fetched; 196 B transferred in 0 seconds; 0 bytes content written
@@ -296,7 +296,7 @@ Once the playbook finishes the new Image is ready and you can check that the Edg
 
 
 ```
-rpm-ostree upgrade --check
+sudo rpm-ostree upgrade --check
 
 
 2 metadata, 0 content objects fetched; 15 KiB transferred in 0 seconds; 0 bytes content written
@@ -311,7 +311,7 @@ You can see how the difference between the running image and the new one is that
 
 
 ```
-rpm-ostree upgrade --preview
+sudo rpm-ostree upgrade --preview
 
 
 
@@ -473,7 +473,7 @@ Run "systemctl reboot" to start a reboot
 You can check that in the next reboot, the new image will be used by running again `rpm-ostree status`. Take a look that the current running version has a dot (`●`) and that the version that is placed in the first place (the one that will be selected by default in the next boot) is the new image:
 
 ```
-rpm-ostree status
+sudo rpm-ostree status
 
 
 State: idle
@@ -510,7 +510,7 @@ If you check the available images you will see how the "running" image and the "
 
 
 ```
-rpm-ostree status
+sudo rpm-ostree status
 
 
 State: idle
@@ -559,7 +559,7 @@ AvailableUpdate:
 The only difference between the running image and the new image is that `zsh` has been added:
 
 ```
-rpm-ostree upgrade --preview
+sudo rpm-ostree upgrade --preview
 
 
 note: automatic updates (stage) are enabled
@@ -597,7 +597,9 @@ And then check that you are running the most recent image version:
 
 
 ```
-[admin@localhost ~]$ rpm-ostree status
+sudo rpm-ostree status
+
+
 State: idle
 AutomaticUpdates: stage; rpm-ostreed-automatic.timer: inactive
 Deployments:
