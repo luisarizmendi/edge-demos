@@ -77,7 +77,7 @@ In this demo we will be using a couple of simple APPs but you can use your own a
 
 You will need to have access to your own Container Image Repository since during the demo we will need to change published container image tags. In my example I use [Quay.io](https://quay.io). 
 
-Once you have access to your Container Image Registry, create a couple of public namespaces/repositories, in my example I used `2048` and `simple-http`.
+Once you have access to your Container Image Registry, create a couple of *public* namespaces/repositories, in my example I used `2048` and `simple-http`.
 
 Then:
 
