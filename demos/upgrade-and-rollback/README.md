@@ -63,7 +63,7 @@ ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osb
 
 * Modify the Ansible `inventory` file with your values
 
-* Copy your public SSH key into the Image Builder system, so you can open passwordless SSH sessions with the user that you configured in your Ansible inventory.
+* Copy your public SSH key into the Image Builder system, so you can open passwordless SSH sessions with the user that you configured in your Ansible inventory. (double check .ssh and authorized_keys permissions in case you are still asked for password after copying the key).
 ```
 ssh-copy-id <user>@<image builder IP>
 ```
