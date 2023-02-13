@@ -52,11 +52,15 @@ If you don't want to use `root`, be sure that the user has [passwordless sudo ac
 Your will need to:
 
 * Install Ansible
+
+> laptop
 ```
 dnf install -y ansible
 ```
 
 * Download the `infra.osbuild` Ansible collection
+
+> laptop
 ```
 ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osbuild
 ```
@@ -64,6 +68,8 @@ ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osb
 * Modify the Ansible `inventory` file with your values
 
 * Copy your public SSH key into the Image Builder system, so you can open passwordless SSH sessions with the user that you configured in your Ansible inventory. (double check .ssh and authorized_keys permissions in case you are still asked for password after copying the key).
+
+> laptop
 ```
 ssh-copy-id <user>@<image builder IP>
 ```
@@ -87,6 +93,7 @@ Then:
 
 3. Run the playbook that will use `skopeo` to copy the images from quay.io/luisarizmendi to your own Registry (remember to include your user and password):
 
+> laptop
 ```
 ansible-playbook -vvi inventory  -e "registry_user=<your registry user>" -e "registry_password=<your registry password>"   playbooks/00-preparation-apps.yml
 ```
@@ -100,6 +107,7 @@ Check that you have images in your Registry and that **the `prod` image tags are
 
 Run the following Ansible Playbook:
 
+> laptop
 ```
 ansible-playbook -vvi inventory playbooks/00-preparation-ostree.yml
 ```
@@ -191,6 +199,8 @@ The environment is composed of two systems, one is the "Image Builder", which is
 
 The Image Builder already has three OSTree images created. The first one is the one that we will use during the first deployment. The second one adds the `zsh` package but removes (by mistake) the `git` package which is needed by the system (let's imagine that one of the system services needs to clone or fetch new files using GIT). The Third image includes the `zsh` package but also keeps the `git` package. 
 
+**_NOTE:_** Every time that you run the `00-preparation-ostree.yml` ansible playbook three images are generated and the previous ones are not deleted, so if you run it multiple times you will see more than just three images in Cockpit.
+
 Follow these steps to review the Image Builder concepts:
 
 1. Log into the Image Builder Cockpit (`https://<image_builder_IP>:9090`) using `root`
@@ -246,6 +256,7 @@ Explain that by default, the OSTree Automatic Update Policy is set to `none` whi
 
 You can open the configuration file to show that the default is configured:
 
+> edge device
 ```
 cat /etc/rpm-ostreed.conf
 
@@ -255,13 +266,13 @@ cat /etc/rpm-ostreed.conf
 # For option meanings, see rpm-ostreed.conf(5).
 
 [Daemon]
-AutomaticUpdatePolicy=none
+#AutomaticUpdatePolicy=none
 #IdleExitTimeout=60
 ```
 
 You can also check the running and the current available image versions:
 
-
+> edge device
 ```
 sudo rpm-ostree status
 
@@ -274,7 +285,7 @@ Deployments:
 
 Also check that, at this moment, there are no available upgrades:
 
-
+> edge device
 ```
 sudo rpm-ostree upgrade --check
 
@@ -288,13 +299,14 @@ No updates available.
 
 Now it's time to "publish" the new image that was created in advance (to save time) in the Image Builder. Run this Ansible Playbook to do it:
 
+> laptop
 ```
 ansible-playbook -vvi inventory playbooks/01-publish-image-v2.yml 
 ```
 
 Once the playbook finishes the new Image is ready and you can check that the Edge Device has a new available image upgrade: 
 
-
+> edge device
 ```
 sudo rpm-ostree upgrade --check
 
@@ -309,7 +321,7 @@ AvailableUpdate:
 
 You can see how the difference between the running image and the new one is that 55 packages were removed and one additional package added. I you want more information about these changes you can check the "preview":
 
-
+> edge device
 ```
 sudo rpm-ostree upgrade --preview
 
@@ -389,6 +401,7 @@ With Greenboot you can write your own check scripts that can, for example, make 
 
 You can write checks that will show a warning message after the upgrade in case of a failure (the ones located in `/etc/greenboot/check/wanted.d`), but you can also write scripts that, if failed, automatically rollback the upgrade (`/etc/greenboot/check/required.d`). In our case we created a super-simple script that just check that GIT binary is available:
 
+> edge device
 ```
 cat /etc/greenboot/check/required.d/01_check_git.sh 
 
@@ -401,7 +414,7 @@ This script will fail if we upgrade to the image shown above.... let's upgrade t
 
 Let's start by downloading the new image and configuring it to be used in the next reboot:
 
-
+> edge device
 ```
 sudo rpm-ostree upgrade 
 
@@ -472,6 +485,7 @@ Run "systemctl reboot" to start a reboot
 
 You can check that in the next reboot, the new image will be used by running again `rpm-ostree status`. Take a look that the current running version has a dot (`●`) and that the version that is placed in the first place (the one that will be selected by default in the next boot) is the new image:
 
+> edge device
 ```
 sudo rpm-ostree status
 
@@ -486,9 +500,11 @@ Deployments:
                   Version: 0.0.1 (2023-02-09T09:01:58Z)
 ```
 
+**_NOTE:_** Due to [an issue](https://github.com/redhat-cop/infra.osbuild/issues/94) with `rpm-ostree upgrade --check` and `--preview` commands at this moment we cannot publish the new images creating a new `ostree` commit, we can [just copy files into the HTTP server](https://github.com/luisarizmendi/edge-demos/blob/main/common/playbooks/publish-image.yml), so the "version" numeber is lost during the upgrade. You will see `Version: 9.1` in the updated image until this issue is fixed.
 
 It's time to reboot, but before running the following command, be sure that you are showing the Edge Device console to being able so see what happens during the reboot process:
 
+> edge device
 ```
 sudo systemctl reboot
 ```
@@ -497,6 +513,7 @@ While rebooting you can explain that the system will try to boot three times, th
 
 After the third reboot, you will get the command prompt. Try to SSH again to the Edge Device, you will see a message showing that there was a problem with the upgrade:
 
+> laptop
 ```
 ssh admin@<edge_device_IP>
 
@@ -508,7 +525,7 @@ Last login: Thu Feb  9 09:46:53 2023 from 192.168.122.1
 
 If you check the available images you will see how the "running" image and the "next default image on reboot" are the same, the first image where we have GIT installed.
 
-
+> edge device
 ```
 sudo rpm-ostree status
 
@@ -533,6 +550,7 @@ Show a successful Edge Device upgrade.
 
 You need to publish a new image version (v39) that remove `zsh` but keep `git` installed:
 
+> laptop
 ```
 ansible-playbook -vvi inventory playbooks/01-publish-image-v3.yml 
 ```
@@ -540,7 +558,7 @@ ansible-playbook -vvi inventory playbooks/01-publish-image-v3.yml
 After publishing it, you can check that you have a new upgrade available in the system:
 
 
-
+> edge device
 ```
 sudo rpm-ostree upgrade --check
 
@@ -558,6 +576,7 @@ AvailableUpdate:
 
 The only difference between the running image and the new image is that `zsh` has been added:
 
+> edge device
 ```
 sudo rpm-ostree upgrade --preview
 
@@ -573,6 +592,7 @@ AvailableUpdate:
 
 Download the image and reboot (with `-r`)
 
+> edge device
 ```
 sudo rpm-ostree upgrade -r
 
@@ -585,6 +605,7 @@ Added:
 
 After the reboot SSH again into the Edge Device:
 
+> laptop
 ```
 ssh admin@<edge_device_IP>
 
@@ -595,7 +616,7 @@ Last login: Thu Feb  9 09:54:43 2023 from 192.168.122.1
 
 And then check that you are running the most recent image version:
 
-
+> edge device
 ```
 sudo rpm-ostree status
 
@@ -639,6 +660,7 @@ In this case we simulated that, due to a mistake, the image v2 introduces an err
 
 Let's update the image in the Edge Device by just changing the `prod` tag in the registry but before than, in order to see what's going on in the device run:
 
+> edge device
 ```
 watch "podman auto-update --dry-run; echo '';podman ps"
 
@@ -646,6 +668,7 @@ watch "podman auto-update --dry-run; echo '';podman ps"
 
 This command will permit you to see the changes in the Edge Device after "updating" the container image by moving the `prod` tag. The first lines show if Podman detects that there is a new version of the image, and in the second part of the output the running containers. Here is an example of the output before the update:
 
+> edge device
 ```
 UNIT                    CONTAINER            IMAGE                            POLICY      UPDATED
 container-app1.service  dc3dead35d5b (app1)  quay.io/luisarizmendi/2048:prod  registry    false
@@ -663,6 +686,7 @@ If you are using [Quay.io](quay.io) moving the tag is easy, you just need to fol
 
 If you are using any other registry, or if you want to do it using Podman (include your `registry/repository`):
 
+> laptop
 ```
 podman tag <registry>/2048:v2 <registry>/2048:prod
 
@@ -671,6 +695,7 @@ podman push <registry>/2048:prod
 
 Right after changing the `prod` tag you will see how the command output changes into "UPDATED = pending":
 
+> edge device
 ```
 UNIT                    CONTAINER            IMAGE                            POLICY      UPDATED
 container-app1.service  e252a5db31f8 (app1)  quay.io/luisarizmendi/2048:prod  registry    pending
@@ -714,6 +739,7 @@ You can double-check that the fresh system already have locally the application 
 
 2. Check the `pre-pull-container-image` systemd unit status with `systemctl --user status pre-pull-container-image.service` and show the systemd unit file with `cat /var/home/admin/.config/systemd/user/pre-pull-container-image.service`. Then if the script is finished the container image is ready with `podman image list` (remember that you will have two images, the one used during the previous steps of the demo, and the serverless application, which in my example is `simple-http`).
 
+> edge device
 ```
 [admin@localhost ~]$ podman image list
 REPOSITORY                         TAG         IMAGE ID      CREATED       SIZE
@@ -723,6 +749,7 @@ quay.io/luisarizmendi/2048         prod        21bbdd4e9419  25 hours ago  444 M
 
 3. Now let's prepare for the service request, run a continuous command that check which containers are running on the system with `watch podman ps` and check that you only have one single container running, the one with the service used in the lifecycle demo, but you don't have the one with the Serverless service (`simple-http` in the example). Remember to **let visible the output of the `watch` command** during the next step, so you can notice when the container starts running).
 
+> edge device
 ```
 CONTAINER ID  IMAGE                            COMMAND     CREATED        STATUS            PORTS                           NAMES
 3dc739ae55d8  quay.io/luisarizmendi/2048:prod              5 minutes ago  Up 5 minutes ago  192.168.122.101:8081->8081/tcp  app1
@@ -730,9 +757,9 @@ CONTAINER ID  IMAGE                            COMMAND     CREATED        STATUS
 
 4. Access the service published on port 8080 on the edge device (`http://<edge-device-ip>:8080`). The service will return a Text message. At this point you will see in the console running the `watch` command how a new container started as soon as the request was made (Serverless).
 
-5. If you don't request the service again and you wait 10 second, you will be able to see in the console running the `watch` command  how the Serverless service scales down to zero replicas (no container with the service is running) again, saving resources until the system get a new request to the service.
+5. If you don't request the service again and you wait 60 second, you will be able to see in the console running the `watch` command  how the Serverless service scales down to zero replicas (no container with the service is running) again, saving resources until the system get a new request to the service.
 
-If you want to test the scale-down , just stop the requests to the service and wait 10 seconds, the container should start the shutdown (stop time will depend on the service).
+If you want to test the scale-down , just stop the requests to the service and wait 60 seconds, the container should start the shutdown (stop time will depend on the service).
 
 You can also test the Podman image auto-update feature with this service but bear in mind that Podman auto-update works if the container is running, so if your Serverless service scaled-down to zero the new version won't be pulled until the container is started again.
 
