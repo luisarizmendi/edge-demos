@@ -731,7 +731,7 @@ Demonstrate that people don't need complex systems to have advanced features suc
 
 ---
 
-Before using the service is important to explain that the serverless services are not running if they are not being used, so by default the container image won't be pull until the first request to the system... which will imply a delay because the service won't be ready until the image is downloaded. In order to remove that wait during the first request, an auto-pull image service has been created in the system, so the image is ready even before the first request.
+Before using the service is important to explain that the serverless services are not running if they are not being used, so by default the container image won't be pulled until the first request to the system... which will imply a delay because the service won't be ready until the image is downloaded. In order to remove that wait during the first request, an auto-pull image service has been created in the system, so the image is ready even before the first request.
 
 You can double-check that the fresh system already have locally the application container image:
 
