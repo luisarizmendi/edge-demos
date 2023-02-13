@@ -500,7 +500,7 @@ Deployments:
                   Version: 0.0.1 (2023-02-09T09:01:58Z)
 ```
 
-**_NOTE:_** Due to [an issue](https://github.com/redhat-cop/infra.osbuild/issues/94) with `rpm-ostree upgrade --check` and `--preview` commands at this moment we cannot publish the new images creating a new `ostree` commit, we can [just copy files into the HTTP server](https://github.com/luisarizmendi/edge-demos/blob/main/common/playbooks/publish-image.yml), so the "version" numeber is lost during the upgrade. You will see `Version: 9.1` in the updated image until this issue is fixed.
+**_NOTE:_** Due to [an issue](https://github.com/redhat-cop/infra.osbuild/issues/94) with `rpm-ostree upgrade --check` and `--preview` commands at this moment we cannot publish the new images creating a new `ostree` commit, we can [just copy files into the HTTP server](https://github.com/luisarizmendi/edge-demos/blob/main/common/playbooks/publish-image.yml), so the "version" number is lost during the upgrade. You will see `Version: 9.1` in the updated image until this issue is fixed.
 
 It's time to reboot, but before running the following command, be sure that you are showing the Edge Device console to being able so see what happens during the reboot process:
 
