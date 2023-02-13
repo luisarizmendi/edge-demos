@@ -100,7 +100,7 @@ ansible-playbook -vvi inventory  -e "registry_user=<your registry user>" -e "reg
 
 Check that you have images in your Registry and that **the `prod` image tags are pointing the APP `v1`**.
 
-**_NOTE:_** In case that you want to make any changes to the provided APP examples, you can [build your own images using the provided Containerfiles](APPs/README.md).
+**_NOTE:_** *In case that you want to make any changes to the provided APP examples, you can [build your own images using the provided Containerfiles](APPs/README.md).*
 
 
 ### Preparing the OSTree images
@@ -199,7 +199,7 @@ The environment is composed of two systems, one is the "Image Builder", which is
 
 The Image Builder already has three OSTree images created. The first one is the one that we will use during the first deployment. The second one adds the `zsh` package but removes (by mistake) the `git` package which is needed by the system (let's imagine that one of the system services needs to clone or fetch new files using GIT). The Third image includes the `zsh` package but also keeps the `git` package. 
 
-**_NOTE:_** Every time that you run the `00-preparation-ostree.yml` ansible playbook three images are generated and the previous ones are not deleted, so if you run it multiple times you will see more than just three images in Cockpit.
+**_NOTE:_** *Every time that you run the `00-preparation-ostree.yml` ansible playbook three images are generated and the previous ones are not deleted, so if you run it multiple times you will see more than just three images in Cockpit.*
 
 Follow these steps to review the Image Builder concepts:
 
@@ -238,7 +238,7 @@ Meanwhile the system is installing, you can comment that:
 
 Once the deployment finished you can get the system IP and:
 
-**_NOTE:_** Depending on your Internet connection, downloading the images could take some time.
+**_NOTE:_** *Depending on your Internet connection, downloading the images could take some time.*
 
 * Test the application at `http://<edge_device_IP>:8081`
 * Connect to the system by SSH using the user configured in the Blueprint (`admin`). You shouldn't need password if you used the same laptop from where you ran the demo preparation since the SSH public key was injected into the OSTree image, otherwise you can use the password configured in the Blueprint (`R3dh4t1!`).
@@ -500,7 +500,7 @@ Deployments:
                   Version: 0.0.1 (2023-02-09T09:01:58Z)
 ```
 
-**_NOTE:_** Due to [an issue](https://github.com/redhat-cop/infra.osbuild/issues/94) with `rpm-ostree upgrade --check` and `--preview` commands at this moment we cannot publish the new images creating a new `ostree` commit, we can [just copy files into the HTTP server](https://github.com/luisarizmendi/edge-demos/blob/main/common/playbooks/publish-image.yml), so the "version" number is lost during the upgrade. You will see `Version: 9.1` in the updated image until this issue is fixed.
+**_NOTE:_** *Due to [an issue](https://github.com/redhat-cop/infra.osbuild/issues/94) with `rpm-ostree upgrade --check` and `--preview` commands at this moment we cannot publish the new images creating a new `ostree` commit, we can [just copy files into the HTTP server](https://github.com/luisarizmendi/edge-demos/blob/main/common/playbooks/publish-image.yml), so the "version" number is lost during the upgrade. You will see `Version: 9.1` in the updated image until this issue is fixed.*
 
 It's time to reboot, but before running the following command, be sure that you are showing the Edge Device console to being able so see what happens during the reboot process:
 
@@ -648,7 +648,7 @@ In our use case we would like to update this application to a new version where 
 We already created the new container image, which is tagged as `v2` and pushed it to the registry. 
 
 
-**_NOTE:_** Now it's a good time to open the registry and see the container image and its tags.
+**_NOTE:_** *Now it's a good time to open the registry and see the container image and its tags.*
 
 
 If you check the registry you will see that you don't have just `v1` and `v2` tags, you also have the `prod` tag that is pointing to the "active" container image version, in this case it is pointing to `v1`, but you also have a `v3` image, why?
