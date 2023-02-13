@@ -385,9 +385,9 @@ In our use case, we said that we have to imagine that the services running on th
 
 We wouldn't like to be checking manually every single image change, so OSTree provides a useful tool that you can use to check your system or apps right after the upgrade: Greenboot.
 
-With Greenboot you can write your own check scripts that can, for example, make requests to the running applications, check connectivity to external resources such as databases, or asure that certain tools are available in the system.
+With Greenboot you can write your own check scripts that can, for example, make requests to the running applications, check connectivity to external resources such as databases, or ensure that certain tools are available in the system.
 
-You can write check that will show a warning message after the upgrade in case of a failure (the ones located in `/etc/greenboot/check/wanted.d`), but you can also write scripts that, if failed, automatically rollback the upgrade (`/etc/greenboot/check/required.d`). In our case we created a super-simple script that just check that GIT binary is available:
+You can write checks that will show a warning message after the upgrade in case of a failure (the ones located in `/etc/greenboot/check/wanted.d`), but you can also write scripts that, if failed, automatically rollback the upgrade (`/etc/greenboot/check/required.d`). In our case we created a super-simple script that just check that GIT binary is available:
 
 ```
 cat /etc/greenboot/check/required.d/01_check_git.sh 
