@@ -542,7 +542,7 @@ After publishing it, you can check that you have a new upgrade available in the 
 
 
 ```
-rpm-ostree upgrade --check
+sudo rpm-ostree upgrade --check
 
 
 note: automatic updates (stage) are enabled
