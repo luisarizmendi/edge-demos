@@ -129,7 +129,7 @@ This is the summarized list of the steps to demonstrate the RHEL OSTree and Podm
 0. Step 0 - Review the use cases and the environment
     1. Describe the use case: hands-off deployment + self-healing upgrades in the OS and APPs
     2. Log into the Image Builder and show the images
-    3. Show the published OSTree repo and ISO in the HTTP server
+    3. Show the published OSTree repo and ISO in the HTTP server in `http://<image_builder_IP>/demo_upgrade`
 
 1. Step 1 - OS lifecycle: Deploy the edge device using the ISO
     1. Boot the Edge Device from the ISO and watch auto-deployment
