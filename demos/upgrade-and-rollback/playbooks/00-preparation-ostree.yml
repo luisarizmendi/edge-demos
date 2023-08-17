@@ -49,7 +49,7 @@
                 description: "Admin user"
                 password: "R3dh4t1!"
                 key: "{{ builder_pub_key }}"
-                groups: '["users", "wheel"]'
+                groups: ["users", "wheel"]
             builder_compose_pkgs:
               - "fuse-overlayfs"
               - "setroubleshoot-server"
@@ -72,7 +72,7 @@
                 description: "Admin user"
                 password: "R3dh4t1!"
                 key: "{{ builder_pub_key }}"
-                groups: '["users", "wheel"]'
+                groups: ["users", "wheel"]
             builder_compose_pkgs:
               - "fuse-overlayfs"
               - "setroubleshoot-server"
@@ -95,7 +95,7 @@
                 description: "Admin user"
                 password: "R3dh4t1!"
                 key: "{{ builder_pub_key }}"
-                groups: '["users", "wheel"]'
+                groups: ["users", "wheel"]
             builder_compose_pkgs:
               - "fuse-overlayfs"
               - "setroubleshoot-server"

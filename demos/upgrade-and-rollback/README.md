@@ -29,14 +29,24 @@ References:
 - [Article about implementing Serverless services with Podman](https://www.redhat.com/en/blog/painless-services-implementing-serverless-rootless-podman-and-systemd)
 
 
+<br><br>
+<hr style="border:2px solid gray">
+
 ## Pre-requisites
 
-You could use baremetal servers for this demo but you can run it too with just a couple of VMs running on your laptop.
+<hr style="border:2px solid gray">
+
+You could use baremetal servers for this demo but you can run it too with just a couple of VMs running on your laptop  (Image Builder and edge device).
 
 You need an active Red Hat Enterprise Linux subscription.
 
+<br><br>
+<hr style="border:2px solid gray">
 
 ## Demo preparation
+
+<hr style="border:2px solid gray">
+
 
 BEFORE delivering the demo, you have to complete these preparation steps.
 
@@ -62,7 +72,7 @@ dnf install -y ansible
 
 > laptop
 ```
-ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osbuild
+ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osbuild --upgrade
 ```
 
 * Modify the Ansible `inventory` file with your values
@@ -121,8 +131,12 @@ It will:
 
 Once the Ansible Playbook is finished, you will see the URL where the **custom** ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
 
+<br><br>
+<hr style="border:2px solid gray">
 
 ## Demo steps
+
+<hr style="border:2px solid gray">
 
 This is the summarized list of the steps to demonstrate the RHEL OSTree and Podman auto-update capabilities (below you will find the detailed description):
 
@@ -177,6 +191,8 @@ If you have more time and want to explore more cool features that could be used 
     5. Wait 10 seconds and see how the service is scaled down to zero replicas
 
 
+<br>
+<br>
 
 ### Step 0 - Review the use cases and the environment
 
@@ -211,6 +227,8 @@ As explained, there are three different images already created (to save time dur
 
 The Image builder also created an installation ISO used to deploy the Edge Device that can be downloaded from `http://<image_builder_IP>/demo_upgrade/images/`. This ISO is already pre-downloaded ready to be used.
 
+<br>
+<br>
 
 ### Step 1 - OS lifecycle: Deploy the edge device using the ISO
 
@@ -243,6 +261,9 @@ Once the deployment finished you can get the system IP and:
 * Test the application at `http://<edge_device_IP>:8081`
 * Connect to the system by SSH using the user configured in the Blueprint (`admin`). You shouldn't need password if you used the same laptop from where you ran the demo preparation since the SSH public key was injected into the OSTree image, otherwise you can use the password configured in the Blueprint (`R3dh4t1!`).
 * Review the configured systemd service with the root-less contanerized application (`systemctl --user status container-app1.service`) and show the systemd unit file that runs the container (`cat /var/home/admin/.config/systemd/user/container-app1.service`).
+
+<br>
+<br>
 
 ### Step 2 - OS lifecycle: Upgrade to OSTree image v2 (with error)
 ---
@@ -539,6 +560,8 @@ Deployments:
                   Version: 0.0.2 (2023-02-09T09:09:19Z)
 ```
 
+<br>
+<br>
 
 ### Step 3 - OS lifecycle: Upgrade to OSTree image v3 (OK)
 ---
@@ -631,7 +654,8 @@ Deployments:
                   Version: 0.0.1 (2023-02-09T09:01:58Z)
 ```
 
-
+<br>
+<br>
 
 ### Step 4 - APP lifecycle: Upgrade to  APP v2 (with error)
 ---
@@ -705,6 +729,8 @@ And how the system tries to start the new version... but since it fails what Pod
 
 This makes that, even with a wrong image, the service at the Edge Device keeps working.
 
+<br>
+<br>
 
 ### Step 5 - APP lifecycle: Upgrade to  APP v3 (OK)
 ---
@@ -721,7 +747,8 @@ You will see similar changes to the previous step, but this time it stabilizes b
 Check again `http://<edge_device_IP>:8081` and see how the RHEL logo appears in the page (remember to clean the browser cache if it's necessary).
 
 
-
+<br>
+<br>
 
 ### BONUS - Serverless service with Podman
 ---

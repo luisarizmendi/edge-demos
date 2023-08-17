@@ -1,4 +1,7 @@
 ---
+
+rhc_state: present
+
 apps:
   app1:
     registry: quay.io/luisarizmendi
