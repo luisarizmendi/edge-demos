@@ -96,6 +96,10 @@ ansible-vault create vars/secrets.yml
 **_NOTE:_** *Remember to include `--ask-vault-pass` when you try to run your Ansible playbooks containing Ansible Vault encrypted files*
 
 
+By default a test app will be deployed along with microshift. If you want to skip that step just comment out the `microshift_test_app_template` line in cars/main.yaml.
+
+
+
 Run the following Ansible Playbook:
 
 > laptop
@@ -108,12 +112,6 @@ It will:
 * Create the OSTree Image with Microshift
 
 Once the Ansible Playbook is finished, you will see the URL where the ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
-
-
-
-
-
-
 
 
 <br><br>

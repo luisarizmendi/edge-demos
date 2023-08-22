@@ -47,11 +47,3 @@ microshift_image_firewall_options:
 rhc_state: present
 
 
-
-
-apps:
-  app1:
-    registry: quay.io/luisarizmendi
-    image: 2048
-    prodtag: prod
-
