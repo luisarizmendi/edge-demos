@@ -115,6 +115,8 @@ Check that you have images in your Registry and that **the `prod` image tags are
 
 ### Preparing the OSTree images
 
+Before jumping into the image preaparation, you could update the `vars/main.yml` file with the RHEL release that you want to use as base.
+
 Run the following Ansible Playbook:
 
 > laptop

@@ -1,0 +1,57 @@
+---
+ocp_release: 4.13
+
+microshift_image_pull_secret_template: pull_secret.j2
+# PULL SECRET ENCRIPTED WITH ANSIBLE VAULT IN secrets.yaml
+
+
+microshift_test_app_template: test_app.j2
+microshift_test_app_name: test
+
+
+#microshift_image_crio_proxy_template: crio_proxy.j2
+microshift_image_crio_proxy:
+  user: 
+  password: 
+  server: 
+  port: 
+
+
+#microshift_image_ovn_options_template: ovn_options.j2
+microshift_image_external_gateway_interface: 
+microshift_image_gateway_interface: 
+microshift_image_mtu: 1400
+
+
+
+microshift_image_firewall_options:
+  # network_access_to_pods (mandatory)
+  - zone: trusted
+    source: 10.42.0.0/16
+  # network_access_to_services (mandatory)
+  - zone: trusted
+    source: 169.254.169.1
+  # network_optional
+  - zone: public
+    port: 80/tcp
+  - zone: public
+    port: 443/tcp
+  - zone: public
+    port: 6443/tcp
+
+
+
+
+
+
+rhc_state: present
+
+
+
+
+apps:
+  app1:
+    registry: quay.io/luisarizmendi
+    image: 2048
+    prodtag: prod
+
