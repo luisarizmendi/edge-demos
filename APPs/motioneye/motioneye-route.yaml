@@ -1,12 +1,12 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: watch
-  namespace: webcam  
+  name: motioneye
+  namespace: motioneye  
 spec:
   port:
-    targetPort: 8080 
+    targetPort: 8765 
   to:
     kind: Service
-    name: webcam
+    name: motioneye-http-service
     weight: 10

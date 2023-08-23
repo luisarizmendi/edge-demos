@@ -3,6 +3,6 @@ kind: Namespace
 metadata:
   labels:
     pod-security.kubernetes.io/enforce: privileged
-    kubernetes.io/metadata.name: webcam
-  name: webcam
+    kubernetes.io/metadata.name: motioneye
+  name: motioneye
 spec: {}
