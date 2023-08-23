@@ -157,7 +157,7 @@ TBD
 
 
 
-### BONUS - Using attached Hardware from Microshift
+###  ~ ~ ~ ~ BONUS - Using attached Hardware from Microshift ~ ~ ~ ~ 
 ---
 **Summary**
 

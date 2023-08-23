@@ -50,14 +50,14 @@ You need an active Red Hat Enterprise Linux subscription.
 
 BEFORE delivering the demo, you have to complete these preparation steps.
 
-### Preparing the Image Builder
+###  ~ ~ ~ ~ Preparing the Image Builder ~ ~ ~ ~ 
 
 You need a subscribed [Red Hat Enterprise Linux 9](https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.1/x86_64/product-software) system (minimal install is enough) with at least 2 vCPUs, 4 GB memory and 50 GB disk.
 
 If you don't want to use `root`, be sure that the user has [passwordless sudo access](https://developers.redhat.com/blog/2018/08/15/how-to-enable-sudo-on-rhel).
 
 
-### Preparing your laptop
+###  ~ ~ ~ ~ Preparing your laptop ~ ~ ~ ~ 
 
 Your will need to:
 
@@ -87,7 +87,7 @@ ssh-copy-id <user>@<image builder IP>
 * If you are using your laptop as hypervisor, be sure that you have at least 2 vCPU, 1.5GB memory and 20 GB disk free to create the Edge device VM (in addition the Image Builder VM that you should have already up and running).
 
 
-### Preparing the APPs
+###  ~ ~ ~ ~ Preparing the APPs ~ ~ ~ ~ 
 
 In this demo we will be using a couple of simple APPs but you can use your own applications (adapting them to your own use case).
 
@@ -113,7 +113,7 @@ Check that you have images in your Registry and that **the `prod` image tags are
 **_NOTE:_** *In case that you want to make any changes to the provided APP examples, you can [build your own images using the provided Containerfiles](APPs/README.md).*
 
 
-### Preparing the OSTree images
+###  ~ ~ ~ ~ Preparing the OSTree images ~ ~ ~ ~ 
 
 Before jumping into the image preaparation, you could update the `vars/main.yml` file with the RHEL release that you want to use as base.
 
@@ -196,7 +196,7 @@ If you have more time and want to explore more cool features that could be used 
 <br>
 <br>
 
-### Step 0 - Review the use cases and the environment
+###  ~ ~ ~ ~ Step 0 - Review the use cases and the environment ~ ~ ~ ~ 
 
 ---
 **Summary**
@@ -232,7 +232,7 @@ The Image builder also created an installation ISO used to deploy the Edge Devic
 <br>
 <br>
 
-### Step 1 - OS lifecycle: Deploy the edge device using the ISO
+###  ~ ~ ~ ~ Step 1 - OS lifecycle: Deploy the edge device using the ISO ~ ~ ~ ~ 
 
 ---
 **Summary**
@@ -267,7 +267,7 @@ Once the deployment finished you can get the system IP and:
 <br>
 <br>
 
-### Step 2 - OS lifecycle: Upgrade to OSTree image v2 (with error)
+###  ~ ~ ~ ~ Step 2 - OS lifecycle: Upgrade to OSTree image v2 (with error) ~ ~ ~ ~ 
 ---
 **Summary**
 
@@ -565,7 +565,7 @@ Deployments:
 <br>
 <br>
 
-### Step 3 - OS lifecycle: Upgrade to OSTree image v3 (OK)
+###  ~ ~ ~ ~ Step 3 - OS lifecycle: Upgrade to OSTree image v3 (OK) ~ ~ ~ ~ 
 ---
 **Summary**
 
@@ -659,7 +659,7 @@ Deployments:
 <br>
 <br>
 
-### Step 4 - APP lifecycle: Upgrade to  APP v2 (with error)
+###  ~ ~ ~ ~ Step 4 - APP lifecycle: Upgrade to  APP v2 (with error) ~ ~ ~ ~ 
 ---
 **Summary**
 
@@ -734,7 +734,7 @@ This makes that, even with a wrong image, the service at the Edge Device keeps w
 <br>
 <br>
 
-### Step 5 - APP lifecycle: Upgrade to  APP v3 (OK)
+###  ~ ~ ~ ~ Step 5 - APP lifecycle: Upgrade to  APP v3 (OK) ~ ~ ~ ~ 
 ---
 **Summary**
 
@@ -752,7 +752,7 @@ Check again `http://<edge_device_IP>:8081` and see how the RHEL logo appears in 
 <br>
 <br>
 
-### BONUS - Serverless service with Podman
+###  ~ ~ ~ ~ BONUS - Serverless service with Podman ~ ~ ~ ~ 
 ---
 **Summary**
 
