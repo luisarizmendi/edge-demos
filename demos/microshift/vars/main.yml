@@ -5,6 +5,19 @@ microshift_image_pull_secret_template: pull_secret.j2
 # PULL SECRET ENCRIPTED WITH ANSIBLE VAULT IN secrets.yaml
 
 
+microshift_config_template: microshift_config.j2
+microshift_config: 
+  baseDomain: $(hostname -I | awk '{print $1}').nip.io
+  clusterNetwork: 10.42.0.0/16
+  serviceNetwork: 10.43.0.0/16
+  serviceNodePortRange: 30000-32767
+  hostnameOverride: microshift
+  nodeIP: $(hostname -I | awk '{print $1}')
+  subjectAltNames:
+    - microshift.lablocal
+    - microshift.$(hostname -I | awk '{print $1}').nip.io
+  logLevel: Normal
+
 microshift_test_app_template: test_app.j2
 microshift_test_app_name: test
 
