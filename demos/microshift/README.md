@@ -42,14 +42,14 @@ You need an active Red Hat Enterprise Linux subscription.
 
 BEFORE delivering the demo, you have to complete these preparation steps.
 
-### Preparing the Image Builder
+### ~ ~ Preparing the Image Builder ~ ~
 
 You need a subscribed [Red Hat Enterprise Linux 9](https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.1/x86_64/product-software) system (minimal install is enough) with at least 2 vCPUs, 4 GB memory and 50 GB disk.
 
 If you don't want to use `root`, be sure that the user has [passwordless sudo access](https://developers.redhat.com/blog/2018/08/15/how-to-enable-sudo-on-rhel).
 
 
-### Preparing your laptop
+### ~ ~ Preparing your laptop ~ ~ 
 
 Your will need to:
 
@@ -82,7 +82,7 @@ ssh-copy-id <user>@<image builder IP>
 
 
 
-### Preparing the OSTree images
+### ~ ~ Preparing the OSTree images ~ ~ 
 
 You will need to prepare the Microshift image before running the demo since it takes some time to complete.
 
@@ -112,6 +112,22 @@ It will:
 * Create the OSTree Image with Microshift
 
 Once the Ansible Playbook is finished, you will see the URL where the ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
+
+
+
+
+### ~ ~ Preparing the edge device ~ ~ 
+
+
+
+
+
+
+
+
+
+
+
 
 
 <br><br>
