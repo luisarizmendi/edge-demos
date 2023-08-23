@@ -57,6 +57,9 @@ You need a subscribed [Red Hat Enterprise Linux 9](https://access.redhat.com/dow
 If you don't want to use `root`, be sure that the user has [passwordless sudo access](https://developers.redhat.com/blog/2018/08/15/how-to-enable-sudo-on-rhel).
 
 
+<br>
+<br>
+
 ###  ~ ~ ~ ~ Preparing your laptop ~ ~ ~ ~ 
 
 Your will need to:
@@ -87,6 +90,9 @@ ssh-copy-id <user>@<image builder IP>
 * If you are using your laptop as hypervisor, be sure that you have at least 2 vCPU, 1.5GB memory and 20 GB disk free to create the Edge device VM (in addition the Image Builder VM that you should have already up and running).
 
 
+<br>
+<br>
+
 ###  ~ ~ ~ ~ Preparing the APPs ~ ~ ~ ~ 
 
 In this demo we will be using a couple of simple APPs but you can use your own applications (adapting them to your own use case).
@@ -112,6 +118,9 @@ Check that you have images in your Registry and that **the `prod` image tags are
 
 **_NOTE:_** *In case that you want to make any changes to the provided APP examples, you can [build your own images using the provided Containerfiles](APPs/README.md).*
 
+
+<br>
+<br>
 
 ###  ~ ~ ~ ~ Preparing the OSTree images ~ ~ ~ ~ 
 
