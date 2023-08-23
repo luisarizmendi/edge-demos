@@ -145,25 +145,27 @@ TBD
 ---
 **Summary**
 
-Show how you can use directly connected Hardware from applications deployed on top of Microshift.
+Show how you can use directly connected Hardware (webcam) from applications deployed on top of Microshift.
 
 ---
 
-Sometimes you will need to use localy connected hardware to your edge device. In the following example we will connect a webcame to our device running microshift and deploy an application that makes use of it.
+Sometimes you will need to use localy connected hardware to your edge device. In the following example we will connect a webcam to our device running microshift and deploy an application that makes use of it.
 
 **_NOTE:_** *If you are using a VM you could redirect the webcam port to the VM*
 
-We wll be using the APP [Motioneye](https://github.com/motioneye-project/motioneye) to manage and view the webcamera stream. 
+We wll be using the APP [Motioneye](https://github.com/motioneye-project/motioneye) to manage and view the video stream. 
 
-One important point is that we will need to run the application using a privileged POD in order to access the the locally attached hardware. This is configured in this case in three steps 
+One important point is that we will need to run the application using a **privileged POD** in order to access the the locally attached hardware. 
 
-1. Create the namespace [enforcing the namespace pod security](https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-namespace-labels/) to privileged using the `pod-security.kubernetes.io/enforce: privileged` label as you can see in the [namespace manifest](../../APPs/motioneye/k8s/namespace.yaml)
+Let's deploy the application following these steps:
+
+1. Create the namespace [enforcing the namespace pod security](https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-namespace-labels/) to `privileged` using the `pod-security.kubernetes.io/enforce: privileged` label as you can see in the [namespace manifest](../../APPs/motioneye/k8s/namespace.yaml)
 
 ```
 oc create -f ../../APPs/motioneye/k8s/namespace.yaml
 ```
 
-2. Create an specific serviceAccount for running privileged PODs in that namespace using the [SCC manifest](../../APPs/motioneye/k8s/scc.yaml)
+2. Create an specific `serviceAccount` for running privileged PODs in that namespace using the [SCC manifest](../../APPs/motioneye/k8s/scc.yaml)
 
 ```
 oc create -f ../../APPs/motioneye/k8s/scc.yaml
@@ -176,9 +178,9 @@ oc create -f ../../APPs/motioneye/k8s/motioneye-pv-claims.yaml
 oc create -f ../../APPs/motioneye/k8s/motioneye-deployment.yaml
 ```
 
-Once that's done you can use `oc get pod -n motioneye` and check when the POD is in `running` state.
+Once that's done you can run `oc get pod -n motioneye` and check when the POD is in `running` state.
 
-4. Create the service and the Route. In this case the [service manifest](../../APPs/motioneye/k8s/motioneye-service.yaml) also createsa nodeport but if you want to use it for testing propuses remember to open the tcp port by running ` sudo firewall-cmd  --add-port=31180/tcp && sudo firewall-cmd  --add-port=31180/tcp`.
+4. Create the Kubernetes Service and the Route. In this case the [service manifest](../../APPs/motioneye/k8s/motioneye-service.yaml) also createsa nodeport but if you want to use it for testing propuses remember to open the tcp port by running ` sudo firewall-cmd  --add-port=31180/tcp && sudo firewall-cmd  --add-port=31180/tcp`.
 
 ```
 oc create -f ../../APPs/motioneye/k8s/motioneye-service.yaml
