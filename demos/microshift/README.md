@@ -141,14 +141,58 @@ TBD
 
 
 
-### BONUS - Serverless service with Podman
+### BONUS - Using attached Hardware from Microshift
 ---
 **Summary**
 
-TBD
+Sometimes you will need to use localy connected hardware to your edge device. In the following example we will connect a webcame to our device running microshift and deploy an application that makes use of it.
+
+---
+
+**_NOTE:_** *If you are using a VM you could redirect the webcam port to the VM*
+
+We wll be using the APP [Motioneye](https://github.com/motioneye-project/motioneye) to manage and view the webcamera stream. 
+
+One important point is that we will need to run the application using a privileged POD in order to access the the locally attached hardware. This is configured in this case in three steps 
+
+1. Create the namespace [enforcing the namespace pod security](https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-namespace-labels/) to privileged using the `pod-security.kubernetes.io/enforce: privileged` label as you can see in the [namespace manifest](../../APPs/motioneye/k8s/namespace.yaml)
+
+```
+oc create -f ../../APPs/motioneye/k8s/namespace.yaml
+```
+
+2. Create an specific serviceAccount for running privileged PODs in that namespace using the [SCC manifest](../../APPs/motioneye/k8s/scc.yaml)
+
+```
+oc create -f ../../APPs/motioneye/k8s/scc.yaml
+```
+
+3. Create the Persistent volumes and application deployment including `spec/template/spec/serviceAccountName: privileged-sa` and `spec/template/spec/containers/securityContext/privileged: true` as you can see in the [application deployment manifest](../../APPs/motioneye/k8s/motioneye-deployment.yaml). You can see 
+
+```
+oc create -f ../../APPs/motioneye/k8s/motioneye-pv-claims.yaml
+oc create -f ../../APPs/motioneye/k8s/motioneye-deployment.yaml
+```
+
+Once that's done you can use `oc get pod -n motioneye` and check when the POD is in `running` state.
+
+4. Create the service and the Route. In this case the [service manifest](../../APPs/motioneye/k8s/motioneye-service.yaml) also createsa nodeport but if you want to use it for testing propuses remember to open the tcp port by running ` sudo firewall-cmd  --add-port=31180/tcp && sudo firewall-cmd  --add-port=31180/tcp`.
+
+```
+oc create -f ../../APPs/motioneye/k8s/motioneye-service.yaml
+oc create -f ../../APPs/motioneye/k8s/motioneye-route.yaml
+
+```
+
+5. At this point you should be able to jump into the app route (`oc get route -n motioneye`) and you will see the log page. Use the `admin` username with an empty password and you should be able to jump into the application but no cameras are configured.
+
+You will need to create a new camera stream by opening the menu (3 line icon on top left corner) and select `add camera` in the dropdown menu:
+
+![Motioneye add camera](DOCs/images/motion_add_camera.png)
+
+Then be sure that you have selected the Camera Type `Local V4L2 Camera` and the choose one of the cameras that appear the button dropdown menu:
+
+![Motioneye select camera](DOCs/images/motion_select_camera.png)
 
 
-
-
-
-
+Few seconds after that you will see the camera image, smile!
