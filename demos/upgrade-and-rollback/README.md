@@ -50,6 +50,9 @@ You need an active Red Hat Enterprise Linux subscription.
 
 BEFORE delivering the demo, you have to complete these preparation steps.
 
+
+<br><br>
+
 ###  ~ ~ ~ ~ Preparing the Image Builder ~ ~ ~ ~ 
 
 You need a subscribed [Red Hat Enterprise Linux 9](https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.1/x86_64/product-software) system (minimal install is enough) with at least 2 vCPUs, 4 GB memory and 50 GB disk.

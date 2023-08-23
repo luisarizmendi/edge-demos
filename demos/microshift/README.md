@@ -1,13 +1,8 @@
-# OSTree system and podman-managed APPs lifecycle demo
+# Microshift sandbox
 
 ## Background 
 
-TBD
-
-
-In this demo, we will explore:
-
-* TBD 
+This "demo" is a little bit special, since I won't include demo steps. This could be re-named as a Microshift sandbox since this repo will give you the bit to deploy Microshift easily in a VM in your laoptop without the need even of a public DNS name (by default it is using [nip.io](nip.io) ).  
 
 
 References:
@@ -42,12 +37,17 @@ You need an active Red Hat Enterprise Linux subscription.
 
 BEFORE delivering the demo, you have to complete these preparation steps.
 
+
+<br><br>
+
 ### ~ ~ ~ ~ Preparing the Image Builder ~ ~ ~ ~
 
 You need a subscribed [Red Hat Enterprise Linux 9](https://access.redhat.com/downloads/content/479/ver=/rhel---9/9.1/x86_64/product-software) system (minimal install is enough) with at least 2 vCPUs, 4 GB memory and 50 GB disk.
 
 If you don't want to use `root`, be sure that the user has [passwordless sudo access](https://developers.redhat.com/blog/2018/08/15/how-to-enable-sudo-on-rhel).
 
+
+<br><br>
 
 ### ~ ~ ~ ~ Preparing your laptop ~ ~ ~ ~
 
@@ -81,6 +81,7 @@ ssh-copy-id <user>@<image builder IP>
 * If you are using your laptop as hypervisor, be sure that you have at least 2 vCPU, 1.5GB memory and 20 GB disk free to create the Edge device VM (in addition the Image Builder VM that you should have already up and running).
 
 
+<br><br>
 
 ### ~ ~ ~ ~ Preparing the OSTree images ~ ~ ~ ~
 
@@ -115,17 +116,27 @@ Once the Ansible Playbook is finished, you will see the URL where the ISO is pub
 
 
 
+<br><br>
 
 ### ~ ~ ~ ~ Preparing the edge device ~ ~ ~ ~
 
+In order to deploy the Edge Device, follow these steps:
+
+1. Create a VM that will be the Edge Device (if you are not using a baremetal machine) with at least 2 vCPU, 2GB memory, 20GB disk and one NIC in a network from where it has access to the Image Builder.
+
+2. Use the ISO downloaded from the Image Builder to install the system (you can get the URL where it is published in the last Ansible debug message from the previous step). Just be sure that the system is starting from the ISO, everything is automatic.
+
+3. Wait until the system prompt.
 
 
+Once the deployment finished you can get the system IP and:
 
+**_NOTE:_** *Depending on your Internet connection, downloading the images could take some time.*
 
-
-
-
-
+* Connect to the system by SSH using the user configured in the Blueprint (`admin`). You shouldn't need password if you used the same laptop from where you ran the demo preparation since the SSH public key was injected into the OSTree image, otherwise you can use the password configured in the Blueprint (`R3dh4t1!`).
+* Get the `kubeconfig` file using the root user (`sudo cat ...`) located in one of the directories located in `/var/lib/microshift/resources/kubeadmin/`. If you didn't changed the Ansible variable defaults, Microshift will be using a [nip.io](nip.io) so probably you will find it in `/var/lib/microshift/resources/kubeadmin/microshift.<ip>.nip.io/kubeconfig`
+* Use that kubeconfig file from your laptop and check that you can reach the kubernetes API (ie. with `oc --kubeconfig <kubeconfig file> get namespaces`)  
+* If you keep the default Ansible variables, you will find a test application already deployed at `http://test.apps.<ip>.nip.io`
 
 
 
@@ -138,24 +149,17 @@ Once the Ansible Playbook is finished, you will see the URL where the ISO is pub
 
 <hr style="border:2px solid gray">
 
-TBD
+I didn't created an specific demo steps for microshift (yet?, let me know if you think that could be useful), as I mentioned this repo is intended to be used as a sandbox to create and test whatever you want in Mmicroshift.
+
+You can review the demo application that you have running since it configures Persisten Volumes and Routes too. If you want to test another example, move to the next section.
 
 <br>
 <br>
 
-### Step 0 - xxxxxxxxxxxxxxxxxxxx
-
----
-**Summary**
-
-TBD
-
----
-
-TBD
 
 
 
+<br><br>
 
 ###  ~ ~ ~ ~ BONUS - Using attached Hardware from Microshift ~ ~ ~ ~ 
 ---
