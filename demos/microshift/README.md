@@ -145,9 +145,11 @@ TBD
 ---
 **Summary**
 
-Sometimes you will need to use localy connected hardware to your edge device. In the following example we will connect a webcame to our device running microshift and deploy an application that makes use of it.
+Show how you can use directly connected Hardware from applications deployed on top of Microshift.
 
 ---
+
+Sometimes you will need to use localy connected hardware to your edge device. In the following example we will connect a webcame to our device running microshift and deploy an application that makes use of it.
 
 **_NOTE:_** *If you are using a VM you could redirect the webcam port to the VM*
 
@@ -167,7 +169,7 @@ oc create -f ../../APPs/motioneye/k8s/namespace.yaml
 oc create -f ../../APPs/motioneye/k8s/scc.yaml
 ```
 
-3. Create the Persistent volumes and application deployment including `spec/template/spec/serviceAccountName: privileged-sa` and `spec/template/spec/containers/securityContext/privileged: true` as you can see in the [application deployment manifest](../../APPs/motioneye/k8s/motioneye-deployment.yaml). You can see 
+3. Create the Persistent volumes and application deployment including `spec/template/spec/serviceAccountName: privileged-sa` and `spec/template/spec/containers/securityContext/privileged: true` as you can see in the [application deployment manifest](../../APPs/motioneye/k8s/motioneye-deployment.yaml). 
 
 ```
 oc create -f ../../APPs/motioneye/k8s/motioneye-pv-claims.yaml
