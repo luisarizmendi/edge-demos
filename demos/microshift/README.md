@@ -94,6 +94,7 @@ ansible-vault create vars/secrets.yml
 
 **_NOTE:_** *Remember to include `--ask-vault-pass` when you try to run your Ansible playbooks containing Ansible Vault encrypted files*
 
+**_NOTE:_** Create a variable named `microshift_image_pull_secret` and assign it a OpenShift pull secret. You can download it from [https://console.redhat.com/openshift/downloads#tool-pull-secret](https://console.redhat.com/openshift/downloads#tool-pull-secret).
 
 By default a test app will be deployed along with microshift. If you want to skip that step just comment out the `microshift_test_app_template` line in cars/main.yaml.
 
