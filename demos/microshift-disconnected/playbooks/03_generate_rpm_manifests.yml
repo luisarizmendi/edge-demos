@@ -49,22 +49,21 @@
       set_fact:
         directory_names: "{{ manifest_files.files | map(attribute='path') | map('dirname') | map('basename') | unique | list }}"
 
-    - name: Extract file names
-      set_fact:
-        file_names: "{{ manifest_files.files | map(attribute='path') | map('basename') | list }}"
-
     - name: Create the app folders
       ansible.builtin.file:
         path: "~/manifests/{{ item }}"
         state: directory
       loop: "{{ directory_names }}"
 
+    - set_fact:
+        directory_file_names: "{{ manifest_files.files | map(attribute='path') | map('regex_replace', '^\\.\\./files/manifests/', '') | list }}"
+
     - name: Copy files to  ~/manifests in Image Builder
       ignore_errors: true
       copy:
-        src: "../files/manifests/{{ item.0 }}/{{ item.1 }}"
-        dest: "~/manifests/{{ item.0 }}/{{ item.1 }}"
-      loop: "{{ directory_names | product(file_names) | list }}"
+        src: "../files/manifests/{{ item }}"
+        dest: "~/manifests/{{ item }}"
+      loop: "{{ directory_file_names }}"
 
 
     - name: Create kustomization file
@@ -81,11 +80,9 @@
     - name: Add lines to kustomization file resources
       ansible.builtin.lineinfile:
         path: "~/manifests/kustomization.yaml"
-        line: "  - {{ item.0 }}/{{ item.1 }}"
+        line: "  - {{ item }}"
         insertafter: EOF
-      loop: "{{ directory_names | product(file_names) | list }}"
-
-
+      loop: "{{ directory_file_names }}"
 
 
 ###########
