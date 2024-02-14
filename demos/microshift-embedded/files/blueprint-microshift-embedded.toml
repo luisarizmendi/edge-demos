@@ -1,0 +1,86 @@
+name = "microshift"
+description = "demo-microshift-embedded"
+version = "0.0.1"
+modules = []
+groups = []
+distro = ""
+
+[[packages]]
+name = "microshift"
+version = "*"
+
+[[packages]]
+name = "bind-utils"
+version = "*"
+
+[[packages]]
+name = "workload-manifests"
+version = "*"
+
+[customizations]
+
+[[customizations.user]]
+name = "admin"
+description = "Admin user"
+password = "$6$aX6HWT.Voy4x9byR$AHNts/pKEzNLnU6bb88Bbq52fWGYpPpXgZPFztb7ayMHkfFCkPq/NBlxBBstA9yGJPudj1unB0NFHYQ6fRKbd1"
+key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCzR2ixpaJIecsCunvgJjg18NEFPPTYKewSa9eD6GMptHNYyybIqYtng/2/AsNSZ9cp54fCqt5QUIsD7OfFJQnN7/1z7sHyeEM5t2PhK1GOykq2klga//HlvCgK3DJTy9az+wq5JVyHLUZnRGtgOQRgYLox2CadThBs2aM8QwSXCDjhIjgApwEvoFuH9yRFAervBNykvIiEx+K8p1w2vkntCn8XsiuZ4xRwNuttiudysCHYq9EkdOHIEt6a+ktR7cxpD8uAoxym4UitoHynCy6Jp7Ji0GNaVNhsE9dkcXjQDmP7s+IRs7s83Om4dDpXzhTAol9++MvHsDjYtEUN5Se/N44jjwyeVXivzF7IjZg1WHJgb1gYiYRUoBhzcqzO8Vft9xdjpS8sZ/46+CQA2XPEw5uxP5iBFHgmzbOYl2GPMr67qK19gtAduXvofSMDiXGkzIPQoXn6xnQjl6QHrn/uCk1q4+76jqYZcRzGj0NNMx4Viu+zws9GLMK9M7arym8= larizmen@hal9k"
+groups = ["users", "wheel"]
+
+
+[customizations.services]
+enabled = ["microshift"]
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:8eabcaeecda8e82140baeade2741158b953298f4c35a0c49c060fe9b07607af5"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:240ad4c4f57ee9e1e4ecb8115efd2b16ab2b4ca8beb3e858e28758483e13fd5c"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:21c3413423d6074c91a233788e65c9a78d089540d4ba887b5b2a3e1116b0d9a9"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:ea9d9fab34150f20e94946382a22558c359a7d8e10b382606ec482f4e93d04e4"
+
+[[containers]]
+source = "registry.access.redhat.com/ubi8/openssl@sha256:9e743d947be073808f7f1750a791a3dbd81e694e37161e8c6c6057c2c342d671"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:bab7274536da8a396bfc072d8eb016a5179a64d8ceae756ede43f78d86fcb98f"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:31bada386df785e0c6539d0aa6c116be651d12d95c6a977ab1ddcc9a61f04256"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:0ed6bbef3a758d5cac50ddc4d05d3065b686b41c509ec7dac46af800b6003494"
+
+[[containers]]
+source = "registry.redhat.io/lvms4/topolvm-rhel9@sha256:d0c039eba8157965b0a7971ad4e01576d2c1e31b09fe938554163b324cc4dc73"
+
+[[containers]]
+source = "registry.redhat.io/openshift4/ose-csi-node-driver-registrar@sha256:caa0bbab808d8cbed476e8fa3e296ceb90f8d7d253e36588fa77e639ea389d55"
+
+[[containers]]
+source = "registry.redhat.io/openshift4/ose-csi-livenessprobe@sha256:829a8e4d34404abbd22fddb6ebfa0f74daa55f2697fb147da77b83fc8b473d8c"
+
+[[containers]]
+source = "registry.redhat.io/openshift4/ose-csi-external-resizer@sha256:7ee0257998b7f804fcde9c095b4dc240c510eb316d7223e8485f701b5c9f2fbf"
+
+[[containers]]
+source = "registry.redhat.io/openshift4/ose-csi-external-provisioner@sha256:b453a5c76ba4e975a978e31a51531b1d6233723b0d944622caf7844dedf9ad5a"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:81bbcfd4e45e04c77346f933a1aa753da8b6b88adbafea8606ce8bb47af7d277"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:9c50f19aca0eff7e74b75c84dc47558b7bbe1bf7dd13fb2b2ee5b70cd622fd33"
+
+[[containers]]
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:89291a09e170b3785c962e07edbfe9fa2f88b2e257fa9c6d1d04939eae2e21f0"
+
+
+
+[[containers]]
+source = "quay.io/tasato/hello-js:latest"
+[[containers]]
+source = "quay.io/luisarizmendi/2048:prod"

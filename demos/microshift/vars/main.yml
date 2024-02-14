@@ -1,5 +1,5 @@
 ---
-ocp_release: 4.13
+ocp_release: 4.14
 
 microshift_image_pull_secret_template: pull_secret.j2
 # PULL SECRET ENCRIPTED WITH ANSIBLE VAULT IN secrets.yaml
@@ -31,8 +31,8 @@ microshift_image_crio_proxy:
 
 
 #microshift_image_ovn_options_template: ovn_options.j2
-microshift_image_external_gateway_interface: 
-microshift_image_gateway_interface: 
+microshift_image_external_gateway_interface: enp1s0
+microshift_image_gateway_interface: enp1s0
 microshift_image_mtu: 1400
 
 
@@ -81,7 +81,7 @@ builder_compose_customizations:
   services:
     enabled: ["microshift"]
   firewall.services:
-    enabled: ["80/tcp", "443/tcp", "6443/tcp"]
+    enabled: ["80/tcp", "8080/tcp", "443/tcp", "6443/tcp"]
 builder_kickstart_options:
   - lang en_US.UTF-8
   - keyboard us

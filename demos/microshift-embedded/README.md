@@ -1,8 +1,8 @@
-# Microshift sandbox
+# Microshift embedded images sandbox
 
 ## Background 
 
-This "demo" is a little bit special, since I won't include demo steps. This could be re-named as a Microshift sandbox since this repo will give you the bit to deploy Microshift easily in a VM in your laptop without the need even of a public DNS name (by default it is using [nip.io](nip.io) ).  
+This "demo" is a little bit special, since I won't include any demo steps. This could be re-named as a Microshift embedded images sandbox since this repo will give you the bit to deploy Microshift in a disconnected environment easily in a VM in your laptop without the need even of a public DNS name (by default it is using [nip.io](nip.io) ).  
 
 
 References:
@@ -59,15 +59,20 @@ Your will need to:
 dnf install -y ansible
 ```
 
-* Download the `infra.osbuild`  Ansible collection
+* Download the `infra.osbuild`  Ansible collection. Since the collection is still not able to get the embedded images as a parameter I created a pull request to allow including customized blueprints: https://github.com/redhat-cop/infra.osbuild/pull/347
+
+The PR is not approved yet so you will need to use my local fork until it's included into the official collection:
 
 > laptop
 ```
-ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osbuild --upgrade
+ansible-galaxy collection install -f git+https://github.com/luisarizmendi/infra.osbuild?ref=import_blueprint --upgrade
 
 ```
 
 * Modify the Ansible `inventory` file with your values
+
+
+* Modify the Ansible `vars/main.yml` file with your values. You might want to change the `microshift_release` or, if you want to manually create the blueprint file with the embedded images instead of let the playbooks to do it, you could switch `microshift_embedded_generate_blueprint` to false and create your own `files/blueprint-microshift-embedded.toml` file.
 
 * Copy your public SSH key into the Image Builder system, so you can open passwordless SSH sessions with the user that you configured in your Ansible inventory. (double check .ssh and authorized_keys permissions in case you are still asked for password after copying the key).
 
@@ -81,9 +86,7 @@ ssh-copy-id <user>@<image builder IP>
 
 <br><br>
 
-### ~ ~ ~ ~ Preparing the OSTree images ~ ~ ~ ~
-
-You will need to prepare the Microshift image before running the demo since it takes some time to complete.
+### ~ ~ ~ ~ Creating the OSTree image ISO ~ ~ ~ ~
 
 As part of the image preparation, you will be injecting your **pull secret** as an Ansible variable. Although you could just create a plain variable in vars/main.yaml it's highly recomended to encrypt sensitive infomation, so it's better to [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) by creating the encrypted variable file (protected by a password that you configure) using the following command:
 
@@ -103,14 +106,16 @@ Run the following Ansible Playbook:
 
 > laptop
 ```
-ansible-playbook -vvi inventory --ask-vault-pass playbooks/00-preparation-ostree.yml
+ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml
 ```
 
 It will:
 * Install Image Builder
-* Create the OSTree Image with Microshift
+* Prepare the image builder to create Microshift offline images
+* Create the OSTree Image with Microshift and the corresponding ISO
+* Download the ISO to the path configured in `microshift_iso_dst` var
 
-Once the Ansible Playbook is finished, you will see the URL where the ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
+Once the Ansible Playbook is finished, you might need to move the ISO to the right path where the hypervisor can use it, or to the system where you will create the Edge device VM if it's not your laptop.
 
 
 
@@ -120,11 +125,13 @@ Once the Ansible Playbook is finished, you will see the URL where the ISO is pub
 
 In order to deploy the Edge Device, follow these steps:
 
-1. Create a VM that will be the Edge Device (if you are not using a baremetal machine) with at least 2 vCPU, 2GB memory, 20GB disk and one NIC in a network from where it has access to the Image Builder.
+1. Create a VM that will be the Edge Device (if you are not using a baremetal machine) with at least 2 vCPU, 2'5GB memory, 20GB disk and one NIC in a network from where it has access to the Image Builder.
 
 2. Use the ISO downloaded from the Image Builder to install the system (you can get the URL where it is published in the last Ansible debug message from the previous step). Just be sure that the system is starting from the ISO, everything is automatic.
 
-3. Wait until the system prompt.
+3. Customize your VM to use UEFI boot instead of legacy BIOS. Also probably you want to attach an isolated network to your VM to test the Microshift offline deployment.
+
+4. Wait until the system prompt.
 
 
 Once the deployment finished you can get the system IP and:
@@ -155,66 +162,3 @@ You can review the demo application that you have running since it configures Pe
 <br>
 
 
-
-
-<br><br>
-
-###  ~ ~ ~ ~ BONUS - Using attached Hardware from Microshift ~ ~ ~ ~ 
----
-**Summary**
-
-Show how you can use directly connected Hardware (webcam) from applications deployed on top of Microshift.
-
----
-
-Sometimes you will need to use localy connected hardware to your edge device. In the following example we will connect a webcam to our device running microshift and deploy an application that makes use of it.
-
-**_NOTE:_** *If you are using a VM you could redirect the webcam port to the VM*
-
-We wll be using the APP [Motioneye](https://github.com/motioneye-project/motioneye) to manage and view the video stream. 
-
-One important point is that we will need to run the application using a **privileged POD** in order to access the the locally attached hardware. 
-
-Let's deploy the application following these steps:
-
-1. Create the namespace [enforcing the namespace pod security](https://kubernetes.io/docs/tasks/configure-pod-container/enforce-standards-namespace-labels/) to `privileged` using the `pod-security.kubernetes.io/enforce: privileged` label as you can see in the [namespace manifest](../../APPs/motioneye/k8s/namespace.yaml)
-
-```
-oc create -f ../../APPs/motioneye/k8s/namespace.yaml
-```
-
-2. Create an specific `serviceAccount` for running privileged PODs in that namespace using the [SCC manifest](../../APPs/motioneye/k8s/scc.yaml)
-
-```
-oc create -f ../../APPs/motioneye/k8s/scc.yaml
-```
-
-3. Create the Persistent volumes and application deployment including `spec/template/spec/serviceAccountName: privileged-sa` and `spec/template/spec/containers/securityContext/privileged: true` as you can see in the [application deployment manifest](../../APPs/motioneye/k8s/motioneye-deployment.yaml). 
-
-```
-oc create -f ../../APPs/motioneye/k8s/motioneye-pv-claims.yaml
-oc create -f ../../APPs/motioneye/k8s/motioneye-deployment.yaml
-```
-
-Once that's done you can run `oc get pod -n motioneye` and check when the POD is in `running` state.
-
-4. Create the Kubernetes Service and the Route. In this case the [service manifest](../../APPs/motioneye/k8s/motioneye-service.yaml) also createsa nodeport but if you want to use it for testing propuses remember to open the tcp port by running ` sudo firewall-cmd  --add-port=31180/tcp && sudo firewall-cmd  --add-port=31180/tcp`.
-
-```
-oc create -f ../../APPs/motioneye/k8s/motioneye-service.yaml
-oc create -f ../../APPs/motioneye/k8s/motioneye-route.yaml
-
-```
-
-5. At this point you should be able to jump into the app route (`oc get route -n motioneye`) and you will see the log page. Use the `admin` username with an empty password and you should be able to jump into the application but no cameras are configured.
-
-You will need to create a new camera stream by opening the menu (3 line icon on top left corner) and select `add camera` in the dropdown menu:
-
-![Motioneye add camera](DOCs/images/motion_add_camera.png)
-
-Then be sure that you have selected the Camera Type `Local V4L2 Camera` and the choose one of the cameras that appear the button dropdown menu:
-
-![Motioneye select camera](DOCs/images/motion_select_camera.png)
-
-
-Few seconds after that you will see the camera image, smile!
