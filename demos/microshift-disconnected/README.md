@@ -119,7 +119,7 @@ microshift_pull_secret: '<YOUR PULL SECRET>'
 **_NOTE:_** *Remember to include `--ask-vault-pass` when you try to run your Ansible playbooks containing Ansible Vault encrypted files*
 
 
-By default a test app will be deployed along with microshift. If you want to skip that step just comment out the `microshift_test_app_template` line in cars/main.yaml.
+By default the manifests under `files/manifests` will be deployed along with microshift. If you want to skip that step just comment out the `microshift_test_app_template` line in cars/main.yaml. You can also include your own manifests there.
 
 
 
