@@ -1,8 +1,18 @@
-# Microshift embedded images sandbox
+# Microshift disconnected sandbox
 
 ## Background 
 
-This "demo" is a little bit special, since I won't include any demo steps. This could be re-named as a Microshift embedded images sandbox since this repo will give you the bit to deploy Microshift in a disconnected environment easily in a VM in your laptop without the need even of a public DNS name (by default it is using [nip.io](nip.io) ).  
+The repo helps creating a RHDE ISO with Microshift and applications embedded, so it can be deployed in a disconnected environment.
+
+The Ansible playbooks will:
+1. Install and configure Image Builder
+2. Add the required Microshift repos to image builder 
+3. Gather the Microshift container image tags to be used offline
+4. Include the pull-secret in the image builder to be injected in the Microshift image
+5. Generate a custom RPM that will embed the app manifests into the image
+6. Detect the container images that are used by the manifests
+7. Generate the blueprint with the embedded images (including Microshift and the ones used in the manifests) and the custom rpm from a provided base blueprint
+8. Create the image and the ISO
 
 
 References:
@@ -13,6 +23,7 @@ References:
 - [OSTree based Operating Systems article](https://luis-javier-arizmendi-alonso.medium.com/a-git-like-linux-operating-system-d84211e97933)
 - [Image Builder quickstart bash scripts](https://github.com/luisarizmendi/rhel-edge-quickstart)
 - [Ansible Collection for OSTree image management](https://github.com/redhat-cop/infra.osbuild)
+- [How to create a fully self contained OS image that includes your Kubernetes workload](https://www.redhat.com/en/blog/how-to-create-a-fully-self-contained-os-image-that-includes-your-kubernetes-workload)
 
 <br><br>
 
@@ -24,6 +35,8 @@ References:
 You could use baremetal servers for this demo but you can run it too with just a couple of VMs running on your laptop (Image Builder and edge device).
 
 You need an active Red Hat Enterprise Linux subscription.
+
+The playbooks will configure the `nip.io` domain for the RHDE node by default. The environment will be disconnected and I don't have a DNS server running on that network (so the edge device won't resolve those domain names) but, since my laptop is connected to both that isolated network where the edge deivce VM will be located and also to the physical network that gives me access to Internet, I can resolve `nip.io` and also reach out to the edge device (but bear in mind that the device won't be able to resolve those DNS names). If you plan to do it with baremetal servers you will need to provide the DNS service for that isolated network in another different way. 
 
 <br><br>
 
@@ -61,6 +74,7 @@ dnf install -y ansible
 
 * Download the `infra.osbuild`  Ansible collection. Since the collection is still not able to get the embedded images as a parameter I created a pull request to allow including customized blueprints: https://github.com/redhat-cop/infra.osbuild/pull/347
 
+**IMPORTANT**
 The PR is not approved yet so you will need to use my local fork until it's included into the official collection:
 
 > laptop
@@ -95,6 +109,13 @@ As part of the image preparation, you will be injecting your **pull secret** as 
 ansible-vault create vars/secrets.yml
 ```
 
+Then add the variable `microshift_pull_secret` in that file
+
+```yaml
+microshift_pull_secret: '<YOUR PULL SECRET>'
+
+```
+
 **_NOTE:_** *Remember to include `--ask-vault-pass` when you try to run your Ansible playbooks containing Ansible Vault encrypted files*
 
 
@@ -113,9 +134,8 @@ It will:
 * Install Image Builder
 * Prepare the image builder to create Microshift offline images
 * Create the OSTree Image with Microshift and the corresponding ISO
-* Download the ISO to the path configured in `microshift_iso_dst` var
 
-Once the Ansible Playbook is finished, you might need to move the ISO to the right path where the hypervisor can use it, or to the system where you will create the Edge device VM if it's not your laptop.
+Once the Ansible Playbook is finished, you will see the URL where the ISO is published in the last Ansible `debug` message. Download it to the system where you will create the Edge device VM.
 
 
 
@@ -127,9 +147,9 @@ In order to deploy the Edge Device, follow these steps:
 
 1. Create a VM that will be the Edge Device (if you are not using a baremetal machine) with at least 2 vCPU, 2'5GB memory, 20GB disk and one NIC in a network from where it has access to the Image Builder.
 
-2. Use the ISO downloaded from the Image Builder to install the system (you can get the URL where it is published in the last Ansible debug message from the previous step). Just be sure that the system is starting from the ISO, everything is automatic.
+2. Customize your VM to use UEFI boot instead of legacy BIOS. Also attach an isolated network to your VM to test the Microshift offline deployment.
 
-3. Customize your VM to use UEFI boot instead of legacy BIOS. Also probably you want to attach an isolated network to your VM to test the Microshift offline deployment.
+3. Use the ISO downloaded from the Image Builder to install the system (you can get the URL where it is published in the last Ansible debug message from the previous step). Just be sure that the system is starting from the ISO, everything is automatic.
 
 4. Wait until the system prompt.
 
