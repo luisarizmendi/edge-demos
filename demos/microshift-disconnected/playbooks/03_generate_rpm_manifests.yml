@@ -34,7 +34,7 @@
 
     - name: Create the ~/manifests folder
       ansible.builtin.file:
-        path: "~/manifests"
+        path: "~/manifests/"
         state: directory
 
     - name: Get list of all files in subdirectories under files/manifests
@@ -53,12 +53,41 @@
       set_fact:
         file_names: "{{ manifest_files.files | map(attribute='path') | map('basename') | list }}"
 
+    - name: Create the app folders
+      ansible.builtin.file:
+        path: "~/manifests/{{ item }}"
+        state: directory
+      loop: "{{ directory_names }}"
+
     - name: Copy files to  ~/manifests in Image Builder
       ignore_errors: true
       copy:
         src: "../files/manifests/{{ item.0 }}/{{ item.1 }}"
-        dest: "~/manifests/{{ item.0 }}_{{ item.1 }}"
+        dest: "~/manifests/{{ item.0 }}/{{ item.1 }}"
       loop: "{{ directory_names | product(file_names) | list }}"
+
+
+    - name: Create kustomization file
+      ansible.builtin.copy:
+        dest: ~/manifests/kustomization.yaml
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          apiVersion: kustomize.config.k8s.io/v1beta1
+          kind: Kustomization
+          resources:
+
+    - name: Add lines to kustomization file resources
+      ansible.builtin.lineinfile:
+        path: "~/manifests/kustomization.yaml"
+        line: "  - {{ item.0 }}/{{ item.1 }}"
+        insertafter: EOF
+      loop: "{{ directory_names | product(file_names) | list }}"
+
+
+
+
 ###########
 
 ########### Create RPM and add it to local repo
