@@ -91,6 +91,9 @@ ansible-galaxy collection install -f /tmp/infra.osbuild/ --upgrade
 
 ```
 
+**NOTE**: There is a bug in ansible-galaxy 2.14 that does not search for hidden folders, be sure that you are using ansible-galaxy version 2.15.
+
+
 * Modify the Ansible `inventory` file with your values
 
 
