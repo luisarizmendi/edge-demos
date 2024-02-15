@@ -11,7 +11,7 @@
 - ansible.builtin.import_playbook: 02_image_builder_microshift_prepare.yml
 
 - ansible.builtin.import_playbook: 03_generate_rpm_manifests.yml
-  when: microshift_embedded_inject_manifests is defined and microshift_embedded_inject_manifests is true
+  when: microshift_embedded_manifests is defined and microshift_embedded_manifests is true
 
 - ansible.builtin.import_playbook: 05_generate_blueprint.yml
   when: microshift_embedded_generate_blueprint is defined and microshift_embedded_generate_blueprint is true

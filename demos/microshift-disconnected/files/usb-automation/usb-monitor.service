@@ -1,0 +1,12 @@
+[Unit]
+Description=USB Monitor Service
+RequiresMountsFor=/media /run/media
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/usb_check.sh
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target

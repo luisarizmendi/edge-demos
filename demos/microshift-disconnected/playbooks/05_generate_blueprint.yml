@@ -13,6 +13,7 @@
   tasks:
     - name: Generate embedded container images from Manifests
       delegate_to: localhost
+      become: false
       block:
       - name: Find YAML manifest files
         find:
@@ -62,7 +63,8 @@
       # IF custom RPM with manifest was created
     - name: Include manifests rpm
       delegate_to: localhost
-      when: microshift_embedded_inject_manifests is defined and microshift_embedded_inject_manifests is true
+      become: false
+      when: microshift_embedded_manifests is defined and microshift_embedded_manifests is true
       block:
         - name: custom rpm with manifest package section
           set_fact:
@@ -83,15 +85,16 @@
 
     - name: Combine files to generate the blueprint
       delegate_to: localhost
+      become: false
       block:
       - name: Read content of blueprint-microshift-base.toml
-        when: microshift_embedded_inject_manifests is not defined or microshift_embedded_inject_manifests is false
+        when: microshift_embedded_manifests is not defined or microshift_embedded_manifests is false
         slurp:
           src: ../files/blueprint-microshift-base.toml
         register: blueprint_base
 
       - name: Read content of blueprint-microshift-base.toml
-        when: microshift_embedded_inject_manifests is defined and microshift_embedded_inject_manifests is true
+        when: microshift_embedded_manifests is defined and microshift_embedded_manifests is true
         slurp:
           src: /tmp/blueprint-microshift-base-manifests.toml
         register: blueprint_base

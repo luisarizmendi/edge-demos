@@ -1,7 +1,7 @@
 ---
 # Based on https://www.redhat.com/en/blog/how-to-create-a-fully-self-contained-os-image-that-includes-your-kubernetes-workload
 
-- name: Create RPM with the manifest and add it to Image Builder
+- name: Create RPM with usb automation and add it to Image Builder
   hosts: image_builder
   become: true
   gather_facts: true
@@ -23,28 +23,49 @@
 
     - name: Copy RPM SPEC
       copy:
-        src: ../files/workload-manifests.spec
-        dest: "~/rpmbuild/SPECS/workload-manifests.spec"
+        src: ../files/usb-automation.spec
+        dest: "~/rpmbuild/SPECS/usb-automation.spec"
 
 ########### Copy manifests
-    - name: Empty the ~/manifests folder
+    - name: Empty the ~/usb-automation folder
       ansible.builtin.file:
-        path: "~/manifests"
+        path: "~/usb-automation"
         state: absent
 
-    - name: Create the ~/manifests folder
+    - name: Create the ~/usb-automation folder
       ansible.builtin.file:
-        path: "~/manifests/"
+        path: "~/usb-automation/"
         state: directory
 
-    - name: Get list of all files in subdirectories under files/manifests
+    - name: Get list of all files in subdirectories under files/usb-automation
       delegate_to: localhost
-      become: false
       find:
-        paths: "../files/manifests"
+        paths: "../files/usb-automation"
         recurse: yes
         file_type: file
-      register: manifest_files
+      register: usb-automation_files
+
+
+
+usb_monitor.sh -> /usr/local/bin/usb_monitor.sh
+99-usb_monitor.rules -> /etc/udev/rules.d/99-usb_monitor.rules
+usb_monitor.service -> /etc/systemd/system/usb_monitor.service
+
+
+
+sudo systemctl enable usb-monitor.service
+sudo systemctl start usb-monitor.service
+
+sudo udevadm control --reload-rules
+sudo systemctl restart systemd-udevd
+
+
+
+
+
+
+
+
 
     - name: Extract directory names
       set_fact:

@@ -1,7 +1,7 @@
 ---
 microshift_release: 4.14
-microshift_embedded: true
-microshift_embedded_inject_manifests: true
+microshift_embedded_images: true
+microshift_embedded_manifests: true
 microshift_embedded_generate_blueprint: true
 
 microshift_config_template: microshift_config.j2
@@ -58,7 +58,7 @@ builder_compose_type: edge-installer
 builder_pub_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 builder_skip_repo: false
 
-builder_blueprint_import_file: ../files/blueprint-microshift-embedded.toml
+builder_blueprint_import_file: "../files/blueprint-microshift-embedded.toml"
 
 builder_compose_customizations:
   installation_device: /dev/vda
@@ -92,3 +92,5 @@ additional_kickstart_post:
 
 # PULL SECRET ENCRIPTED WITH ANSIBLE VAULT IN secrets.yaml using variable microshift_pull_secret
 # ansible-vault create vars/secrets.yml
+
+usb_automation_token: hOlAQUeTaleSTAstu
