@@ -176,7 +176,7 @@ Once the deployment finished you can get the system IP and:
 
 I didn't created an specific demo steps for microshift (yet?, let me know if you think that could be useful), as I mentioned this repo is intended to be used as a sandbox to create and test whatever you want in Microshift.
 
-You can review the demo application that you have running since it configures Persisten Volumes and Routes too. If you want to test another example, move to the next section.
+You can review the demo application that you have running since it configures Persisten Volumes and Routes too. 
 
 <br>
 <br>
