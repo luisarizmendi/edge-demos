@@ -3,8 +3,8 @@ kind: Deployment
 metadata:
   labels:
     app: hello
-  name: test-app-hello
-  namespace: test-app
+  name: hello
+  namespace: test
 spec:
   replicas: 1
   selector:

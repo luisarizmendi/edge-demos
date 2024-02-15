@@ -1,12 +1,68 @@
 #!/bin/bash
 
+TEMP_DIR="/tmp/usb-automation"
+
 # Ensure that a directory path is provided
 if [ -z "$1" ]; then
-    echo "Error: Directory path not provided."
+    echo "Error: USB device not provided."
     exit 1
 fi
 
-USB_DIR="$1"
+USB_DEVICE="$1"
+
+if [ -z "$2" ]; then
+    echo "Error: Directory path to be checked not provided."
+    exit 1
+fi
+
+RHDE_DIR="$2"
+
+
+
+
+
+
+echo Device connected: $USB_DEVICE
+mkdir -p $TEMP_DIR
+mount $USB_DEVICE $TEMP_DIR
+
+echo Contents of $USB_DEVICE
+echo $(ls $TEMP_DIR)
+
+# Check if the rhde directory exists on the USB device
+if [ -d "${TEMP_DIR}/${RHDE_DIR}" ]; then
+    echo "Directory ${TEMP_DIR}/${RHDE_DIR} exist!"
+else
+    echo "Directory ${TEMP_DIR}/${RHDE_DIR} not found."
+    umount $TEMP_DIR
+    exit 1
+fi
+
+
+
+
+
+
+
+umount $TEMP_DIR
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Verify the digital signature of the rhde directory
 gpg --verify "$USB_DIR/rhde.sig" "$USB_DIR/rhde"

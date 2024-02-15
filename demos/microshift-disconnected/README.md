@@ -65,7 +65,7 @@ If you don't want to use `root`, be sure that the user has [passwordless sudo ac
 
 Your will need to:
 
-* Install Ansible
+* Install Ansible (or ansible-core depending on your version)
 
 > laptop
 ```
@@ -130,7 +130,7 @@ microshift_pull_secret: '<YOUR PULL SECRET>'
 **_NOTE:_** *Remember to include `--ask-vault-pass` when you try to run your Ansible playbooks containing Ansible Vault encrypted files*
 
 
-By default the manifests under `files/manifests` will be deployed along with microshift. If you want to skip that step just comment out the `microshift_test_app_template` line in cars/main.yaml. You can also include your own manifests there.
+By default the manifests under `files/manifests` will be deployed along with microshift. If you want to skip that step just comment out the `microshift_test_app_template` line in vars/main.yaml. You can also include your own manifests there.
 
 
 
@@ -172,7 +172,7 @@ Once the deployment finished you can get the system IP and:
 * Connect to the system by SSH using the user configured in the Blueprint (`admin`). You shouldn't need password if you used the same laptop from where you ran the demo preparation since the SSH public key was injected into the OSTree image, otherwise you can use the password configured in the Blueprint (`R3dh4t1!`).
 * Get the `kubeconfig` file using the root user (`sudo cat ...`) located in one of the directories located in `/var/lib/microshift/resources/kubeadmin/`. If you didn't changed the Ansible variable defaults, Microshift will be using a [nip.io](nip.io) so probably you will find it in `/var/lib/microshift/resources/kubeadmin/microshift.<ip>.nip.io/kubeconfig`
 * Use that kubeconfig file from your laptop and check that you can reach the kubernetes API (ie. with `oc --kubeconfig <kubeconfig file> get namespaces`)  
-* If you keep the default Ansible variables, you will find a test application already deployed at `http://test.apps.<ip>.nip.io`
+* If you keep the default Ansible variables, you will find a test applications already deployed at `frontend-app2048.apps.<ip>.nip.io` and  `http://hello-test.apps.<ip>.nip.io`
 
 
 

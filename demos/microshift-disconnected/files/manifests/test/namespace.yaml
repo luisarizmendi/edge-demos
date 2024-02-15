@@ -2,6 +2,6 @@ apiVersion: v1
 kind: Namespace
 metadata:
   labels:
-    kubernetes.io/metadata.name: test-app
-  name: test-app
+    kubernetes.io/metadata.name: test
+  name: test
 spec: {}

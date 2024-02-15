@@ -1,1 +1,1 @@
-ACTION=="add", KERNEL=="sd*[!0-9]", SUBSYSTEM=="block", ENV{SYSTEMD_WANTS}="usb-monitor.service"
+ACTION=="add", KERNEL=="sd*[!0-9]", SUBSYSTEM=="block", RUN+="/usr/local/bin/usb_check.sh %E{DEVNAME}"
