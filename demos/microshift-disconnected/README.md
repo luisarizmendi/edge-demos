@@ -78,8 +78,16 @@ dnf install -y ansible
 The PR is not approved yet so you will need to use my local fork until it's included into the official collection:
 
 > laptop
-```
-ansible-galaxy collection install -f git+https://github.com/luisarizmendi/infra.osbuild?ref=import_blueprint --upgrade
+```bash
+cd /tmp/
+
+git clone https://github.com/luisarizmendi/infra.osbuild
+
+cd infra.osbuild/
+
+git checkout import_blueprint
+
+ansible-galaxy collection install -f /tmp/infra.osbuild/ --upgrade
 
 ```
 
