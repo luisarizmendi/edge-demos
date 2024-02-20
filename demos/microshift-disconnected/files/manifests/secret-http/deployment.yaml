@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secret-http
+  namespace: secret-http
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: secret-http
+  template:
+    metadata:
+      labels:
+        app: secret-http
+    spec:
+      containers:
+        - name: secret-http
+          image: nginx
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - name: html-volume
+              mountPath: /usr/share/nginx/html
+          env:
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: username
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: credentials
+                  key: password 
+      volumes:
+        - name: html-volume
+          configMap:
+            name: web-server-html

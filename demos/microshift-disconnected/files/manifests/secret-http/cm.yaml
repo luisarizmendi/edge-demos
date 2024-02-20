@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-server-html
+  namespace: secret-http
+data:
+  index.html: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n    <meta charset=\"UTF-8\">\n
+    \   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n
+    \   <title>Secret Display</title>\n</head>\n<body>\n    <h1>Secret Credentials</h1>\n
+    \   <p>Username: <span id=\"username\"></span></p>\n    <p>Password: <span id=\"password\"></span></p>\n\n
+    \   <script>\n        fetch('/credentials')\n            .then(response => response.json())\n
+    \           .then(data => {\n                document.getElementById('username').textContent
+    = data.username;\n                document.getElementById('password').textContent
+    = data.password;\n            });\n    </script>\n</body>\n</html> \n\n"
+

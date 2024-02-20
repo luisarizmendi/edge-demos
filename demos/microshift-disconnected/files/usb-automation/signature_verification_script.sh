@@ -1,87 +1,49 @@
 #!/bin/bash
 
-TEMP_DIR="/tmp/usb-automation"
 
-# Ensure that a directory path is provided
-if [ -z "$1" ]; then
-    echo "Error: USB device not provided."
-    exit 1
-fi
+##### CHECK VARS
 
-USB_DEVICE="$1"
+################
 
-if [ -z "$2" ]; then
-    echo "Error: Directory path to be checked not provided."
-    exit 1
-fi
-
-RHDE_DIR="$2"
+# Define variables
+TARGET_FILE=$1
+SIGNATURE_FILE=$2
+PUBLIC_KEY=$3
 
 
 
+if [ -f "${SIGNATURE_FILE}" ]; then
+    echo "Signature ${SIGNATURE_FILE} exist!"
 
+    if [ -f "${TARGET_FILE}" ]; then
+        echo "File ${TARGET_FILE} exist!"
 
-
-echo Device connected: $USB_DEVICE
-mkdir -p $TEMP_DIR
-mount $USB_DEVICE $TEMP_DIR
-
-echo Contents of $USB_DEVICE
-echo $(ls $TEMP_DIR)
-
-# Check if the rhde directory exists on the USB device
-if [ -d "${TEMP_DIR}/${RHDE_DIR}" ]; then
-    echo "Directory ${TEMP_DIR}/${RHDE_DIR} exist!"
-else
-    echo "Directory ${TEMP_DIR}/${RHDE_DIR} not found."
-    umount $TEMP_DIR
-    exit 1
-fi
-
-
-
-
-
-
-
-umount $TEMP_DIR
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Verify the digital signature of the rhde directory
-gpg --verify "$USB_DIR/rhde.sig" "$USB_DIR/rhde"
-verification_status=$?
-
-if [ $verification_status -eq 0 ]; then
-    # Signature verification successful
-    echo "Digital signature verification successful."
-    
-    # Proceed with further actions (e.g., copying files, running scripts)
-    # Example: Copy rhde directory to /tmp/rhde-automation
-    cp -r "$USB_DIR" /tmp/rhde-automation
-    
-    # Example: Check if rhde.sh exists and execute it with root privileges
-    if [ -f "/tmp/rhde-automation/rhde.sh" ]; then
-        sudo /bin/bash "/tmp/rhde-automation/rhde.sh"
+    else 
+        echo "File ${TARGET_FILE} not found!"
+        exit 2
     fi
-else
-    # Signature verification failed
-    echo "Error: Digital signature verification failed."
+else 
+    echo "ERROR: Signature ${SIGNATURE_FILE} not found!"
     exit 1
 fi
+
+
+
+
+
+# Create a tar archive of the TARGET_FILE
+
+# Verify the signature
+openssl dgst -sha256 -verify "$PUBLIC_KEY" -signature "$SIGNATURE_FILE" "${TARGET_FILE}"
+
+# Check the exit code to determine verification success or failure
+if [ $? -eq 0 ]; then
+    echo "Signature is valid. Content has not been tampered with."
+else
+    echo "Signature verification failed. Content may have been tampered with."
+fi
+
+
+exit 0
+
+

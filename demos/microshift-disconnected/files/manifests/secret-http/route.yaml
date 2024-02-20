@@ -1,0 +1,12 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: web
+  namespace: secret-http
+spec:
+  port:
+    targetPort: 8080 
+  to:
+    kind: Service
+    name: secret-http-svc
+    weight: 10 

@@ -1,0 +1,8 @@
+- name: Create contents for the automation from USB
+  hosts: localhost
+  gather_facts: false
+
+  tasks:
+Sign 
+
+       openssl dgst -sha256 -sign rhde-automation-priv.pem -out rhde-automation-signature.sha256 rhde-automation.tar.gz

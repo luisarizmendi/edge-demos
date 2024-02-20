@@ -10,7 +10,7 @@ name = "microshift"
 version = "*"
 
 [[packages]]
-name = "bind-utils"
+name = "autofs"
 version = "*"
 
 [[packages]]

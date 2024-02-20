@@ -9,6 +9,24 @@
   - ../vars/main.yml
 
   tasks:
+
+
+########## Generate the keys if they are not created and copy to iles/usb-automation folder
+
+
+
+       openssl genpkey -algorithm RSA -out rhde-automation-priv.pem
+       openssl rsa -pubout -in rhde-automation-priv.pem -out rhde-automation-pub.pem
+
+
+
+COPY PUB (con permisos buenos), and directory
+
+
+
+###########
+
+
     - name: Install other dependencies
       ansible.builtin.dnf:
         name: 
@@ -26,92 +44,20 @@
         src: ../files/usb-automation.spec
         dest: "~/rpmbuild/SPECS/usb-automation.spec"
 
-########### Copy manifests
-    - name: Empty the ~/usb-automation folder
-      ansible.builtin.file:
-        path: "~/usb-automation"
-        state: absent
-
-    - name: Create the ~/usb-automation folder
-      ansible.builtin.file:
-        path: "~/usb-automation/"
-        state: directory
-
-    - name: Get list of all files in subdirectories under files/usb-automation
-      delegate_to: localhost
-      find:
-        paths: "../files/usb-automation"
-        recurse: yes
-        file_type: file
-      register: usb-automation_files
-
-
-
-usb_monitor.sh -> /usr/local/bin/usb_monitor.sh
-99-usb_monitor.rules -> /etc/udev/rules.d/99-usb_monitor.rules
-usb_monitor.service -> /etc/systemd/system/usb_monitor.service
-
-
-
-sudo systemctl enable usb-monitor.service
-sudo systemctl start usb-monitor.service
-
-sudo udevadm control --reload-rules
-sudo systemctl restart systemd-udevd
+    - name: rpm build 
+      shell: rpmbuild -bb ~/rpmbuild/SPECS/usb-automation.spec
 
 
 
 
-
-
-
-
-
-    - name: Extract directory names
-      set_fact:
-        directory_names: "{{ manifest_files.files | map(attribute='path') | map('dirname') | map('basename') | unique | list }}"
-
-    - name: Create the app folders
-      ansible.builtin.file:
-        path: "~/manifests/{{ item }}"
-        state: directory
-      loop: "{{ directory_names }}"
-
-    - set_fact:
-        directory_file_names: "{{ manifest_files.files | map(attribute='path') | map('regex_replace', '^\\.\\./files/manifests/', '') | list }}"
-
-    - name: Copy files to  ~/manifests in Image Builder
-      ignore_errors: true
-      copy:
-        src: "../files/manifests/{{ item }}"
-        dest: "~/manifests/{{ item }}"
-      loop: "{{ directory_file_names }}"
-
-
-    - name: Create kustomization file
-      ansible.builtin.copy:
-        dest: ~/manifests/kustomization.yaml
-        owner: root
-        group: root
-        mode: '0644'
-        content: |
-          apiVersion: kustomize.config.k8s.io/v1beta1
-          kind: Kustomization
-          resources:
-
-    - name: Add lines to kustomization file resources
-      ansible.builtin.lineinfile:
-        path: "~/manifests/kustomization.yaml"
-        line: "  - {{ item }}"
-        insertafter: EOF
-      loop: "{{ directory_file_names }}"
-
-
-###########
 
 ########### Create RPM and add it to local repo
-    - name: rpm build 
-      shell: rpmbuild -bb ~/rpmbuild/SPECS/workload-manifests.spec
+
+
+
+#### check if it exist and if created in image builder
+
+
 
     # TODO modify permissions to allow only image builder
     - name: create local repo
@@ -130,6 +76,7 @@ sudo systemctl restart systemd-udevd
           check_ssl = false
           system = false
         dest: "repo-local-rpmbuild.toml"
+
 
     - name: Add the local RPM repository to Image Builder sources
       shell: "composer-cli sources add repo-local-rpmbuild.toml"
