@@ -72,6 +72,12 @@
               [[packages]]
               name = "workload-manifests"
               version = "*"
+              {% if usb_automation|default(false) %}
+              
+              [[packages]]
+              name = "usb-automation"
+              version = "*"
+              {% endif %}
 
         - name: Get line number of first occurrence of "[customizations]"
           shell: "grep -n 'customizations' ../files/blueprint-microshift-base.toml | cut -d: -f1 | head -n 1"

@@ -35,10 +35,7 @@
         format: gz
 
     - name: Generate signature
-      command: >
-        openssl dgst -sha256 -sign "{{ key_private }}"
-        -out "{{ tmp_folder }}/{{ signature_file }}"
-        "{{ tmp_folder }}/{{ signed_file }}"
+      shell: openssl dgst -sha256 -sign "{{ key_private }}" -out "{{ tmp_folder }}/{{ signature_file }}" "{{ tmp_folder }}/{{ signed_file }}"
 
     - name: Create rhde directory
       file:
@@ -46,23 +43,18 @@
         state: directory
 
     - name: Move signature file to rhde directory
-      command: mv "{{ tmp_folder }}/{{ signature_file }}" "{{ tmp_folder }}/rhde/"
+      shell: mv "{{ tmp_folder }}/{{ signature_file }}" "{{ tmp_folder }}/rhde/"
 
     - name: Move signed file to rhde directory
-      command: mv "{{ tmp_folder }}/{{ signed_file }}" "{{ tmp_folder }}/rhde/"
+      shell: mv "{{ tmp_folder }}/{{ signed_file }}" "{{ tmp_folder }}/rhde/"
 
     - name: Encrypt files if encryption key exists
       block:
         - name: Create tar archive
-          command: tar -C "{{ tmp_folder }}/" -cf "{{ tmp_folder }}/rhde.tar" rhde/
+          shell: tar -C "{{ tmp_folder }}/" -cf "{{ tmp_folder }}/rhde.tar" rhde/
 
         - name: Encrypt tar archive
-          command: >
-            openssl enc -aes-256-cbc -salt
-            -in "{{ tmp_folder }}/rhde.tar"
-            -out "{{ tmp_folder }}/rhde_encrypted.tar"
-            -pass "file:{{ encryption_key }}"
-            -pbkdf2
+          shell: openssl enc -aes-256-cbc -salt -in "{{ tmp_folder }}/rhde.tar" -out "{{ tmp_folder }}/rhde_encrypted.tar" -pass "file:{{ encryption_key }}" -pbkdf2
 
         - name: Copy encrypted file to USB contents
           copy:
@@ -71,7 +63,7 @@
       when: encryption_key is exists
 
     - name: Copy rhde directory to USB contents
-      command: cp -r "{{ tmp_folder }}/rhde" "{{ usb_contents }}/"
+      shell: cp -r "{{ tmp_folder }}/rhde" "{{ usb_contents }}/"
       when: encryption_key is not exists
 
     - name: Remove temporary folder
