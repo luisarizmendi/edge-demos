@@ -1,43 +1,17 @@
 ---
-# Based on https://www.redhat.com/en/blog/how-to-create-a-fully-self-contained-os-image-that-includes-your-kubernetes-workload
-
 - name: Create RPM with usb automation and add it to Image Builder
   hosts: image_builder
   become: true
   gather_facts: true
   vars_files:
   - ../vars/main.yml
-
+  vars:
+    private_key_path: "../files/others/rhde-automation-priv.pem"
+    public_key_path: "../files/others/rhde-automation-pub.pem"
   tasks:
 
 
-########## Generate the keys if they are not created and copy to iles/usb-automation folder
-
-
-
-       openssl genpkey -algorithm RSA -out rhde-automation-priv.pem
-       openssl rsa -pubout -in rhde-automation-priv.pem -out rhde-automation-pub.pem
-
-
-
-COPY PUB (con permisos buenos), and directory
-
-
-
-############################
-
-
-generate key
-
-openssl rand -base64 32 > ../files/others/rhde_automation_encryption_key
-
-
-
-
-
-
-###########
-
+########### RPM build init
 
     - name: Install other dependencies
       ansible.builtin.dnf:
@@ -56,26 +30,88 @@ openssl rand -base64 32 > ../files/others/rhde_automation_encryption_key
         src: ../files/usb-automation.spec
         dest: "~/rpmbuild/SPECS/usb-automation.spec"
 
+### Generate encryption pass and keys
+
+    - name: Create encryption and signature keys 
+      delegate_to: localhost
+      block:
+      - name: Check if encryption key exists
+        stat:
+          path: "{{ encryption_key_path }}"
+        register: encryption_key_stat
+
+      - name: Generate encryption key
+        command: "openssl rand -base64 32 > {{ encryption_key_path }}"
+        when: not encryption_key_stat.stat.exists
+
+      - name: Check if RSA keys exist
+        stat:
+          path: "{{ item }}"
+        loop:
+          - "{{ private_key_path }}"
+          - "{{ public_key_path }}"
+        register: rsa_key_stat
+
+      - name: Remove existing RSA keys if any
+        command: "rm -f {{ item.item }}"
+        loop: "{{ rsa_key_stat.results }}"
+        when: item.stat.exists
+        ignore_errors: true
+
+      - name: Generate RSA private key
+        command: "openssl genpkey -algorithm RSA -out {{ private_key_path }}"
+        when: not rsa_key_stat.results[0].stat.exists or not rsa_key_stat.results[1].stat.exists
+
+      - name: Generate RSA public key
+        command: "openssl rsa -pubout -in {{ private_key_path }} -out {{ public_key_path }}"
+        when: not rsa_key_stat.results[0].stat.exists or not rsa_key_stat.results[1].stat.exists
+
+
+
+########### Copy usb-automation files
+
+    - name: Copy files to ~/rpmbuild/SOURCES in Image Builder
+      ignore_errors: true
+      copy:
+        src: "../files/usb-automation/*"
+        dest: "~/rpmbuild/SOURCES/"
+
+
+########### Copy encryption key and public key
+
+    - name: Copy encryption key
+      ignore_errors: true
+      copy:
+        src: "../files/others/rhde_automation_encryption_key"
+        dest: "~/rpmbuild/SOURCES/rhde_automation_encryption_key"
+
+
+    - name: Copy public key
+      ignore_errors: true
+      copy:
+        src: "../files/others/rhde-automation-pub.pem"
+        dest: "~/rpmbuild/SOURCES/rhde-automation-pub.pem"
+
+##### RPM build
+
     - name: rpm build 
       shell: rpmbuild -bb ~/rpmbuild/SPECS/usb-automation.spec
 
 
 
-
-
-########### Create RPM and add it to local repo
-
-
-
 #### check if it exist and if created in image builder
 
-
+    - name: Check if repository directory exists
+      ansible.builtin.stat:
+        path: "~/rpmbuild/RPMS"
+      register: repo_directory
 
     # TODO modify permissions to allow only image builder
     - name: create local repo
       shell: |
         createrepo ~/rpmbuild/RPMS/
         chmod a+rx ~
+      when: repo_directory.stat.exists == False
 
     - name: Create repo-local-rpmbuild.toml
       copy:
@@ -88,10 +124,12 @@ openssl rand -base64 32 > ../files/others/rhde_automation_encryption_key
           check_ssl = false
           system = false
         dest: "repo-local-rpmbuild.toml"
+      when: repo_directory.stat.exists == False
 
 
     - name: Add the local RPM repository to Image Builder sources
       shell: "composer-cli sources add repo-local-rpmbuild.toml"
+      when: repo_directory.stat.exists == False
 
 
 ########### 

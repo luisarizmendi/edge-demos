@@ -3,7 +3,10 @@
 
 ##### CHECK VARS
 
-################
+if [ $# -ne 3 ]; then
+    echo "Script was not run with three arguments."
+    exit -1
+fi
 
 # Define variables
 TARGET_FILE=$1

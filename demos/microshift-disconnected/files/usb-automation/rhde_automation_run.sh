@@ -2,6 +2,10 @@
 
 ## CHECK VARS
 
+if [ $# -ne 2 ]; then
+    echo "Script was not run with two arguments."
+    exit -1
+fi
 
 ##################
 

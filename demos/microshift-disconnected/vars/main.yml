@@ -4,6 +4,9 @@ microshift_embedded_images: true
 microshift_embedded_manifests: true
 microshift_embedded_generate_blueprint: true
 
+usb_automation: true
+usb_content_create: true
+
 microshift_config_template: microshift_config.j2
 microshift_config: 
   baseDomain: $(hostname -I | awk '{print $1}').nip.io
