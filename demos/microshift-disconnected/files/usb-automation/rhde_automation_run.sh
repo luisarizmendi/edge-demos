@@ -21,16 +21,16 @@ mkdir -p ${SCRIPTS_TEMP_DIR}
 echo "Decompressing file ${SCRIPTS_TAR_FILE}"
 tar zxvf ${SCRIPTS_TAR_FILE} -C ${SCRIPTS_TEMP_DIR}
 
-for i in $(ls ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/*.sh)
+for i in $(ls ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/* | grep \.sh$)
 do 
-        chmod +x ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/$i 
+        chmod +x $i 
         echo "Running script ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/$1 ..."
-        ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/$i 
+        $i 
         # Check if the script was successful
         if [ $? -eq 0 ]; then
-                echo "Script ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/$i successful"
+                echo "Script $i successful"
         else
-                echo "ERROR: Script ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/$1 failed"
+                echo "ERROR: Script $1 failed"
                 exit 1
         fi
 

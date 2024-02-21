@@ -24,6 +24,32 @@ COPY PUB (con permisos buenos), and directory
 
 
 
+############################
+
+
+generate key
+
+openssl rand -base64 32 > rhde_automation_encryption_key
+
+
+encrypt
+tar -cf rhde.tar rhde/
+openssl enc -aes-256-cbc -salt -in rhde.tar -out rhde_encrypted.tar -pass file:rhde_automation_encryption_key -pbkdf2
+rm -f rhde.tar
+
+
+decrypt
+openssl enc -d -aes-256-cbc -in rhde_encrypted.tar -out rhde.tar -pass file:rhde_automation_encryption_key -pbkdf2
+tar xvf rhde.tar
+rm -f rhde.tar
+
+
+
+
+
+
+
+
 ###########
 
 
