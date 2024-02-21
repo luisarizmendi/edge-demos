@@ -8,6 +8,7 @@
   vars:
     private_key_path: "../files/others/rhde-automation-priv.pem"
     public_key_path: "../files/others/rhde-automation-pub.pem"
+    encryption_key_path: "../files/others/rhde_automation_encryption_key"
   tasks:
 
 
