@@ -16,7 +16,7 @@ RHDE_AUTOMATION_DIR="rhde-automation"
 RHDE_AUTOMATION_TAR="rhde-automation.tar.gz"
 RHDE_AUTOMATION_RUN="/usr/local/bin/rhde_automation_run.sh"
 
-ENCRYPTION_KEY="/root/rhde_automation_encryption_key"
+ENCRYPTION_KEY="/usr/local/etc/rhde_automation_encryption_key"
 
 TEMP_DIR="/tmp/usb-autoconfigure"
 
@@ -25,7 +25,7 @@ SIGNATURE_VERIFICATION_SCRIPT="/usr/local/bin/signature_verification_script.sh"
 USB_DEVICE=$(cat /tmp/last-usb)
 
 SIGNATURE_FILE="rhde-automation-signature.sha256"
-PUBLIC_KEY="/root/rhde-automation-pub.pem"
+PUBLIC_KEY="/usr/local/etc/rhde-automation-pub.pem"
 
 ######################################
 
