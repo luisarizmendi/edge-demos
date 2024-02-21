@@ -48,6 +48,11 @@
     - name: Move signed file to rhde directory
       shell: mv "{{ tmp_folder }}/{{ signed_file }}" "{{ tmp_folder }}/rhde/"
 
+    - name: Check if encryption key file exists
+      stat:
+        path: "{{ encryption_key }}"
+      register: key_file
+
     - name: Encrypt files if encryption key exists
       block:
         - name: Create tar archive
@@ -60,11 +65,11 @@
           copy:
             src: "{{ tmp_folder }}/rhde_encrypted.tar"
             dest: "{{ usb_contents }}/rhde_encrypted.tar"
-      when: encryption_key is exists
+      when: key_file.stat.exists
 
     - name: Copy rhde directory to USB contents
       shell: cp -r "{{ tmp_folder }}/rhde" "{{ usb_contents }}/"
-      when: encryption_key is not exists
+      when: not key_file.stat.exists
 
     - name: Remove temporary folder
       file:
