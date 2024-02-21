@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: secret-http
-          image: nginx
+          image: quay.io/luisarizmendi/nginx:latest
           ports:
             - containerPort: 80
           volumeMounts:

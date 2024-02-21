@@ -1,3 +1,4 @@
 secrets.yml
 demos/microshift-disconnected/files/others/usb-contents/*
 *.pem
+rhde_automation_encryption_key

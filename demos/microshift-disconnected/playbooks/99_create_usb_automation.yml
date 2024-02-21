@@ -1,8 +1,50 @@
-- name: Create contents for the automation from USB
-  hosts: localhost
-  gather_facts: false
+#!/bin/bash 
 
-  tasks:
-Sign 
+TMP_FOLDER="/tmp/create-usb"
+KEY_PRIVATE="../files/others/rhde-automation-priv.pem"
+SIGNATURE_FILE="rhde-automation-signature.sha256"
+SIGNED_FILE="rhde-automation.tar.gz"
+USB_CONTENTS="../files/others/usb-contents"
+AUTOMATION_SCRIPTS="../files/others/rhde-automation/"
+ENCRYPTION_KEY="../files/others/rhde_automation_encryption_key"
 
-       openssl dgst -sha256 -sign rhde-automation-priv.pem -out rhde-automation-signature.sha256 rhde-automation.tar.gz
+
+
+rm -rf $TMP_FOLDER/
+
+mkdir -p $TMP_FOLDER/original
+
+
+cp -r ${AUTOMATION_SCRIPTS}/* $TMP_FOLDER/original
+
+tar -C $TMP_FOLDER/original -zvcf $TMP_FOLDER/$SIGNED_FILE .
+
+
+openssl dgst -sha256 -sign $KEY_PRIVATE -out $TMP_FOLDER/$SIGNATURE_FILE $TMP_FOLDER/$SIGNED_FILE
+
+mkdir -p $TMP_FOLDER/rhde
+
+mv $TMP_FOLDER/$SIGNATURE_FILE $TMP_FOLDER/rhde/
+mv $TMP_FOLDER/$SIGNED_FILE $TMP_FOLDER/rhde/
+
+
+if [ -f "$ENCRYPTION_KEY " ]; then
+
+  tar -C $TMP_FOLDER/ -cf  $TMP_FOLDER/rhde.tar rhde/
+  openssl enc -aes-256-cbc -salt -in $TMP_FOLDER/rhde.tar -out $TMP_FOLDER/rhde_encrypted.tar -pass file:$ENCRYPTION_KEY -pbkdf2
+
+  cp $TMP_FOLDER/rhde_encrypted.tar $USB_CONTENTS/rhde_encrypted.tar
+
+ else
+
+cp -r $TMP_FOLDER/rhde $USB_CONTENTS/
+
+ fi
+
+
+
+
+
+
+
+
