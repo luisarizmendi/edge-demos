@@ -25,11 +25,10 @@ mkdir -p ${SCRIPTS_TEMP_DIR}
 echo "Decompressing file ${SCRIPTS_TAR_FILE}"
 tar zxvf ${SCRIPTS_TAR_FILE} -C ${SCRIPTS_TEMP_DIR}
 
-for i in $(ls ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/* | grep \.sh$)
-do 
+for i in "${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/"*.sh; do
         chmod +x $i 
-        echo "Running script ${SCRIPTS_TEMP_DIR}/${SCRIPTS_DIR}/$1 ..."
-        $i 
+        echo "Running script $i ..."
+        bash $i 
         # Check if the script was successful
         if [ $? -eq 0 ]; then
                 echo "Script $i successful"

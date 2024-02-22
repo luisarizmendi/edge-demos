@@ -99,7 +99,7 @@ if $RUN_SIGNATURE; then
 
     if [ $? -eq 0 ]; then
         echo "Signature verification succeded"
-       
+        echo "Extracting automations on ${TEMP_DIR}/${RHDE_DIR}/${RHDE_AUTOMATION_TAR} from ${RHDE_AUTOMATION_DIR}"
        # script <tar location> <directory in the tar with the scripts> 
         ${RHDE_AUTOMATION_RUN} ${TEMP_DIR}/${RHDE_DIR}/${RHDE_AUTOMATION_TAR} ${RHDE_AUTOMATION_DIR}
 

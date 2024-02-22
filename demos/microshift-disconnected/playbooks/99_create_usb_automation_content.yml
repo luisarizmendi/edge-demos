@@ -18,19 +18,19 @@
         path: "{{ tmp_folder }}"
         state: absent
 
-    - name: Create original folder
+    - name: Create rhde-automation folder
       file:
-        path: "{{ tmp_folder }}/original"
+        path: "{{ tmp_folder }}/rhde-automation"
         state: directory
 
-    - name: Copy automation scripts to original folder
+    - name: Copy automation scripts to rhde-automation folder
       copy:
         src: "{{ automation_scripts }}"
-        dest: "{{ tmp_folder }}/original"
+        dest: "{{ tmp_folder }}/rhde-automation"
 
     - name: Create signed file
       archive:
-        path: "{{ tmp_folder }}/original"
+        path: "{{ tmp_folder }}/rhde-automation"
         dest: "{{ tmp_folder }}/{{ signed_file }}"
         format: gz
 
@@ -71,7 +71,7 @@
       shell: cp -r "{{ tmp_folder }}/rhde" "{{ usb_contents }}/"
       when: not key_file.stat.exists
 
-    - name: Remove temporary folder
-      file:
-        path: "{{ tmp_folder }}"
-        state: absent
+#    - name: Remove temporary folder
+#      file:
+#        path: "{{ tmp_folder }}"
+#        state: absent
