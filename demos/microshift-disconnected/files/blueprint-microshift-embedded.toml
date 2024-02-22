@@ -89,6 +89,4 @@ source = "quay.io/tasato/hello-js:latest"
 [[containers]]
 source = "quay.io/luisarizmendi/2048:prod"
 [[containers]]
-source = "quay.io/luisarizmendi/nginx:latest"
-[[containers]]
-source = "k8s.gcr.io/coredns/coredns:v1.8.6"
+source = "quay.io/luisarizmendi/nginx-showsecrets:latest"

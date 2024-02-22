@@ -36,9 +36,9 @@
             dd if=/dev/zero of=images/efiboot.img bs=1M count=10
             mkfs.vfat -n ANACONDA images/efiboot.img
             mkdir -p mnt
-            sudo mount images/efiboot.img mnt           
+            sudo mount images/efiboot.img mnt
+            sed -i 's/set timeout=.*/set timeout=1/g' EFI/BOOT/grub.cfg           
             sudo cp -r  EFI mnt/
-            sed -i 's/set timeout=.*/set timeout=1/g' mnt/EFI/BOOT/grub.cfg
             sudo umount mnt
             rm -rf mnt
             OS_LABEL=$(grep -Ri search  EFI/BOOT/grub.cfg | awk -F \' '{print $2}')

@@ -9,3 +9,5 @@ else
     echo "secret-http app configuration failed"
     exit 1
 fi
+
+oc  --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig  -n secret-http rollout restart deployment secret-http

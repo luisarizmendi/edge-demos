@@ -4,7 +4,7 @@ After=multi-user.target
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/usb_autoconfig.sh
+ExecStart=/usr/bin/usb_autoconfig.sh
 RemainAfterExit=no
 
 [Install]

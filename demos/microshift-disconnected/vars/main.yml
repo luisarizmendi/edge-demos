@@ -95,5 +95,3 @@ additional_kickstart_post:
 
 # PULL SECRET ENCRIPTED WITH ANSIBLE VAULT IN secrets.yaml using variable microshift_pull_secret
 # ansible-vault create vars/secrets.yml
-
-usb_automation_token: hOlAQUeTaleSTAstu

@@ -1,38 +1,46 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  labels:
+    app: secret-http
   name: secret-http
-  namespace: secret-http
+  namespace: secret-http 
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: secret-http
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
   template:
     metadata:
+      creationTimestamp: null
       labels:
         app: secret-http
     spec:
       containers:
-        - name: secret-http
-          image: quay.io/luisarizmendi/nginx:latest
-          ports:
-            - containerPort: 80
-          volumeMounts:
-            - name: html-volume
-              mountPath: /usr/share/nginx/html
-          env:
-            - name: USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: credentials
-                  key: username
-            - name: PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: credentials
-                  key: password 
-      volumes:
-        - name: html-volume
-          configMap:
-            name: web-server-html
+      - image: quay.io/luisarizmendi/nginx-showsecrets:latest
+        imagePullPolicy: IfNotPresent
+        name: secret-http
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File  
+      env:
+      - name: username
+        valueFrom:
+          secretKeyRef:
+            name: credentials
+            key: username
+      - name: password
+        valueFrom:
+          secretKeyRef:
+            name: credentials
+            key: password         
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
