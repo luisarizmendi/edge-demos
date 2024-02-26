@@ -89,4 +89,4 @@ source = "quay.io/tasato/hello-js:latest"
 [[containers]]
 source = "quay.io/luisarizmendi/2048:prod"
 [[containers]]
-source = "quay.io/luisarizmendi/nginx-showsecrets:latest"
+source = "quay.io/luisarizmendi/secret-http:latest"
