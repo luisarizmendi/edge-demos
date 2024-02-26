@@ -18,6 +18,7 @@ spec:
       containers:
         - name: secret-http
           image: quay.io/luisarizmendi/secret-http:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
           env:
