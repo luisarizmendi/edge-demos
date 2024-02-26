@@ -6,7 +6,7 @@ Sometimes you have to deploy microshift in an environment where there is no exte
 
 But you probably will need to include secrets as part of your onboarding. Adding secrets to an image (if those are not encrypted) is not a good idea since someone can steal the image (ie. get the ISO) and then extract your secrets from it.
 
-Usually this problem can be solved by performing a "late binding" onboarding approach such as what you get with FIDO FDO, but in a disconnected environment probably you won't have access to external servers (ie. FIDO FDO servers), so you will need to introduce those secrets after the deployment in another different way. 
+Usually this problem can be solved by performing a "late binding" onboarding approach such as what you get with [FIDO FDO](https://fidoalliance.org/device-onboarding-overview/), but in a disconnected environment probably you won't have access to external servers (ie. FIDO FDO servers), so you will need to introduce those secrets after the deployment in another different way. 
 
 Several companies/people are including customizations and secrets as a second step right after the device deployment using a USB stick or a manual entry using local keyboards and screens. Since several edge devices lack of screens and even keyboard inputs, one possible way to introduce those customizations is making that the device detects that someone has connected a USB and then, automatically, gets the secrets, automations, etc from it and then applies them into the system.
 
@@ -36,6 +36,7 @@ The Ansible playbooks will:
 - [Red Hat Device Edge introduction](https://cloud.redhat.com/blog/introducing-the-new-red-hat-device-edge)
 - (Red Hat internal) [Red Hat Device Edge slide deck](https://docs.google.com/presentation/d/1FKQDHrleCPuE0e36UekzXdkw86wNDx16dSgllXj-swY/edit?usp=sharing)
 - [OSTree based Operating Systems article](https://luis-javier-arizmendi-alonso.medium.com/a-git-like-linux-operating-system-d84211e97933)
+- [FDO article - first part](https://luis-javier-arizmendi-alonso.medium.com/edge-computing-device-onboarding-part-i-introducing-the-challenge-59add9a86200)
 - [Image Builder quickstart bash scripts](https://github.com/luisarizmendi/rhel-edge-quickstart)
 - [Ansible Collection for OSTree image management](https://github.com/redhat-cop/infra.osbuild)
 - [How to create a fully self contained OS image that includes your Kubernetes workload](https://www.redhat.com/en/blog/how-to-create-a-fully-self-contained-os-image-that-includes-your-kubernetes-workload)
@@ -220,7 +221,7 @@ ssh-copy-id <user>@<image builder IP>
 
 Once you have your laptop ready, you can run the playbooks to create and include your image in an ISO that you can use to deploy your device but before you need one more thing.
 
-As part of the image preparation, you will be injecting your **pull secret** as an Ansible variable so [get your pull secret from the Red Hat Console](https://cloud.redhat.com/openshift/install/pull-secret). Although you could just create a plain variable in vars/main.yaml it's highly recomended to encrypt sensitive infomation, so it's better to [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) by creating the encrypted variable file (protected by a password that you configure) using the following command:
+As part of the image preparation, you will be injecting your **pull secret** as an Ansible variable so [get your pull secret from the Red Hat Console](https://cloud.redhat.com/openshift/install/pull-secret). Although you could just create a plain variable in vars/main.yaml it's highly recommended to encrypt sensitive information, so it's better to [Ansible Vault](https://docs.ansible.com/ansible/latest/vault_guide/index.html) by creating the encrypted variable file (protected by a password that you configure) using the following command:
 
 > laptop
 ```
@@ -252,7 +253,7 @@ You can add your own manifest too, just create a new directory under `files/mani
   >
   >  Include one single object per file, do not split different objects using `---` in the same file.
 
-You can also add or change the proposed automations scripts that you find under `files/others/rhde-automation`. Those will be digitally signed and encrypted by the playbooks so the edge device apply them once you connect the USB after the first deployment.
+You can also add or change the proposed automation scripts that you find under `files/others/rhde-automation`. Those will be digitally signed and encrypted by the playbooks so the edge device apply them once you connect the USB after the first deployment.
 
 
 ### ~ ~ ~ ~ Create the image and the ISO ~ ~ ~ ~
@@ -285,9 +286,9 @@ Follow these steps:
 
 2. **BIOS**: Customize your VM/BM edge device to use UEFI boot instead of legacy BIOS (otherwise the edge device won't boot after the deployment). If you are using VMs with `libvirt` with `Virtual Manager` this can be done by selecting `Customize configuration before install` check box in the last step while creating the VM, then in `Overview` you have to change the `Firmware` setting to `UEFI` (this setting cannot be changed once the VM has been created).
 
-3. **Boot order**: Use the ISO downloaded from the Image Builder to install the system (you can get the URL where it is published in the last Ansible debug message from the previous step). Just be sure that the system is starting from the ISO, everything is automatic.
+3. **Boot order**: Use the ISO downloaded from the Image Builder to install the system (you can get the URL where it is published in the last Ansible debug message from the previous step). Just be sure that the system starts from the ISO, everything is automatic.
 
-4. Wait until the system prompt.
+4. Wait until the system prompts.
 
 
 ### ~ ~ ~ ~ Test and troubleshoot your demo ~ ~ ~ ~
@@ -297,7 +298,7 @@ For a successful demo there are two things that you always will need:
 1. Test the demo in advance and also right before running it in front of people
 2. Having a backup video with the demo recorded just in case Demo Gods don't allow you to run it live
 
-Regarding the first point, this demo is simple to test. Once the deployment finished you can:
+Regarding the first point, this demo is simple to test. Once the deployment is finished you can:
 
 * Use the VM console or keyboard/screen to test the default (if you didn't change them) user and password: `admin` / `R3dh4t1!` 
 
@@ -305,7 +306,7 @@ Regarding the first point, this demo is simple to test. Once the deployment fini
 
 * Use the kubeconfig locally and test the `pods` status by running `oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig get pod --all-namespaces`. All `pods` must be in `Running` state. If you find that any of them are not Running you could check if the system already have the container images pulled by running `podman image list`
 
-* If you plan to run `oc` cli from your laptop, you can copy the `kubeconfig` file (using the root user) located in one of the directories that you find in `/var/lib/microshift/resources/kubeadmin/`. You will need to choose the one that has a name that is reacheable from your laptop (maybe you need to create an static entry in `/etc/hosts`) but if you didn't changed the Ansible variable defaults, Microshift will be using a [nip.io](nip.io) so probably you will find it in `/var/lib/microshift/resources/kubeadmin/microshift.<ip>.nip.io/kubeconfig`. Once you have the `kubeconfig` in you laptop you can use it to test connectivity to kubernetes API from it.
+* If you plan to run `oc` cli from your laptop, you can copy the `kubeconfig` file (using the root user) located in one of the directories that you find in `/var/lib/microshift/resources/kubeadmin/`. You will need to choose the one that has a name that is reacheable from your laptop (maybe you need to create a static entry in `/etc/hosts`) but if you didn't changed the Ansible variable defaults, Microshift will be using a [nip.io](nip.io) so probably you will find it in `/var/lib/microshift/resources/kubeadmin/microshift.<ip>.nip.io/kubeconfig`. Once you have the `kubeconfig` in you laptop you can use it to test connectivity to kubernetes API from it.
 
 * If you keep the default Ansible variables, you will find a test applications already deployed at `frontend-app2048.apps.<ip>.nip.io` and  `http://hello-test.apps.<ip>.nip.io`.
 

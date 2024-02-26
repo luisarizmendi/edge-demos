@@ -10,37 +10,24 @@ spec:
   selector:
     matchLabels:
       app: secret-http
-  strategy:
-    rollingUpdate:
-      maxSurge: 25%
-      maxUnavailable: 25%
-    type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: secret-http
     spec:
       containers:
-      - image: quay.io/luisarizmendi/nginx-showsecrets:latest
-        imagePullPolicy: IfNotPresent
-        name: secret-http
-        resources: {}
-        terminationMessagePath: /dev/termination-log
-        terminationMessagePolicy: File  
-      env:
-      - name: username
-        valueFrom:
-          secretKeyRef:
-            name: credentials
-            key: username
-      - name: password
-        valueFrom:
-          secretKeyRef:
-            name: credentials
-            key: password         
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 30
+        - name: secret-http
+          image: quay.io/luisarizmendi/secret-http:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: username-secret
+                  key: username
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: password-secret
+                  key: password
