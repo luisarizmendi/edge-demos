@@ -4,8 +4,8 @@ const port = 3000;
 
 app.get('/', (req, res) => {
   // Accessing the injected secrets
-  const username = process.env.USERNAME || '';
-  const password = process.env.PASSWORD || '';
+  const username = process.env.USERNAME || 'NOT-CONFIGURED';
+  const password = process.env.PASSWORD || 'NOT-CONFIGURED';
 
   res.send(`Username: ${username}, Password: ${password}`);
 });
