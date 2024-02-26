@@ -2,9 +2,14 @@
 
 This repository contains guided demos where you can see how Red Hat portfolio can help with different Edge Computing use cases.
 
-## Available demos
+## Available demos in this repo
 
 1. [OSTree system and podman-managed APPs lifecycle demo](demos/upgrade-and-rollback/README.md)
 2. [Secure Edge device onboarding with RHEL and FDO workshop](demos/rhel-fdo-onboarding/README.md)
 3. [Microshift sandbox](demos/microshift/README.md)
-3. [Microshift disconnected sandbox](demos/microshift-disconnected/README.md)
+3. [Microshift disconnected with USB customization](demos/microshift-disconnected/README.md)
+
+
+## Other demos
+
+* [Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md)

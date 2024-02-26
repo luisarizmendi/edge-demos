@@ -1,4 +1,4 @@
-# Microshift disconnected
+# Microshift disconnected with USB customization
 
 ## Background 
 
