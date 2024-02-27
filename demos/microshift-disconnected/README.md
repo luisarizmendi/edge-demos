@@ -310,7 +310,7 @@ Regarding the first point, this demo is simple to test. Once the deployment is f
 
 * If you keep the default Ansible variables, you will find a test applications already deployed at `frontend-app2048.apps.<ip>.nip.io` and  `http://hello-test.apps.<ip>.nip.io`.
 
-* Open the APP that will show the secrets at `web-secret-http.apps.<ip>.nip.io` if you didn't change the domain. You won't see the `username` and `password` values because those are not in the device. Now connect the USB with the `rhde_encrypted.tar` file, wait some seconds, refresh the page (maybe you have to clean the cache), and you should see then the secrets. IF you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
+* Open the APP that will show the secrets at `web-secret-http.apps.<ip>.nip.io` if you didn't change the domain. You should get an error since the APP is still not working because it does not have the required secrets (`username` and `password`). Now connect the USB with the `rhde_encrypted.tar` file, wait some seconds, refresh the page (maybe you have to clean the cache), and you should see then the secrets. IF you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
 
 
 <br><br>
@@ -333,7 +333,7 @@ Well, the steps are more or less the ones that you followed during the preparati
 
 5. Show the application that show the secrets (it should show the values) at `web-secret-http.apps.<ip>.nip.io`
 
-6. Connect the USB and wait some seconds
+6. Connect the USB and wait some seconds so the secrests are injected
 
 7. Referesh your browser and show the `username` and `password` values at `web-secret-http.apps.<ip>.nip.io`
 
