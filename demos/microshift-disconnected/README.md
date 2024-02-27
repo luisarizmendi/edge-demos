@@ -310,7 +310,13 @@ Regarding the first point, this demo is simple to test. Once the deployment is f
 
 * If you keep the default Ansible variables, you will find a test applications already deployed at `frontend-app2048.apps.<ip>.nip.io` and  `http://hello-test.apps.<ip>.nip.io`.
 
-* Open the APP that will show the secrets at `web-secret-http.apps.<ip>.nip.io` if you didn't change the domain. You should get an error since the APP is still not working because it does not have the required secrets (`username` and `password`). Now connect the USB with the `rhde_encrypted.tar` file, wait some seconds, refresh the page (maybe you have to clean the cache), and you should see then the secrets. IF you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
+* Open the APP that will show the secrets at `web-secret-http.apps.<ip>.nip.io` if you didn't change the domain. You should get an error since the APP is still not working because it does not have the required secrets (`username` and `password`). 
+
+* Now connect the USB with the `rhde_encrypted.tar` file, wait some seconds, refresh the page (maybe you have to clean the cache), and you should see then the secrets. IF you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
+
+  >**Note**
+  >
+  >  If you are using Virtual Machine Manager with `libvirt` you can attach a USB by opening the VM, clicking on the "Virtual Machine" menu on the top and then "Redirect USB". If you are not sure which one is the USB stick you can physically disconnect and re-connect it to your laptop. If you cannot select the option (it's grey) you have to be sure that your user is part of the `libvirt` group.
 
 
 <br><br>
