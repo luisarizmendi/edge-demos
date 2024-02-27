@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: web
+  name: secret-http-svc
   namespace: secret-http
 spec:
   selector:
     app: secret-http
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 3000
+      targetPort: 3000
