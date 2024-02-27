@@ -304,7 +304,7 @@ Regarding the first point, this demo is simple to test. Once the deployment is f
 
 * Once you are loged in, you can get the system IP (`ip a`) and try to connect using SSH from your laptop. You might not even need a password if you used the same laptop from where you ran the demo preparation since the SSH public key was injected into the OSTree image, otherwise you can use the same credentials configured in the Blueprint (`admin`/`R3dh4t1!`).
 
-* Use the kubeconfig locally and test the `pods` status by running `oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig get pod --all-namespaces`. All `pods` must be in `Running` state. If you find that any of them are not Running you could check if the system already have the container images pulled by running `podman image list`
+* Use the kubeconfig locally and test the `pods` status by running `oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig get pod --all-namespaces`. All `pods` (less the one related to the secret-http APP, which does not have the secrets yet) must be in `Running` state. If you find that any of them are not Running you could check if the system already have the container images pulled by running `podman image list`
 
 * If you plan to run `oc` cli from your laptop, you can copy the `kubeconfig` file (using the root user) located in one of the directories that you find in `/var/lib/microshift/resources/kubeadmin/`. You will need to choose the one that has a name that is reacheable from your laptop (maybe you need to create a static entry in `/etc/hosts`) but if you didn't changed the Ansible variable defaults, Microshift will be using a [nip.io](nip.io) so probably you will find it in `/var/lib/microshift/resources/kubeadmin/microshift.<ip>.nip.io/kubeconfig`. Once you have the `kubeconfig` in you laptop you can use it to test connectivity to kubernetes API from it.
 
@@ -333,7 +333,7 @@ Well, the steps are more or less the ones that you followed during the preparati
 
 2. Connect to the device using the console and get the IP, then connect using SSH (user `admin`, password `R3dh4t1!`)
 
-3. Show that Microshift is up by running  `oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig get pod --all-namespaces`
+3. Show that Microshift is up by running  `oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig get pod --all-namespaces`. Explain why the `secret-http` application is not running (it still does not have the required secrets).
 
 4. Show the test applications  at `frontend-app2048.apps.<ip>.nip.io` and  `http://hello-test.apps.<ip>.nip.io`
 
