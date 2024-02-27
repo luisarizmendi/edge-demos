@@ -1,20 +1,20 @@
 #!/bin/bash
 
-oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig create -f secrets/secret-http-user.yaml
+script_dir="$(dirname "$0")"
+
+oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig create -f $script_dir/secrets/secret-http-user.yaml
 
 if [ $? -eq 0 ]; then
     echo "secret-http app configuration successful"
-    exit 0
 else
     echo "secret-http app configuration failed"
     exit 1
 fi
 
-oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig create -f secrets/secret-http-password.yaml
+oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig create -f $script_dir/secrets/secret-http-password.yaml
 
 if [ $? -eq 0 ]; then
     echo "secret-http app configuration successful"
-    exit 0
 else
     echo "secret-http app configuration failed"
     exit 1
