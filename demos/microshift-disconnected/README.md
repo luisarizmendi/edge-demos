@@ -331,7 +331,7 @@ Well, the steps are more or less the ones that you followed during the preparati
 
 4. Show the test applications  at `frontend-app2048.apps.<ip>.nip.io` and  `http://hello-test.apps.<ip>.nip.io`
 
-5. Show the application that show the secrets (it should show the values) at `web-secret-http.apps.<ip>.nip.io`
+5. Try to access `web-secret-http.apps.<ip>.nip.io` and get the error
 
 6. Connect the USB and wait some seconds so the secrests are injected
 
