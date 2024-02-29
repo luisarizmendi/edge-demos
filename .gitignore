@@ -2,3 +2,9 @@ secrets.yml
 demos/microshift-disconnected/files/others/usb-contents/*
 *.pem
 rhde_automation_encryption_key
+
+demos/edge-management/infra/ocp/hub/install-config.yaml
+demos/edge-management/infra/ocp/hub/cluster
+demos/edge-management/infra/ocp/hub/openshift-install*
+values-secret-multicloud-gitops.yaml
+*openshift_install.log
