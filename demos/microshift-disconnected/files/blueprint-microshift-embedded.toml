@@ -21,6 +21,26 @@ version = "*"
 name = "usb-automation"
 version = "*"
 
+[[packages]]
+name = "kiosk-automation"
+version = "*"
+
+[[packages]]
+name = "gdm"
+version = "*" 
+
+[[packages]]
+name = "gnome-kiosk"
+version = "*" 
+
+[[packages]]
+name = "gnome-kiosk-script-session"
+version = "*"
+
+[[packages]]
+name = "firefox"
+version = "*"
+
 [customizations]
 
 [[customizations.user]]
@@ -50,7 +70,7 @@ source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:b3cc4a7529a6c70b
 source = "registry.access.redhat.com/ubi8/openssl@sha256:9e743d947be073808f7f1750a791a3dbd81e694e37161e8c6c6057c2c342d671"
 
 [[containers]]
-source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:2d0158da4d43a2d096cab9f4531d0501271cb77f37fa6bf3957e8769128945ef"
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:49d2c1409ed7e270996250dc7238b543e42122619cbde5be54b6a967807963ef"
 
 [[containers]]
 source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:8ac8d69c30b3c664442a716714fd4aa7bb166ac1f75d141e56d613d37801958b"
@@ -74,19 +94,22 @@ source = "registry.redhat.io/openshift4/ose-csi-external-resizer@sha256:7ee02579
 source = "registry.redhat.io/openshift4/ose-csi-external-provisioner@sha256:b453a5c76ba4e975a978e31a51531b1d6233723b0d944622caf7844dedf9ad5a"
 
 [[containers]]
-source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:b9d0a828722870d6e3e7487daa457c4eab72a5382e358eef28b59dc295dfa21e"
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:84536df7c4cc304d447d134a9e5c891d10da3feb35244f0f66b772129c63c7af"
 
 [[containers]]
-source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:63583b28d051006bd1d8ceccce2916be107ae99fb6a4256f138e2031ff46f3e7"
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:8efe85af899e0e92150a169ad9557b041b1dc06715ba1279b28f8ab28121c7ee"
 
 [[containers]]
-source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:855cc97e238bad594aa1f070e25e01d31e3e080242b3bf2ad081ac925c864f7b"
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:8c401faae75e521816b940c35288a5b9684422856ea897336f356ea8e2d3b334"
 
 
 
 [[containers]]
-source = "quay.io/tasato/hello-js:latest"
+source = "quay.io/luisarizmendi/kiosk-token:latest"
+
 [[containers]]
 source = "quay.io/luisarizmendi/2048:prod"
 [[containers]]
 source = "quay.io/luisarizmendi/secret-http:latest"
+[[containers]]
+source = "quay.io/tasato/hello-js:latest"

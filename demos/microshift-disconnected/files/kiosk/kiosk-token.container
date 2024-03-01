@@ -1,0 +1,19 @@
+[Unit]
+Description=The kiosk container asking for a token
+After=local-fs.target
+
+[Container]
+Image=quay.io/luisarizmendi/kiosk-token:latest
+Environment=PYTHONUNBUFFERED=1
+PublishPort=8080:8080
+SecurityLabelDisable=yes
+Volume=/usr/share:/usr/share
+Volume=/var/lib/microshift/resources/kubeadmin:/var/lib/microshift/resources/kubeadmin
+
+[Service]
+Restart=always
+
+[Install]
+# Start by default on boot
+WantedBy=multi-user.target default.target
+

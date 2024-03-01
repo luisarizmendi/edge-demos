@@ -53,6 +53,16 @@
           dest: /tmp/blueprint_embedded_container-images.toml
 
 
+    - name: Append kiosk-token container if kiosk-automation is enabled
+      delegate_to: localhost
+      when:  kiosk_automation|default(false)
+      blockinfile:
+        path: /tmp/blueprint_embedded_container-images.toml
+        marker: ""
+        block: |
+          [[containers]]
+          source = "quay.io/luisarizmendi/kiosk-token:latest"
+
     - name: Fetch Microshift container images
       fetch:
         src: /root/blueprint-microshift-embedded.toml
@@ -76,6 +86,28 @@
               
               [[packages]]
               name = "usb-automation"
+              version = "*"
+              {% endif %}
+              {% if kiosk_automation|default(false) %}
+              
+              [[packages]]
+              name = "kiosk-automation"
+              version = "*"
+
+              [[packages]]
+              name = "gdm"
+              version = "*" 
+
+              [[packages]]
+              name = "gnome-kiosk"
+              version = "*" 
+
+              [[packages]]
+              name = "gnome-kiosk-script-session"
+              version = "*"
+
+              [[packages]]
+              name = "firefox"
               version = "*"
               {% endif %}
 
