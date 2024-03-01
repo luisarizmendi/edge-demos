@@ -7,7 +7,7 @@ microshift_embedded_generate_blueprint: true
 usb_automation: true
 usb_content_create: true
 
-kiosk_automation: true 
+kiosk_automation: false 
 
 microshift_config_template: microshift_config.j2
 microshift_config: 
