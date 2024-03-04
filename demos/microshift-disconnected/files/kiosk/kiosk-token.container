@@ -6,6 +6,7 @@ After=local-fs.target
 Image=quay.io/luisarizmendi/kiosk-token:latest
 Environment=PYTHONUNBUFFERED=1
 PublishPort=8080:8080
+Network=host
 SecurityLabelDisable=yes
 Volume=/usr/share:/usr/share
 Volume=/var/lib/microshift/resources/kubeadmin:/var/lib/microshift/resources/kubeadmin

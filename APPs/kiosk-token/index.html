@@ -40,13 +40,10 @@
         <button onclick="sendToken()">Send</button>
         <p id="errorMessage" class="error-message" style="display: none;">Invalid Token, try again</p>
         <p id="successMessage" class="success-message" style="display: none;">Your service is now active</p>
-        <p id="ipAddress" style="display: none;"></p> <!-- Placeholder for displaying IP address -->
+        <p id="ipAddress">Host IP Address: {{ host_ip }}</p>
     </div>
 
     <script>
-        window.onload = function() {
-            fetchIPAddress(); 
-        };
 
         function sendToken() {
             var token = document.getElementById("tokenInput").value;
@@ -72,19 +69,7 @@
             xhr.send(JSON.stringify({ token: token }));
         }
 
-        function fetchIPAddress() {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", "https://api.ipify.org?format=json", true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    var response = JSON.parse(xhr.responseText);
-                    var ipAddress = response.ip;
-                    document.getElementById("ipAddress").textContent = "Your IP address: " + ipAddress;
-                    document.getElementById("ipAddress").style.display = "inline-block";
-                }
-            };
-            xhr.send();
-        }
+
     </script>
 </body>
 </html>

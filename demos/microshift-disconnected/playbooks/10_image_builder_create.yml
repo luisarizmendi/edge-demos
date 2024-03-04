@@ -47,6 +47,7 @@
             implantisomd5 /var/www/html/{{ _efi_blueprint_name }}/images/{{_efi_blueprint_version }}/{{ _efi_blueprint_name }}_{{ _efi_compose_type }}_custom-ks.iso
             umount /tmp/efi-mount
             rm -rf /tmp/efi-iso/*
+            rm -f /var/www/html/{{ _efi_blueprint_name }}/images/{{ _efi_blueprint_version }}/{{ _efi_blueprint_name }}_{{ _efi_compose_type }}.iso 
 #####################
 
 

@@ -18,24 +18,29 @@ Adds scripts to make the kiosk-based automation work
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/share/containers/systemd/
-
-mkdir -p $RPM_BUILD_ROOT/%{_prefix}/etc/gdm/
-mkdir -p $RPM_BUILD_ROOT/var/lib/AccountsService/users/
-mkdir -p $RPM_BUILD_ROOT/var/home/admin/.local/bin/
+mkdir -p $RPM_BUILD_ROOT/%{_prefix}/bin/
+mkdir -p $RPM_BUILD_ROOT/etc/systemd/system
 
 cp -p /root/kiosk-automation/rhde_encrypted.tar $RPM_BUILD_ROOT/%{_prefix}/share/
 cp -p /root/kiosk-automation/kiosk-token.container $RPM_BUILD_ROOT/%{_prefix}/share/containers/systemd/
-cp -p /root/kiosk-automation/gdm-custom.conf $RPM_BUILD_ROOT/%{_prefix}/etc/gdm/custom.conf
-cp -p /root/kiosk-automation/admin-accountservice $RPM_BUILD_ROOT/var/lib/AccountsService/users/admin
-cp -p /root/kiosk-automation/gnome-kiosk-script $RPM_BUILD_ROOT/var/home/admin/.local/bin/gnome-kiosk-script
+cp -p /root/kiosk-automation/config_kiosk.sh $RPM_BUILD_ROOT/%{_prefix}/bin/config_kiosk.sh
+cp -p /root/kiosk-automation/kiosk-config.service $RPM_BUILD_ROOT/etc/systemd/system/kiosk-config.service
+cp -p /root/kiosk-automation/config_kiosk.sh $RPM_BUILD_ROOT/%{_prefix}/bin/deactivation_kiosk.sh
+cp -p /root/kiosk-automation/deactivation-kiosk.service $RPM_BUILD_ROOT/etc/systemd/system/deactivation-kiosk.service
+
+chmod +x $RPM_BUILD_ROOT/%{_prefix}/bin/config_kiosk.sh
+chmod +x $RPM_BUILD_ROOT/%{_prefix}/bin/deactivation_kiosk.sh
+
+# Reload systemd daemon
 systemctl daemon-reload
 
 # Define files to be included in the package
 %files
 /%{_prefix}/share/rhde_encrypted.tar
 /%{_prefix}/share/containers/systemd/kiosk-token.container
-/%{_prefix}/etc/gdm/custom.conf
-/var/lib/AccountsService/users/admin
-/var/home/admin/.local/bin/gnome-kiosk-script
+/%{_prefix}/bin/config_kiosk.sh
+/%{_prefix}/bin/deactivation_kiosk.sh
+/etc/systemd/system/kiosk-config.service
+/etc/systemd/system/deactivation-kiosk.service
 
 %changelog

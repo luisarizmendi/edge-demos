@@ -1,10 +1,16 @@
 import subprocess
 import os
-from flask import Flask, request, jsonify
+import socket
+from flask import Flask, request, jsonify, render_template
 
 os.environ['PYTHONUNBUFFERED'] = '1'
 
 app = Flask(__name__)
+
+
+def get_host_ip():
+    # Get the host IP address using socket
+    return socket.gethostbyname(socket.gethostname())
 
 @app.route('/decrypt', methods=['POST'])
 def decrypt():
@@ -33,7 +39,10 @@ def decrypt():
         if script_process.returncode != 0:
             # If shell scripts fail, raise an exception
             raise Exception("Error running shell scripts")
-        
+   
+        print("Executing post-success command...")
+        subprocess.run(['touch', '/var/tmp/activation_done'])
+
         print("Returning success message...")
         # If decryption and execution were successful, return a success message
         return jsonify({"message": "Your service is now active"}), 200
@@ -47,10 +56,10 @@ def decrypt():
 
 @app.route('/', methods=['GET'])
 def serve_web_interface():
-    # Read index.html and serve it as the web interface
-    with open('/usr/src/app/index.html', 'r') as file:
-        html_content = file.read()
-    return html_content
+    # Get the host IP address
+    host_ip = get_host_ip()
+    # Render the HTML template with the host IP address
+    return render_template('index.html', host_ip=host_ip)
 
 if __name__ == '__main__':
     # Change directory to where index.html is located

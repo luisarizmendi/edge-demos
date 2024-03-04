@@ -5,7 +5,7 @@ RUN pip install Flask
 
 # Copy all necessary files into the container
 COPY decrypt_service.py /usr/src/app/
-COPY index.html /usr/src/app/
+COPY index.html /usr/src/app/templates/
 
 # Download and copy the oc CLI executable into the container
 ADD https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz /tmp

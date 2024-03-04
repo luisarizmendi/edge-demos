@@ -60,26 +60,36 @@
         dest: "~/kiosk-automation/"
         force: true
 
-    - name: Copy admin-accountservice file to ~/kiosk-automation 
+    - name: Copy config_kiosk.sh file to ~/kiosk-automation 
       ignore_errors: true
       ansible.builtin.copy:
-        src: "../files/kiosk/admin-accountservice"
+        src: "../files/kiosk/config_kiosk.sh"
+        dest: "~/kiosk-automation/"
+        mode: u+x,g+x
+        force: true
+
+    - name: Copy kiosk-config.service file to ~/kiosk-automation 
+      ignore_errors: true
+      ansible.builtin.copy:
+        src: "../files/kiosk/kiosk-config.service"
         dest: "~/kiosk-automation/"
         force: true
 
-    - name: Copy gdm-custom.conf file to ~/kiosk-automation 
+    - name: Copy deactivation_kiosk.sh file to ~/kiosk-automation 
       ignore_errors: true
       ansible.builtin.copy:
-        src: "../files/kiosk/gdm-custom.conf"
+        src: "../files/kiosk/deactivation_kiosk.sh"
         dest: "~/kiosk-automation/"
-        force: true       
+        mode: u+x,g+x
+        force: true
 
-    - name: Copy gnome-kiosk-script file to ~/kiosk-automation 
+    - name: Copy deactivation-kiosk.service file to ~/kiosk-automation 
       ignore_errors: true
       ansible.builtin.copy:
-        src: "../files/kiosk/gnome-kiosk-script"
+        src: "../files/kiosk/deactivation-kiosk.service"
         dest: "~/kiosk-automation/"
         force: true
+
 
 ##### RPM build
 
