@@ -4,7 +4,7 @@ activation_file="/var/tmp/activation_done"
 
 perform_actions() {
 
-    sleep 5 
+    sleep 2
     
     systemctl isolate multi-user.target
     systemctl stop gdm.service
@@ -12,8 +12,12 @@ perform_actions() {
     systemctl disable deactivation-kiosk.service    
 }
 
-while [ ! -f "$activation_file" ]; do
-    sleep 5
-done
 
-perform_actions
+while true
+do
+    if [ -f "$activation_file" ]; then
+        perform_actions
+        exit 0
+    fi
+    sleep 2
+done

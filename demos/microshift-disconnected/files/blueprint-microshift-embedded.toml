@@ -22,6 +22,10 @@ name = "usb-automation"
 version = "*"
 
 [[packages]]
+name = "kiosk-config"
+version = "*"
+
+[[packages]]
 name = "kiosk-automation"
 version = "*"
 

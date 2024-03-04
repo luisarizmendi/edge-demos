@@ -3,6 +3,10 @@
 script_dir="$(dirname "$0")"
 kubeconfig_file=""
 
+if [ -n "$HOST_IP" ]; then
+    echo "Set microshift IP $HOST_IP in container /etc/hosts"
+    echo "$HOST_IP microshift"  >> /etc/hosts
+fi
 
 # Find all kubeconfig files
 kubeconfig_files=$(find /var/lib/microshift/resources/kubeadmin/ -type f -name "kubeconfig")

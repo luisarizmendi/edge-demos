@@ -53,7 +53,7 @@
           dest: /tmp/blueprint_embedded_container-images.toml
 
 
-    - name: Append kiosk-token container if kiosk-automation is enabled
+    - name: Append kiosk-token container if kiosk-config is enabled
       delegate_to: localhost
       when:  kiosk_automation|default(false)
       blockinfile:
@@ -89,6 +89,10 @@
               version = "*"
               {% endif %}
               {% if kiosk_automation|default(false) %}
+              
+              [[packages]]
+              name = "kiosk-config"
+              version = "*"
               
               [[packages]]
               name = "kiosk-automation"

@@ -26,7 +26,12 @@
     - name: Initiate the rpm build tree
       shell: rpmdev-setuptree
 
-    - name: Copy RPM SPEC
+    - name: Copy RPM kiosk-config SPEC
+      copy:
+        src: ../files/kiosk-config.spec
+        dest: "~/rpmbuild/SPECS/kiosk-config.spec"
+
+    - name: Copy RPM kiosk-automation SPEC
       copy:
         src: ../files/kiosk-automation.spec
         dest: "~/rpmbuild/SPECS/kiosk-automation.spec"
@@ -34,68 +39,77 @@
 
 
 
-########### Copy kiosk-automation files
 
-    - name: Empty the ~/kiosk-automation folder
+########### Copy kiosk-config files
+
+    - name: Empty the ~/kiosk-config folder
       ansible.builtin.file:
-        path: "~/kiosk-automation"
+        path: "~/kiosk-config"
         state: absent
 
-    - name: Create the ~/kiosk-automation folder
+    - name: Create the ~/kiosk-config folder
       ansible.builtin.file:
-        path: "~/kiosk-automation/"
+        path: "~/kiosk-config/"
         state: directory
 
-    - name: Copy encrypted file to ~/kiosk-automation 
+    - name: Copy encrypted file to ~/kiosk-config 
       ignore_errors: true
       ansible.builtin.copy:
         src: "../files/others/usb-contents/rhde_encrypted.tar"
-        dest: "~/kiosk-automation/"
+        dest: "~/kiosk-config/"
         force: true
 
-    - name: Copy quadlet file to ~/kiosk-automation 
+    - name: Copy kiosk-token.service file to ~/kiosk-config 
       ignore_errors: true
       ansible.builtin.copy:
-        src: "../files/kiosk/kiosk-token.container"
-        dest: "~/kiosk-automation/"
+        src: "../files/kiosk/kiosk-token.service"
+        dest: "~/kiosk-config/"
         force: true
 
-    - name: Copy config_kiosk.sh file to ~/kiosk-automation 
+
+    - name: Copy token-web.sh file to ~/kiosk-config 
       ignore_errors: true
       ansible.builtin.copy:
-        src: "../files/kiosk/config_kiosk.sh"
-        dest: "~/kiosk-automation/"
+        src: "../files/kiosk/token-web.sh"
+        dest: "~/kiosk-config/"
         mode: u+x,g+x
         force: true
 
-    - name: Copy kiosk-config.service file to ~/kiosk-automation 
-      ignore_errors: true
-      ansible.builtin.copy:
-        src: "../files/kiosk/kiosk-config.service"
-        dest: "~/kiosk-automation/"
-        force: true
-
-    - name: Copy deactivation_kiosk.sh file to ~/kiosk-automation 
-      ignore_errors: true
-      ansible.builtin.copy:
-        src: "../files/kiosk/deactivation_kiosk.sh"
-        dest: "~/kiosk-automation/"
-        mode: u+x,g+x
-        force: true
-
-    - name: Copy deactivation-kiosk.service file to ~/kiosk-automation 
+    - name: Copy deactivation-kiosk.service file to ~/kiosk-config 
       ignore_errors: true
       ansible.builtin.copy:
         src: "../files/kiosk/deactivation-kiosk.service"
-        dest: "~/kiosk-automation/"
+        dest: "~/kiosk-config/"
         force: true
+
+    - name: Copy deactivation_kiosk.sh file to ~/kiosk-config 
+      ignore_errors: true
+      ansible.builtin.copy:
+        src: "../files/kiosk/deactivation_kiosk.sh"
+        dest: "~/kiosk-config/"
+        mode: u+x,g+x
+        force: true
+
+    - name: Copy kiosk SOURCES file to ~/rpmbuild/SOURCES
+      ignore_errors: true
+      ansible.builtin.copy:
+        src: "../files/kiosk/SOURCES/"
+        dest: "~/rpmbuild/SOURCES"
+        force: true
+
+
+
 
 
 ##### RPM build
 
-    - name: rpm build 
-      shell: rpmbuild -bb ~/rpmbuild/SPECS/kiosk-automation.spec
+    - name: rpm build kiosk-config
+      shell: rpmbuild -bb ~/rpmbuild/SPECS/kiosk-config.spec
 
+
+
+    - name: rpm build kiosk-automation
+      shell: rpmbuild -bb ~/rpmbuild/SPECS/kiosk-automation.spec
 
 
 #### check if it exist and if created in image builder

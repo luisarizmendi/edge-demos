@@ -51,6 +51,13 @@
 #####################
 
 
+
+        - name: Empty the /tmp/{{ _efi_blueprint_name }}
+          ansible.builtin.file:
+            path: "/tmp/{{ _efi_blueprint_name }}"
+            state: absent
+
+
 ##################### I encourage to download the modified version *_custom-ks.iso that I created above, not the default one
         - debug:
             msg:  

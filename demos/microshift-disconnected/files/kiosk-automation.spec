@@ -20,27 +20,42 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/share/containers/systemd/
 mkdir -p $RPM_BUILD_ROOT/%{_prefix}/bin/
 mkdir -p $RPM_BUILD_ROOT/etc/systemd/system
+mkdir -p $RPM_BUILD_ROOT/etc/systemd/system/multi-user.target.wants/
 
-cp -p /root/kiosk-automation/rhde_encrypted.tar $RPM_BUILD_ROOT/%{_prefix}/share/
-cp -p /root/kiosk-automation/kiosk-token.container $RPM_BUILD_ROOT/%{_prefix}/share/containers/systemd/
-cp -p /root/kiosk-automation/config_kiosk.sh $RPM_BUILD_ROOT/%{_prefix}/bin/config_kiosk.sh
-cp -p /root/kiosk-automation/kiosk-config.service $RPM_BUILD_ROOT/etc/systemd/system/kiosk-config.service
-cp -p /root/kiosk-automation/config_kiosk.sh $RPM_BUILD_ROOT/%{_prefix}/bin/deactivation_kiosk.sh
-cp -p /root/kiosk-automation/deactivation-kiosk.service $RPM_BUILD_ROOT/etc/systemd/system/deactivation-kiosk.service
+cp -p /root/kiosk-config/rhde_encrypted.tar $RPM_BUILD_ROOT/%{_prefix}/share/
+cp -p /root/kiosk-config/kiosk-token.service $RPM_BUILD_ROOT/etc/systemd/system/kiosk-token.service
+cp -p /root/kiosk-config/deactivation_kiosk.sh $RPM_BUILD_ROOT/%{_prefix}/bin/deactivation_kiosk.sh
+cp -p /root/kiosk-config/deactivation-kiosk.service $RPM_BUILD_ROOT/etc/systemd/system/deactivation-kiosk.service
+cp -p /root/kiosk-config/token-web.sh $RPM_BUILD_ROOT/%{_prefix}/bin/token-web.sh
 
-chmod +x $RPM_BUILD_ROOT/%{_prefix}/bin/config_kiosk.sh
-chmod +x $RPM_BUILD_ROOT/%{_prefix}/bin/deactivation_kiosk.sh
+chmod +x $RPM_BUILD_ROOT/%{_prefix}/bin/*
+# Set SELinux context for the files
+restorecon -R $RPM_BUILD_ROOT/etc/systemd/system $RPM_BUILD_ROOT/%{_prefix}/bin/  $RPM_BUILD_ROOT/%{_prefix}/share/
 
 # Reload systemd daemon
 systemctl daemon-reload
 
+
+%post
+chmod +x $RPM_BUILD_ROOT/%{_prefix}/bin/*
+# Set SELinux context for the files
+restorecon -R $RPM_BUILD_ROOT/etc/systemd/system $RPM_BUILD_ROOT/%{_prefix}/bin/  $RPM_BUILD_ROOT/%{_prefix}/share/
+
+systemctl enable deactivation-kiosk.service || :
+systemctl start deactivation-kiosk.service || :
+
+systemctl enable kiosk-token.service || :
+systemctl start kiosk-token.service || :
+
+systemctl daemon-reload || :
+
+
 # Define files to be included in the package
 %files
 /%{_prefix}/share/rhde_encrypted.tar
-/%{_prefix}/share/containers/systemd/kiosk-token.container
-/%{_prefix}/bin/config_kiosk.sh
+/etc/systemd/system/kiosk-token.service
 /%{_prefix}/bin/deactivation_kiosk.sh
-/etc/systemd/system/kiosk-config.service
 /etc/systemd/system/deactivation-kiosk.service
+/%{_prefix}/bin/token-web.sh
 
 %changelog

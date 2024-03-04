@@ -9,8 +9,7 @@ app = Flask(__name__)
 
 
 def get_host_ip():
-    # Get the host IP address using socket
-    return socket.gethostbyname(socket.gethostname())
+  return os.getenv('HOST_IP')
 
 @app.route('/decrypt', methods=['POST'])
 def decrypt():

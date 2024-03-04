@@ -23,6 +23,6 @@ EXPOSE 8080
 # Command to run the Flask app
 CMD ["python", "decrypt_service.py"]
 
-# RUN with: podman run --privileged --env PYTHONUNBUFFERED=1 -v /usr/share:/usr/share -v /var/lib/microshift/resources/kubeadmin:/var/lib/microshift/resources/kubeadmin -p 8080:8080 quay.io/luisarizmendi/kiosk-token:latest
+# RUN with: podman run --security-opt label:disable  --env HOST_IP=$(ip addr show $(ip link | grep DEFAULT | grep -v "ovn\|br\|cni\|ovs\|lo" | awk '{ print $2}' |  tr -d ':') | grep -oP '(?<=inet\s)\d+(\.\d+){3}') --env PYTHONUNBUFFERED=1 -v /usr/share:/usr/share -v /var/lib/microshift/resources/kubeadmin:/var/lib/microshift/resources/kubeadmin -p 8080:8080 quay.io/luisarizmendi/kiosk-token:latest
 
 
