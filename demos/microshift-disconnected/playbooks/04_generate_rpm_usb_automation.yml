@@ -42,8 +42,9 @@
           path: "{{ encryption_key_path }}"
         register: encryption_key_stat
 
+# Only 5 characters so it's easy to type on the console for the manual-input workflow
       - name: Generate encryption key
-        shell: "openssl rand -base64 32 > {{ encryption_key_path }}"
+        shell: "openssl rand -base64 5 > {{ encryption_key_path }}"
         when: not encryption_key_stat.stat.exists
 
       - name: Check if RSA keys exist

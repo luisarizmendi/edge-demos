@@ -390,9 +390,13 @@ Now you should choose the auto-config method that you want to show during the de
 
 * Access the edge device console (If you are using a physical edge device you will need to connect a screen and keyboard), you should see something like this:
 
+  >**Note**
+  >
+  > It could take a couple of minutes to show the page after booting the edge device
+
 ![Token-web](DOCs/token-web.png)
 
-* Introduce the the encryption key that you can find in `files/others/rhde_automation_encryption_key` and wait some seconds after you see the message "Your service is now active".
+* Introduce the the encryption key that you can find in `files/others/rhde_automation_encryption_key` and wait some seconds after you see the message "Your service is now active". The key was generated with a short number of characters, which is less secure but more convinient to type on the console for the demo.
 
   >**Note**
   >
