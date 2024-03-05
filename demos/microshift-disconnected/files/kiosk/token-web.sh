@@ -1,5 +1,16 @@
 #!/bin/bash
 
+
+directory="/var/lib/microshift/resources/kubeadmin"
+
+# Loop until the directory is created
+while [ ! -d "$directory" ]; do
+    echo "Waiting for $directory to be created..."
+    sleep 1  
+done
+
+echo "$directory has been created."
+
 HOST_IP=$(ip addr show $(ip link | grep DEFAULT | grep -v 'ovn\|br\|cni\|ovs\|lo' | awk '{print $2}' | tr -d ':') | grep -oP 'inet \K[\d.]+')
 export HOST_IP
 
