@@ -7,9 +7,13 @@ perform_actions() {
     sleep 2
     
     systemctl isolate multi-user.target
-    systemctl stop gdm.service
+    systemctl set-default multi-user.target
 
-    systemctl disable deactivation-kiosk.service    
+    systemctl stop gdm.service
+    systemctl disable gdm.service
+
+    systemctl stop deactivation-kiosk.service 
+    systemctl disable deactivation-kiosk.service      
 }
 
 
