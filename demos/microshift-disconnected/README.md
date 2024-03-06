@@ -169,7 +169,7 @@ You can use either baremetal servers or VMs. You will need a RHEL 9.x (tested wi
 
 You need an active Red Hat Enterprise Linux subscription.
 
-If you plan to use the USB-based customization you will need a 1GB USB key, or a 4GB key if you want to use physical hardware instead of VMs for your edge device or if you also want to upgrade your image with to newer image version using that USB key.
+If you plan to use the USB-based customization you will need a 1GB USB key, or a 8 GB key if you want to use physical hardware instead of VMs for your edge device or if you also want to upgrade your image with to newer image version using that USB key.
 
 In order to access the APPs published in Microshift you will need to resolve a DNS wildcard in your DNS server (pointing to the edge device). In really small disconnected environments that could be challenging (imagine that you just have the router and a single server that will be your edge device with Microshift). In that case, one possible solution could be to deploy a DNS server on top of Microshift to resolve those names (even you can configure kubernetes external dns integration to dynamically configure new APP ingress routes in the DNS service). This has not been implemented in this repo (yet?), I took a more simple solution.
 
