@@ -82,9 +82,10 @@ kickstart_options:
   - part /boot/efi --fstype=efi --size=200
   - part /boot --fstype=xfs --asprimary --size=800
   - part swap --fstype=swap --recommended
+  - part /run --fstype=tmpfs --size=5120
   - part pv.01 --grow
   - volgroup rhel pv.01
-  - logvol / --vgname=rhel --fstype=xfs --size=10000 --name=root
+  - logvol / --vgname=rhel --fstype=xfs --size=20480 --name=root
   - reboot
   - network --bootproto=dhcp
   - ostreesetup --nogpg --osname=rhel --remote=edge --url=file:///run/install/repo/ostree/repo --ref=rhel/9/x86_64/edge

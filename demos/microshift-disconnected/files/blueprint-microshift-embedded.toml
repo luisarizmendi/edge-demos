@@ -74,10 +74,10 @@ source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:b3cc4a7529a6c70b
 source = "registry.access.redhat.com/ubi8/openssl@sha256:9e743d947be073808f7f1750a791a3dbd81e694e37161e8c6c6057c2c342d671"
 
 [[containers]]
-source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:49d2c1409ed7e270996250dc7238b543e42122619cbde5be54b6a967807963ef"
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:f9125d62134690c8bf662df73fdd09fb89a439ecec4f653c6fdde9f822d93599"
 
 [[containers]]
-source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:8ac8d69c30b3c664442a716714fd4aa7bb166ac1f75d141e56d613d37801958b"
+source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:7430c24e583c8558ba1c913bc7500628145bb5d3fc783e3d5bf669c25abc43cb"
 
 [[containers]]
 source = "quay.io/openshift-release-dev/ocp-v4.0-art-dev@sha256:8b27a584c2fd72a69c83f0803207821aedf97cb3a92c5e1e8cbc849218093a98"

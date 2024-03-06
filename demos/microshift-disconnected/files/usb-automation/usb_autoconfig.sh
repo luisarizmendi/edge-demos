@@ -108,6 +108,8 @@ if $RUN_SIGNATURE; then
             echo "Automation successful"
         else
             echo "Automation failed"
+            echo "Removing directory ${TEMP_DIR}/${RHDE_DIR}"
+            rm -rf ${TEMP_DIR}/${RHDE_DIR}
             exit 4
         fi
 
@@ -115,14 +117,21 @@ if $RUN_SIGNATURE; then
     else
         echo "Error: Signature verification failed"
         umount $TEMP_DIR/mnt
+        echo "Removing directory ${TEMP_DIR}/${RHDE_DIR}"
+        rm -rf ${TEMP_DIR}/${RHDE_DIR}
         exit 3
     fi
 else
     umount $TEMP_DIR/mnt
+    echo "Removing directory ${TEMP_DIR}/${RHDE_DIR}"
+    rm -rf ${TEMP_DIR}/${RHDE_DIR}
     exit 2
 fi
 
 
+
+echo "Removing directory ${TEMP_DIR}/${RHDE_DIR}"
+rm -rf ${TEMP_DIR}/${RHDE_DIR}
 
 # Unmount the filesystem using systemd-umount
 umount ${TEMP_DIR}/mnt

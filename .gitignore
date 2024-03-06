@@ -1,7 +1,13 @@
 secrets.yml
 
+
 # demo microshift-disconnected
 demos/microshift-disconnected/files/others/usb-contents/*
-!demos/microshift-disconnected/files/others/usb-contents/.keep
 *.pem
 rhde_automation_encryption_key
+demos/microshift-disconnected/files/others/upgrades/usb/v2/*
+demos/microshift-disconnected/files/others/upgrades/usb/v3/*
+
+
+
+!**/.keep
