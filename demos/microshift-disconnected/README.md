@@ -389,7 +389,7 @@ Now you should choose the auto-config method that you want to show during the de
 
 **USB-based auto-configuration**
 
-* Now connect the USB with the `rhde_encrypted.tar` file. After some time (you can check the edge device console, since the token web will dissappear when the automation is done) you can refresh the page, and you should see then the secrets. IF you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
+* Now connect the USB with the `rhde_encrypted.tar` file. After some time you can refresh the page, and you should see then the secrets. Since the customization cannot be done until MicroShift services are deployed, if you try to use the USB customization right after the first boot of the VM, it can take longer (a couple of minutes) but you will know when it's done if you check the edge device console, since the screen asking for "a token" will dissappear when the automation is done. If you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
 
   >**Note**
   >
