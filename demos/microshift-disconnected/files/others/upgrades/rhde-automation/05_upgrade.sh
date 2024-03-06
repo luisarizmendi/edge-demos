@@ -1,7 +1,7 @@
 #!/bin/bash
 
 script_dir="$(dirname "$0")"
-repo_tar="/tmp/usb-autoconfigure/mnt/rhde/rhde-image.tar"
+repo_tar="/tmp/usb-autoconfigure/rhde/rhde-image.tar"
 repo_dir="/run/install/repo/ostree/"
 
 if [ ! -d $repo_dir ]; then
