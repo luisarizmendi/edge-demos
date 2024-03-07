@@ -55,6 +55,7 @@
 
     - name: Append kiosk-token container if kiosk-config is enabled
       delegate_to: localhost
+      become: false
       when:  kiosk_automation|default(false)
       blockinfile:
         path: /tmp/blueprint_embedded_container-images.toml

@@ -67,6 +67,7 @@
 
     - name: Download image
       delegate_to: localhost
+      become: false
       get_url:
         url: "http://{{ ansible_host }}/{{ builder_blueprint_name }}/{{ builder_blueprint_name }}-{{ image_version }}.tar"
         dest: "{{ output_content }}/v2/rhde/rhde-image.tar"
@@ -112,6 +113,7 @@
 
     - name: Download image
       delegate_to: localhost
+      become: false
       get_url:
         url: "http://{{ ansible_host }}/{{ builder_blueprint_name }}/{{ builder_blueprint_name }}-{{ image_version }}.tar"
         dest: "{{ output_content }}/v3/rhde/rhde-image.tar"
