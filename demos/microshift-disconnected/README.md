@@ -506,7 +506,7 @@ ansible-playbook -vvi inventory playbooks/99_upgrade_demo.yaml
 
   >**Note**
   >
-  > If you note that the shutdown takes too long for your demo (because the device is tring to shutdown MicroShift services), just force the reset of the device...
+  > If you note that the shutdown takes too long for your demo (because the device is tring to shutdown MicroShift services), DO NOT force the reset of the device because in that case the upgrade won't take place.
 
 4. Remove the contents of the USB stick and copy the `files/other/upgrades/usb/v3` files.
 
