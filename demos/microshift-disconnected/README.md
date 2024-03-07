@@ -96,19 +96,11 @@ Manual-input-based customization:
 
 If you are short in time and you don't want to read the demo instructions, here it is a summary:
 
-1. Be sure that you are using the latest `os-build` Ansible Collection. Today there is a Pull Request that is still not merged so you should use my fork:
+1. Be sure that you are using the latest `os-build` Ansible Collection from the `redhat-cop`.
 
 > laptop
 ```bash
-cd /tmp/
-
-git clone https://github.com/luisarizmendi/infra.osbuild
-
-cd infra.osbuild/
-
-git checkout import_blueprint
-
-ansible-galaxy collection install -f /tmp/infra.osbuild/ --upgrade
+ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osbuild --upgrade
 ```
 
 2. Clone this repo and create a `vars/secrets.yml` Vault file and include your pull secret in the `microshift_pull_secret` variable.
@@ -235,22 +227,11 @@ dnf install -y ansible
   > Or `ansible-core` in some systems.
 
 
-2. Download the `infra.osbuild`  Ansible collection. Since the collection is still not able to get the embedded images as a parameter, I created a pull request to allow including customized blueprints: https://github.com/redhat-cop/infra.osbuild/pull/347
-
-**IMPORTANT**
-The PR is not approved yet so you will need to use my local fork until it's included into the official collection:
+2. Download the `infra.osbuild`  Ansible collection. Be sure that you have the latest version of the Collection from the `redhat-cop`, so it contains a PR that I created to enable custom TOML files: https://github.com/redhat-cop/infra.osbuild/pull/357
 
 > laptop
 ```bash
-cd /tmp/
-
-git clone https://github.com/luisarizmendi/infra.osbuild
-
-cd infra.osbuild/
-
-git checkout import_blueprint
-
-ansible-galaxy collection install -f /tmp/infra.osbuild/ --upgrade
+ansible-galaxy collection install -f git+https://github.com/redhat-cop/infra.osbuild --upgrade
 
 ```
 
