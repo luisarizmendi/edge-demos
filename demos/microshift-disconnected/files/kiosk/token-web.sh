@@ -3,6 +3,7 @@
 
 directory="/var/lib/microshift/resources/kubeadmin"
 
+
 # Loop until the directory is created
 while [ ! -d "$directory" ]; do
     echo "Waiting for $directory to be created..."
@@ -11,7 +12,11 @@ done
 
 echo "$directory has been created."
 
-HOST_IP=$(ip addr show $(ip link | grep DEFAULT | grep -v 'ovn\|br\|cni\|ovs\|lo' | awk '{print $2}' | tr -d ':') | grep -oP 'inet \K[\d.]+')
+while [ -z "$HOST_IP" ]; do
+  HOST_IP=$(ip addr show $(ip link | grep DEFAULT | grep -v 'ovn\|br\|cni\|ovs\|lo' | awk '{print $2}' | tr -d ':') | grep -oP 'inet \K[\d.]+')
+  sleep 1 
+done
+
 export HOST_IP
 
 echo "Detected Host IP: $HOST_IP"
