@@ -119,7 +119,7 @@ ansible-vault create vars/secrets.yml
 ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml
 ```
 
-5. Download the ISO from the URL shown in the last `debug` message and also copy the contents that you find in `files/others/usb-contents` in an USB stick
+5. Download the ISO from the URL shown in the last `debug` message and also copy the contents that you find in `files/others/usb-contents` (so the file `rhde_encrypted.tar`) in the root path of an USB stick
 
 6. Deploy the edge device using the ISO. Be sure that you are using `UEFI` boot and an isolated network.
 
@@ -332,7 +332,7 @@ By default it creates an encrypted tar (`rhde_encrypted.tar`) file that contains
 
 Follow these steps:
 
-0. If you plan to use virtual machines you will need to create a new VM that will be the Edge Device with at least 2 vCPU, 3GB memory, 20GB disk and one NIC.
+0. If you plan to use virtual machines you will need to create a new VM that will be the Edge Device with at least 2 vCPU, 3GB memory, 30 GB disk and one NIC.
 
 1. **Network**: The edge device should be connected to a network that has no external access in order to test the disconnected deployment. If you are using VMs with `libvirt` you can create an `isolated` network (keep DHCP enabled). That network will prevent the VM to connect outside but at the same time will let you laptop to reach your edge device. If you have a physical system just be sure that you have DHCP enabled in your router but also that you prevent connections from the internal network to outside. Also remember that your laptop, from where you will be showing the demo, should have Internet access to be able to resolve `nip.io` names, if that's not possible you can always configure entries in `/etc/hosts` for the DNS names of the APPS used during the demo pointing to the edge device IP address.
 
@@ -370,7 +370,7 @@ Now you should choose the auto-config method that you want to show during the de
 
 **USB-based auto-configuration**
 
-* Now connect the USB with the `rhde_encrypted.tar` file. After some time you can refresh the page, and you should see then the secrets. Since the customization cannot be done until MicroShift services are deployed, if you try to use the USB customization right after the first boot of the VM, it can take longer (a couple of minutes) but you will know when it's done if you check the edge device console, since the screen asking for "a token" will dissappear when the automation is done. If you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
+* Now connect the USB with the `rhde_encrypted.tar` file on the root path. After some time you can refresh the page, and you should see then the secrets. Since the customization cannot be done until MicroShift services are deployed, if you try to use the USB customization right after the first boot of the VM, it can take longer (a couple of minutes) but you will know when it's done if you check the edge device console, since the screen asking for "a token" will dissappear when the automation is done. If you find any issue with this part, you can tail the `/var/log/usb_check.log` file, where the outputs of the USB automation are dumped.
 
   >**Note**
   >
