@@ -16,6 +16,8 @@ echo "Upgrading..."
 ostree pull-local $repo_dir/repo
 rpm-ostree update --preview
 rpm-ostree update
+rpm-ostree status
+rpm-ostree update
 
 echo "Rebooting..."
 sleep 5
