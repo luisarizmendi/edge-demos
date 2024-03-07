@@ -472,6 +472,9 @@ The image `v2` will be created including `zsh` but also removing the `microshift
 
 The steps to demonstrate the upgrades are the following:
 
+
+
+
 **Demo Preparation**
 
 
@@ -485,7 +488,9 @@ ansible-playbook -vvi inventory playbooks/99_upgrade_demo.yaml
 
   >**Note**
   >
-  > If you want to save some time, use the CLI instead any GUI to copy the files over the USB.
+  > If you want to save some time, use the CLI instead any GUI to copy the files over the USB. 
+
+3. If you have two USB keys instead of just one you can copy the content of `files/other/upgrades/usb/v2` into your second USB key.  This approach offers several advantages: Firstly, it eliminates the need to spend time waiting for file copying during your demo. Additionally, having two USB keys for upgrades enables you to pre-test both devices, minimizing the risk of encountering issues during your presentation due to image file corruption produced during the copy to the USB.
 
 **Demo Steps**
 
