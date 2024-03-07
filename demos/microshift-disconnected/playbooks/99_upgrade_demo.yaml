@@ -44,7 +44,7 @@
     - set_fact:
         image_version: "0.0.2"
 
-    - shell: composer-cli compose status | grep {{ image_version }} | grep FINISHED | sort -k5M -k6n -k7n | tail -n 1 | awk '{print $1}'
+    - shell: composer-cli compose status | grep {{ image_version }} | grep FINISHED | sort -k4M -k5d -k6n -k7n | tail -n 1 | awk '{print $1}'
       register: image_export_id
 
     - name: Export the compose artifact
@@ -90,7 +90,7 @@
     - set_fact:
         image_version: "0.0.3"
 
-    - shell: composer-cli compose status | grep {{ image_version }} | grep FINISHED | sort -k5M -k6n -k7n | tail -n 1 | awk '{print $1}'
+    - shell: composer-cli compose status | grep {{ image_version }} | grep FINISHED | sort -k4M -k5d -k6n -k7n | tail -n 1 | awk '{print $1}'
       register: image_export_id
 
     - name: Export the compose artifact
