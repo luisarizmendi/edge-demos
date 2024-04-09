@@ -1,0 +1,24 @@
+---
+
+### Image Builder
+include_image_builder: false
+
+### FDO
+include_fdo: false
+
+### AAP
+include_aap: false
+aap_controller_fqdn: edge-manager.demo
+aap_admin_password: R3dh4t1!
+aap_user_count: 3
+aap_user_name: user
+aap_user_password: password
+
+
+### Gitea
+include_gitea: true
+gitea_admin_name: admin
+gitea_admin_password: R3dh4t1!
+gitea_user_count: 3
+gitea_user_name: user
+gitea_user_password: password

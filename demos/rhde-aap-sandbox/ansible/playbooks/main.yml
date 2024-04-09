@@ -6,3 +6,7 @@
     - name: Install management node
       ansible.builtin.include_role:
         name: ../../../../common/roles/setup_mgmt-node
+      vars:
+        include_image_builder: false
+        include_fdo: false
+        include_aap: false

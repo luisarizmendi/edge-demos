@@ -19,19 +19,10 @@
         - /home/{{ ansible_user }}/gitea
 
     - name: Allow containers to access and modify files
-      community.general.sefcontext:
-        target: "{{ item }}" 
-        setype: container_file_t
-        state: present
       become: true
-      loop:
-        - "'/home/{{ ansible_user }}/gitea(/.*)?'" 
-
-    - name: Apply new SELinux file context to filesystem
-      ansible.builtin.command: restorecon -R {{ item }}
-      become: true
-      loop:
-        - "/home/{{ ansible_user }}/gitea" 
+      shell: |
+        semanage fcontext -a -t container_file_t '/home/{{ ansible_user }}/gitea(/.*)?'
+        restorecon -R /home/{{ ansible_user }}/gitea
 
     - name: Check if container with name "gitea" exists
       containers.podman.podman_container_info:

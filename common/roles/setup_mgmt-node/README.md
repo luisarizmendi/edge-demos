@@ -167,7 +167,7 @@ ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml
 
 ### Access the services
 
-Once the role finish, you will be able to access the service in these ports (if you didn't customize them):
+Once the role finish (you might need to wait a little bit after the role completion), you will be able to access the service in these ports (if you didn't customize them):
 
 * Ansible Automation Platform Controller: 8080 (HTTP) / 8443 (HTTPS)
 * Ansible Automation Platform Hub:  8081 (HTTP) / 8444 (HTTPS)
