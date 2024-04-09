@@ -39,7 +39,7 @@ Save apart your `manifest.zip` file (location configured with the `manifest_file
   > If you want to check the contents of the ZIP file you will see a `consumer_export.zip` file and a `signature` inside.
 
 
-## Red Hat Customer Portal Offline Token
+### Red Hat Customer Portal Offline Token
 
 This token is used to authenticate to the customer portal and download software. It is needed to deploy the Ansible Automation Platform server.
 
@@ -52,7 +52,7 @@ It can be generated [here](https://access.redhat.com/management/api).
 Take note of the token.
 
 
-## Red Hat Pull Secret
+### Red Hat Pull Secret
 
 This Pull Secret will be needed to pull the container images used by `Microshift` from the Red Hat's container repository.  It is needed to deploy the Ansible Automation Platform server.
 
