@@ -1,0 +1,60 @@
+---
+
+    - name: Open TCP ports for AAP Controller
+      become: true
+      firewalld:
+        port: "{{ item }}"
+        permanent: yes
+        state: enabled
+        zone: public
+      loop:
+        - 3000/tcp
+        - 3306/tcp
+
+    - name: Ensure required directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /home/{{ ansible_user }}/gitea
+
+    - name: Allow containers to access and modify files
+      community.general.sefcontext:
+        target: "{{ item }}" 
+        setype: container_file_t
+        state: present
+      become: true
+      loop:
+        - "'/home/{{ ansible_user }}/gitea(/.*)?'" 
+
+    - name: Apply new SELinux file context to filesystem
+      ansible.builtin.command: restorecon -R {{ item }}
+      become: true
+      loop:
+        - "/home/{{ ansible_user }}/gitea" 
+
+    - name: Check if container with name "gitea" exists
+      containers.podman.podman_container_info:
+        name: gitea
+      register: container_info
+      ignore_errors: true
+
+    - name: Start Gitea container
+      when: "'Error: no such container gitea' in container_info.stderr"
+      containers.podman.podman_container:
+        name: gitea
+        image: docker.io/gitea/gitea:{{ gitea_version }}
+        state: started
+        ports:
+          - 3000:3000
+          - 222:22
+        env:
+          USER_UID: "1000"
+          USER_GID: "1000"
+          GITEA__security__INSTALL_LOCK: true
+        volumes:
+          - /home/{{ ansible_user }}/gitea:/data
+          - /etc/localtime:/etc/localtime:ro
+
+
+

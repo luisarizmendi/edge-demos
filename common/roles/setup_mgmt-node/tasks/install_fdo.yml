@@ -1,0 +1,145 @@
+---
+
+- name: Install FDO Manufacturing server
+  become: true
+  block:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name: "fdo-admin-cli"
+        state: present
+
+    - name: Generate keys and certificates for FDO components
+      command: "fdo-admin-tool generate-key-and-cert --destination-dir /etc/fdo/keys/ {{ item }}"
+      with_items:
+        - diun
+        - manufacturer
+        - device-ca
+        - owner
+
+    - name: Create the Manufacturing server config file
+      template:
+        src: ../templates/fdo_manufacturing.j2
+        dest: /etc/fdo/manufacturing-server.conf.d/manufacturing-server.yml
+        mode: 0644
+
+    - name: Configure firewall rules
+      ansible.builtin.firewalld:
+        port: "{{ fdo_manufacturing_port | default('8080')}}/tcp"
+        state: enabled
+        permanent: yes
+
+    - name: Set SELinux port type
+      ansible.builtin.shell: semanage port -a -t http_port_t -p tcp {{ fdo_manufacturing_port | default('8080')}}
+      ignore_errors: true
+
+    - name: Reload firewall
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded
+
+    - name: Start and enable the service
+      ansible.builtin.systemd:
+        name: fdo-manufacturing-server.service
+        state: started
+        enabled: yes
+
+- name: Install FDO Redezvous server
+  become: true
+  block:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name: "fdo-rendezvous-server"
+        state: present
+
+    - name: Create the Redezvous server config file
+      template:
+        src: ../templates/fdo_rendezvous.j2
+        dest: /etc/fdo/rendezvous-server.conf.d/rendezvous-server.yml
+        mode: 0644
+
+    - name: Configure firewall rules
+      ansible.builtin.firewalld:
+        port: "{{ fdo_rendezvous_port | default('8082')}}/tcp"
+        state: enabled
+        permanent: yes
+
+    - name: Set SELinux port type
+      ansible.builtin.shell: semanage port -a -t http_port_t -p tcp {{ fdo_rendezvous_port | default('8082')}}
+      ignore_errors: true
+
+    - name: Reload firewall
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded
+
+    - name: Start and enable the service
+      ansible.builtin.systemd:
+        name: fdo-rendezvous-server.service
+        state: started
+        enabled: yes
+
+
+
+- name: Install FDO Owner and Service Info servers
+  become: true
+  block:
+    - name: Install required packages
+      ansible.builtin.dnf:
+        name: "fdo-owner-onboarding-server"
+        state: present
+
+    - name: Create the Owner server config file
+      template:
+        src: ../templates/fdo_owner-onboarding.j2
+        dest: /etc/fdo/owner-onboarding-server.conf.d/owner-onboarding-server.yml
+        mode: 0644
+
+    - name: Create the Service Info server config file
+      template:
+        src: ../templates/fdo_serviceinfo-api.j2
+        dest: /etc/fdo/serviceinfo-api-server.conf.d/serviceinfo-api-server.yml
+        mode: 0644
+
+    - name: Configure firewall rules
+      ansible.builtin.firewalld:
+        port: "{{ fdo_owner_port | default('8081')}}/tcp"
+        state: enabled
+        permanent: yes
+
+    - name: Set SELinux port type
+      ansible.builtin.shell: semanage port -a -t http_port_t -p tcp {{ fdo_owner_port | default('8081')}}
+      ignore_errors: true
+
+
+    - name: Configure firewall rules
+      ansible.builtin.firewalld:
+        port: "{{ fdo_serviceinfo_api_port | default('8083')}}/tcp"
+        state: enabled
+        permanent: yes
+
+    - name: Set SELinux port type
+      ansible.builtin.shell: semanage port -a -t http_port_t -p tcp {{ fdo_serviceinfo_api_port | default('8083')}}
+      ignore_errors: true
+
+    - name: Reload firewall
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded
+
+    - name: Start and enable the owner-onboarding-server service
+      ansible.builtin.systemd:
+        name: fdo-owner-onboarding-server.service
+        state: started
+        enabled: yes
+
+    - name: Start and enable the serviceinfo-api-server service
+      ansible.builtin.systemd:
+        name: fdo-serviceinfo-api-server.service
+        state: started
+        enabled: yes
+
+
+
+
+
+

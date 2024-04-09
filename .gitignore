@@ -11,3 +11,8 @@ demos/microshift-disconnected/files/others/upgrades/usb/v3/*
 
 
 !**/.keep
+
+# demo rhde-aap
+aap.tar.gz
+manifest.zip
+microshift-embedded-images.toml

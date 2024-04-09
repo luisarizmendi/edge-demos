@@ -1,0 +1,161 @@
+---
+# Install image-builder with infra.osbuild collection (https://github.com/redhat-cop/infra.osbuild)
+- name: Prepare Image Builder server
+  become: true
+  ansible.builtin.import_role:
+    name: infra.osbuild.setup_server
+
+- name: Install additional packages
+  become: true
+  ansible.builtin.dnf:
+    state: latest
+    name: "{{ packages }}"
+  vars:
+    packages:
+    - coreutils
+    - glibc-minimal-langpack
+    - pykickstart
+    - mtools
+    - xorriso
+    - genisoimage
+    - syslinux
+    - isomd5sum
+    - lorax
+
+- name: Prepare Image Builder for Microshift
+  become: true
+  when: microshift | default(false)
+  block:
+    - name: Create rhocp-{{ microshift_release }}.toml configuration file
+      copy:
+        dest: "/tmp/rhocp-{{ microshift_release }}.toml"
+        content: |
+          id = "rhocp-{{ microshift_release }}"
+          name = "Red Hat OpenShift Container Platform {{ microshift_release }} for RHEL 9"
+          type = "yum-baseurl"
+          url = "https://cdn.redhat.com/content/dist/layered/rhel9/{{ ansible_architecture }}/rhocp/{{ microshift_release }}/os"
+          check_gpg = true
+          check_ssl = true
+          system = false
+          rhsm = true
+
+    - name: Create fast-datapath.toml configuration file
+      copy:
+        dest: "/tmp/fast-datapath.toml"
+        content: |
+          id = "fast-datapath"
+          name = "Fast Datapath for RHEL 9"
+          type = "yum-baseurl"
+          url = "https://cdn.redhat.com/content/dist/layered/rhel9/{{ ansible_architecture }}/fast-datapath/os"
+          check_gpg = true
+          check_ssl = true
+          system = false
+          rhsm = true
+
+    - name: Add sources to Image Builder
+      command: "sudo composer-cli sources add {{ item }}"
+      loop:
+        - "/tmp/rhocp-{{ microshift_release }}.toml"
+        - "/tmp/fast-datapath.toml"
+
+    - name: Microshift offline
+      when: microshift_get_offline_images | default(false)
+      block:
+          - name: Enable OCP repo on the host for Microshift
+            community.general.rhsm_repository:
+              state: enabled
+              name: "rhocp-{{ microshift_release }}-for-rhel-9-{{ ansible_architecture }}-rpms"
+
+          - name: Getting microshift-release-info package
+            ansible.builtin.shell:
+              cmd: dnf download -y microshift-release-info
+            register: _dnf_output
+
+            #bug with cmd output
+          - name: Getting microshift-release-info package
+            ansible.builtin.shell:
+              cmd: dnf download -y microshift-release-info
+            register: _dnf_output
+
+          - name: Capture filename from the output
+            set_fact:
+              _microshift_release_info_string: >-
+                {{
+                  _dnf_output.stdout
+                  | regex_search('microshift-release-info-[^\n:]*')
+                  | default('')
+                  | regex_replace(':$', '')
+                }}
+
+          - name: Display captured microshift-release-info string
+            debug:
+              var: _microshift_release_info_string
+
+          - name: Running rpm2cpio for the microshift-release-info package
+            ansible.builtin.shell:
+              cmd: rpm2cpio {{ _microshift_release_info_string }} | cpio -idmv
+
+          - name: Be sure that jq is installed
+            ansible.builtin.dnf:
+              name: jq
+
+          - name: Clear previous Microshift images
+            ansible.builtin.file:
+              path: /root/blueprint-microshift-embedded.toml
+              state: absent
+      
+          - name: Extracting the Microshift images
+            ansible.builtin.shell:
+              cmd: jq -r '.images | .[] | ("[[containers]]\nsource = \"" + . + "\"\n")' "./usr/share/microshift/release/release-{{ ansible_architecture }}.json" >> "/root/blueprint-microshift-embedded.toml"
+
+          - name: Create ../files directory on localhost if it doesn't exist
+            delegate_to: localhost
+            ansible.builtin.file:
+              path: "../files"
+              state: directory
+
+          - name: Fetch Microshift embedded images TOLM file from remote server to localhost
+            ansible.builtin.fetch:
+              src: "/root/blueprint-microshift-embedded.toml"
+              dest: "../files/microshift-embedded-images.toml"
+              flat: yes
+              validate_checksum: no
+              fail_on_missing: no
+
+          # This repo is just to download microshift_release_info
+          - name: Disable OCP repo 
+            community.general.rhsm_repository:
+              state: disabled
+              name: "rhocp-{{ microshift_release }}-for-rhel-9-{{ ansible_architecture }}-rpms"
+
+
+    - name: Add pull-secret to Image Builder
+      become: true
+      when: pull_secret | default(false)
+      block:
+        - name: Include secrets file with pull-secret if microshift_embedded_images is true
+          include_vars:
+            file: "../vars/secrets.yml"
+
+        - name: Create /etc/osbuild-worker/ directory
+          file:
+            path: /etc/osbuild-worker/
+            state: directory
+
+        - name: Put pull_secret into /etc/osbuild-worker/pull-secret.json
+          copy:
+            content: "{{ pull_secret }}"
+            dest: /etc/osbuild-worker/pull-secret.json
+
+        - name: Create /etc/osbuild-worker/osbuild-worker.toml
+          copy:
+            content: |
+              [containers]
+              auth_file_path = "/etc/osbuild-worker/pull-secret.json"
+            dest: /etc/osbuild-worker/osbuild-worker.toml
+
+        - name: Restart osbuild-worker@1.service
+          systemd:
+            name: osbuild-worker@1
+            state: restarted
+ 
