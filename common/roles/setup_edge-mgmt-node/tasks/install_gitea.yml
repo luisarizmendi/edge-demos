@@ -1,4 +1,9 @@
 ---
+    - name: Install Git CLI
+      become: true
+      ansible.builtin.dnf:
+        state: latest
+        name: "git"
 
     - name: Open TCP ports for AAP Controller
       become: true
@@ -8,7 +13,7 @@
         state: enabled
         zone: public
       loop:
-        - 3000/tcp
+        - "{{ gitea_port | default('3000') }}/tcp"
         - 3306/tcp
 
     - name: Ensure required directories exist
@@ -37,7 +42,7 @@
         image: docker.io/gitea/gitea:{{ gitea_version }}
         state: started
         ports:
-          - 3000:3000
+          - "{{ gitea_port | default('3000') }}:{{ gitea_port | default('3000') }}"
           - 222:22
         env:
           USER_UID: "1000"

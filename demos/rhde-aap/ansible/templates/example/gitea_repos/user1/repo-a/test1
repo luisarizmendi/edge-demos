@@ -1,1 +1,0 @@
-hola {{ gitea_user_name }}{{ user_number }}

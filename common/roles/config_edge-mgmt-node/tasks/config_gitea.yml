@@ -27,15 +27,15 @@
         loop_var: user_number
 
 
-    - name: Create repo contents per user
+    - name: Create repos per user
       block: 
-
         - name: Find template files
           delegate_to: localhost
           ansible.builtin.find:
             paths: "{{ gitea_user_repos_template }}"
-            patterns: "*.j2"
+            patterns: "*"
             recurse: yes
+            file_type: file 
           register: _template_files
 
         - name: Crop template file paths
@@ -46,42 +46,68 @@
           set_fact:
             _template_directories: "{{ _template_files_crop | map('dirname') | unique | list }}"
 
+        - name: Extract repo names
+          set_fact:
+            repo_names: "{{ _template_directories | map('regex_replace', '(.+)/.*', '\\1') | unique }}"
+
         - name: Create directories for user repos
           file:
-            path: "{{ gitea_user_repos_target }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}"
+            path: "{{ gitea_user_repos_target | default('/tmp/gitea_user_repos') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}"
             state: directory
           loop: "{{ range(1, gitea_user_count + 1) | product(_template_directories) | list }}"
 
+        - name: Create local git repos
+          ansible.builtin.shell: |
+            cd {{ gitea_user_repos_target | default('/tmp/gitea_user_repos') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}
+            if [ ! -d .git ]; then 
+            git init
+            git checkout -b main
+            git config user.name "{{ gitea_user_name }}{{ item.0 }}"
+            git config user.email "dont@email.me"
+            fi
+          loop: "{{ range(1, gitea_user_count + 1) | product(repo_names) | list }}"
 
-  
         - name: Copy template files to user repos
           ansible.builtin.template:
             src: "{{ gitea_user_repos_template }}/{{ item.0 }}"
-            dest: "{{ gitea_user_repos_target }}/{{ gitea_user_name }}{{ item.1 }}/{{ item.0 }}"
+            dest: "{{ gitea_user_repos_target | default('/tmp/gitea_user_repos') }}/{{ gitea_user_name }}{{ item.1 }}/{{ item.0 }}"
           loop: "{{ _template_files_crop | product(range(1, gitea_user_count + 1)) | list }}"
           vars:
             user_number: "{{ item.1 }}"
 
+        - name: create repos in Gitea
+          ansible.builtin.uri:
+            url: "http://{{ ansible_host }}:{{ gitea_port | default('3000') }}/api/v1/admin/users/{{ gitea_user_name }}{{ item.0 }}/repos"
+            validate_certs: false
+            user: "{{ gitea_admin_name }}"
+            password: '{{ gitea_admin_password }}'
+            force_basic_auth: true
+            body_format: json
+            method: POST
+            body:
+              name: "{{ item.1 }}"
+              private: true
+            status_code:
+              - 201
+              - 409
+          with_nested: 
+            - "{{ range(1, (gitea_user_count + 1), 1)|list }}"
+            - "{{ repo_names }}"
+
+        - name: Commit repositories
+          ignore_errors: true
+          ansible.builtin.shell: |
+            cd {{ gitea_user_repos_target | default('/tmp/gitea_user_repos') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}
+            git checkout main
+            git add .
+            git commit -m "initial commit"
+            git remote add origin http://{{ gitea_user_name }}{{ item.0 }}:{{ gitea_user_password }}{{ item.0 }}@{{ ansible_host }}:{{ gitea_port | default('3000') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}.git
+          loop: "{{ range(1, gitea_user_count + 1) | product(repo_names) | list }}"
 
 
 
-    - name: create repos
-      ansible.builtin.uri:
-        url: "http://{{ ansible_host }}:3000/api/v1/admin/users/{{ gitea_user_name }}{{ item.0 }}/repos"
-        validate_certs: false
-        user: "{{ gitea_admin_name }}"
-        password: '{{ gitea_admin_password }}'
-        force_basic_auth: true
-        body_format: json
-        method: POST
-        body:
-          name: "{{ item.1 }}"
-          private: true
-        status_code:
-          - 201
-          - 409
-      with_nested: 
-        - "{{ range(1, (gitea_user_count + 1), 1)|list }}"
-        - "{{ repo_names }}"
-
-
+        - name: Push repositories
+          ansible.builtin.shell: |
+            cd {{ gitea_user_repos_target | default('/tmp/gitea_user_repos') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}
+            git push -u origin main
+          loop: "{{ range(1, gitea_user_count + 1) | product(repo_names) | list }}"
