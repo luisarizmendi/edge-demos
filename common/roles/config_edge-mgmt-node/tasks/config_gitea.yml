@@ -29,21 +29,40 @@
 
     - name: Create repo contents per user
       block: 
+
+        - name: Find template files
+          delegate_to: localhost
+          ansible.builtin.find:
+            paths: "{{ gitea_user_repos_template }}"
+            patterns: "*.j2"
+            recurse: yes
+          register: _template_files
+
+        - name: Crop template file paths
+          set_fact:
+            _template_files_crop: "{{ _template_files.files | map(attribute='path') | map('regex_replace', '^' + gitea_user_repos_template + '/?', '') | list }}"
+
+        - name: Extract template directories
+          set_fact:
+            _template_directories: "{{ _template_files_crop | map('dirname') | unique | list }}"
+
         - name: Create directories for user repos
           file:
-            path: "{{ gitea_user_repos_target }}/{{ gitea_user_name }}{{ item }}"
+            path: "{{ gitea_user_repos_target }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}"
             state: directory
-          loop: "{{ range(1, gitea_user_count + 1) | list }}"
+          loop: "{{ range(1, gitea_user_count + 1) | product(_template_directories) | list }}"
 
-        - name: Copy repo templates to user repos
+
+  
+        - name: Copy template files to user repos
           ansible.builtin.template:
-            src: "{{ gitea_user_repos_template }}/{{ repo_name }}/{{ file_name }}"
-            dest: "{{ gitea_user_repos_target }}/{{ gitea_user_name }}{{ user_index }}/{{ item | regex_replace('\\.j2$', '') }}"
-          loop: "{{ lookup('fileglob', gitea_user_repos_template + '/*/*.j2') }}"
+            src: "{{ gitea_user_repos_template }}/{{ item.0 }}"
+            dest: "{{ gitea_user_repos_target }}/{{ gitea_user_name }}{{ item.1 }}/{{ item.0 }}"
+          loop: "{{ _template_files_crop | product(range(1, gitea_user_count + 1)) | list }}"
           vars:
-            user_index: "{{ item.split('/')[1] | regex_replace('[^0-9]', '') }}"
-            repo_name: "{{ item.split('/')[1] }}"
-            file_name: "{{ item.split('/')[-1] }}"
+            user_number: "{{ item.1 }}"
+
+
 
 
     - name: create repos

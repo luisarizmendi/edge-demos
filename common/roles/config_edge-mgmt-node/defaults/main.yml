@@ -22,5 +22,5 @@ gitea_admin_password: R3dh4t1!
 gitea_user_count: 3
 gitea_user_name: user
 gitea_user_password: password
-gitea_user_repos_template: ../templates/gitea_repos
+gitea_user_repos_template: 
 gitea_user_repos_target: ~/gitea_user_repos
