@@ -5,7 +5,7 @@
   tasks:
     - name: Install management node
       ansible.builtin.include_role:
-        name: ../../../../common/roles/setup_mgmt-node
+        name: ../../../../common/roles/setup_edge-mgmt-node
       vars:
         include_image_builder: false
         include_fdo: false

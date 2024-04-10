@@ -17,8 +17,10 @@ aap_user_password: password
 
 ### Gitea
 include_gitea: true
-gitea_admin_name: admin
+gitea_admin_name: gitea
 gitea_admin_password: R3dh4t1!
 gitea_user_count: 3
 gitea_user_name: user
 gitea_user_password: password
+gitea_user_repos_template: ../templates/gitea_repos
+gitea_user_repos_target: ~/gitea_user_repos

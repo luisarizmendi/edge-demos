@@ -1,4 +1,4 @@
-# setup_mgmt-node role
+# setup_edge-mgmt-node role
 
 This Ansible Role was created to be used as a simple way of deploying all Management components that you would need to run a Red Hat Edge Management DEMO:
 
@@ -105,7 +105,7 @@ Use a task to call the role, as it appears in the example below:
   tasks:
     - name: Install management node
       ansible.builtin.include_role:
-        name: ../../../../common/roles/setup_mgmt-node
+        name: ../../../../common/roles/setup_edge-mgmt-node
 ```
 
 By default the role deploys all services. If you want to remove any of them, or if you need to customize your servers you can add the variables that you want to change from the [role defaults](defaults/main.yml), for example, if you don't want to deploy the FDO servers:
@@ -117,7 +117,7 @@ By default the role deploys all services. If you want to remove any of them, or 
   tasks:
     - name: Install management node
       ansible.builtin.include_role:
-        name: ../../../../common/roles/setup_mgmt-node
+        name: ../../../../common/roles/setup_edge-mgmt-node
       vars:
         include_fdo: false
 ```

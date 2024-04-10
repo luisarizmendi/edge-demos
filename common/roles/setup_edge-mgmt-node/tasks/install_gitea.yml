@@ -48,4 +48,22 @@
           - /etc/localtime:/etc/localtime:ro
 
 
+    - name: Ensure /home/{{ ansible_user }}/.config/systemd/user directories exist
+      file:
+        path: "{{ item }}"
+        state: directory
+      loop:
+        - /home/{{ ansible_user }}/.config/systemd/user/default.target.wants
+        - /home/{{ ansible_user }}/.config/systemd/user/multi-user.target.wants
+
+    - name: Copy systemd service unit template
+      template:
+        src: gitea.service.j2
+        dest: /home/{{ ansible_user }}/.config/systemd/user/gitea.service
+
+    - name: Enable Gitea systemd service
+      shell: |
+        ln -s /home/{{ ansible_user }}/.config/systemd/user/gitea.service /home/{{ ansible_user }}/.config/systemd/user/default.target.wants/gitea.service
+        ln -s /home/{{ ansible_user }}/.config/systemd/user/gitea.service /home/{{ ansible_user }}/.config/systemd/user/multi-user.target.wants/gitea.service
+        systemctl --user daemon-reload
 
