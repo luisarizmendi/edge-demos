@@ -217,20 +217,19 @@ eda_users_yaml: |-
     password: "{{ gitea_user_password }}{{ user_number }}"
     email: "{{ gitea_user_name }}{{ user_number }}@dont-email.me"
     roles:
-      - Contributor
+      - Auditor
 {% endfor %}
 
 
-# Per user (add {% raw %}{{ user_number }}{% endraw %})
 
 eda_credentials:
   - name: Gitea Credentials
     credential_type: 'GitHub Personal Access Token'
-    username: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}"
-    secret: "{{ gitea_user_password }}{% raw %}{{ user_number }}{% endraw %}"
+    username: "{{ gitea_admin_name }}"
+    secret: "{{ gitea_admin_password }}"
 
 eda_projects:
   - name: Device Edge Codebase
-    url: http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}/{{ eda_repo_name | default('aap') }}.git
+    url: http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{{ gitea_admin_name }}/{{ eda_repo_name | default('eda') }}.git
     credential: Gitea Credentials
 

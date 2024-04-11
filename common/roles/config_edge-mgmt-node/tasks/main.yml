@@ -8,9 +8,9 @@
 #  ansible.builtin.import_tasks: config_fdo.yml
 #  when: include_fdo | default(false)
 
-- name: import gitea tasks
-  ansible.builtin.import_tasks: config_gitea.yml
-  when: include_gitea | default(false)
+#- name: import gitea tasks
+#  ansible.builtin.import_tasks: config_gitea.yml
+#  when: include_gitea | default(false)
 
 - name: import aap tasks
   ansible.builtin.import_tasks: config_aap.yml
