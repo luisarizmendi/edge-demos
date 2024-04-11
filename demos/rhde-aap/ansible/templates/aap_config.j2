@@ -33,23 +33,28 @@ controller_hosts:
 
 
 
-{% for user_number in range(1, gitea_user_count + 1) %}
-
 controller_organizations_yaml: |-
+{% for user_number in range(1, gitea_user_count + 1) %}
   - name: "{{ gitea_user_name }}{{ user_number }} Organization"
-  
+{% endfor %}
+
 controller_users_yaml: |-
+{% for user_number in range(1, gitea_user_count + 1) %}
   - username: "{{ gitea_user_name }}{{ user_number }}"
     password: "{{ gitea_user_password }}{{ user_number }}"
     email: "{{ gitea_user_name }}{{ user_number }}@dont-email.me"
     organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+{% endfor %}
 
 controller_roles_yaml: |-
+{% for user_number in range(1, gitea_user_count + 1) %}
   - user: "user{{ user_number }}"
     organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     role: admin
+{% endfor %}
 
 controller_inventories_yaml: |-
+{% for user_number in range(1, gitea_user_count + 1) %}
   - name: Edge Devices
     organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     variables:
@@ -62,46 +67,51 @@ controller_inventories_yaml: |-
     organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     variables:
       user_number: "{{ user_number }}"
+{% endfor %}
+
+
+## Per User (needs specific user as controller_username, that's why variable {% raw %}{{ user_number }}{% endraw %} is included )
 
 controller_credentials:
   - name: Gitea Credentials
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     credential_type: Source Control
     inputs:
-      username: "{{ gitea_user_name }}{{ user_number }}"
-      password: "{{ gitea_user_password }}{{ user_number }}"
+      username: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}"
+      password: "{{ gitea_user_password }}{% raw %}{{ user_number }}{% endraw %}"
   - name: Device Credentials
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     credential_type: Machine
     inputs:
       username: {{ rhde_user_name | default('admin')}}
       password: "{{ rhde_user_password | default('R3dh4t1!') }}"
       become_password: "{{ rhde_user_password | default('R3dh4t1!') }}"
   - name: Controller API Credentials
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     credential_type: Controller API Credentials
     inputs:
-      controller_username: "{{ gitea_user_name }}{{ user_number }}"
-      controller_password: "{{ gitea_user_password }}{{ user_number }}"
+      controller_username: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}"
+      controller_password: "{{ gitea_user_password }}{% raw %}{{ user_number }}{% endraw %}"
   - name: Image Builder Credentials
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     credential_type: Machine
     inputs:
       username: "{{ image_builder_admin_name }}"
       password: "{{ image_builder_admin_password }}"
       become_password: "{{ image_builder_admin_password }}"
 
+
 controller_projects:
   - name: Device Edge Codebase
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     scm_type: git
     scm_branch: main
-    scm_url: http://{{ ansible_host }}:{{ gitea_port | default('3000') }}/{{ gitea_user_name }}{{ user_number }}/{{ aap_repo_name | default('aap') }}.git
+    scm_url: http://{{ ansible_host }}:{{ gitea_port | default('3000') }}/{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}/{{ aap_repo_name | default('aap') }}.git
     credential: Gitea Credentials
 
 controller_templates:
   - name: Test Device Connectivity
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Edge Devices
     project: Device Edge Codebase
     playbook: playbooks/hello-world.yml
@@ -109,7 +119,7 @@ controller_templates:
       - Device Credentials
     execution_environment: Device Edge Execution Environment
   - name: Initial Device Configuration
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Edge Devices
     project: Device Edge Codebase
     playbook: playbooks/initial-configuration.yml
@@ -117,7 +127,7 @@ controller_templates:
       - Device Credentials
     execution_environment: Device Edge Execution Environment
   - name: Create Host in Controller Inventory
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Local Actions
     project: Device Edge Codebase
     playbook: playbooks/manage-hosts-in-controller.yml
@@ -128,7 +138,7 @@ controller_templates:
     become_enabled: true
 
   - name: Compose Image
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/compose-image.yml
@@ -138,7 +148,7 @@ controller_templates:
     become_enabled: true
 
   - name: Create ISO Kickstart
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/create_iso_kickstart.yml
@@ -148,7 +158,7 @@ controller_templates:
     become_enabled: true
 
   - name: Publish Image
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/publish-image.yml
@@ -159,7 +169,7 @@ controller_templates:
 
 controller_workflows:
   - name: Provision Edge Device
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     state: present
     allow_simultaneous: true
     survey_enabled: false
@@ -177,7 +187,7 @@ controller_workflows:
         unified_job_template: Initial Device Configuration
 
   - name: New Edge Device Image
-    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     state: present
     allow_simultaneous: false
     survey_enabled: false
@@ -196,8 +206,6 @@ controller_workflows:
       - identifier: Publish Image
         unified_job_template: Publish Image
     webhook_service: github
-
-{% endfor %}
 
 
 

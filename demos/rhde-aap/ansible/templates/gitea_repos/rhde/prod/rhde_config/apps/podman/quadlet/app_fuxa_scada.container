@@ -1,0 +1,14 @@
+[Unit]
+Description=The FUXA container
+After=local-fs.target
+
+[Service]
+TimeoutSec=300
+
+[Container]
+Image=docker.io/frangoteam/fuxa:latest
+PublishPort=1881:1881
+
+[Install]
+# Start by default on boot
+WantedBy=multi-user.target default.target
