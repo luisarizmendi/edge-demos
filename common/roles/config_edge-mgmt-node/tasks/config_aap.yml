@@ -11,33 +11,39 @@
 
 ## Cross Organization
 - name: configure execution environments
+  when: controller_execution_environments is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.execution_environments
 
 - name: configure credential types
+  when: controller_credential_types is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.credential_types
 
 ## Organization specific
 - name: configure organizations
+  when: controller_organizations_yaml is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.organizations
   vars:
     controller_organizations: "{{ controller_organizations_yaml|from_yaml }}"
 
 - name: configure users
+  when: controller_users_yaml is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.users
   vars:
     controller_user_accounts: "{{ controller_users_yaml|from_yaml }}"
 
 - name: configure roles
+  when: controller_roles_yaml is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.roles
   vars:
     controller_roles: "{{ controller_roles_yaml|from_yaml }}"
 
 - name: configure inventories
+  when: controller_inventories_yaml is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.inventories
   vars:
@@ -45,6 +51,7 @@
 
 ## User specific (needs to look over users)
 - name: configure credentials
+  when: controller_credentials is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.credentials
   vars:
@@ -56,6 +63,7 @@
     loop_var: user_number
 
 - name: configure projects
+  when: controller_projects is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.projects
   vars:
@@ -67,6 +75,7 @@
     loop_var: user_number
 
 - name: configure hosts
+  when: controller_hosts is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.hosts
   vars:
@@ -78,6 +87,7 @@
     loop_var: user_number
 
 - name: configure job templates
+  when: controller_templates is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.job_templates
   vars:
@@ -89,6 +99,7 @@
     loop_var: user_number
 
 - name: configure workflows
+  when: controller_workflows is defined
   ansible.builtin.include_role:
     name: redhat_cop.controller_configuration.workflow_job_templates
   vars:
