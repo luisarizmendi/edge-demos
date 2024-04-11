@@ -33,7 +33,7 @@
           delegate_to: localhost
           ansible.builtin.find:
             paths: "{{ gitea_user_repos_template }}"
-            patterns: ".*"
+            patterns: "*"
             recurse: yes
             file_type: file 
           register: _template_files
