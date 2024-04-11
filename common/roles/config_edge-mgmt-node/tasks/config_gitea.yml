@@ -35,6 +35,7 @@
             paths: "{{ gitea_user_repos_template }}"
             patterns: "*"
             recurse: yes
+            hidden: true            
             file_type: file 
           register: _template_files
 
