@@ -2,17 +2,25 @@
 
 ### Image Builder
 include_image_builder: false
+image_builder_admin_name: admin
+image_builder_admin_password: R3dh4t1!
+rhde_user_name: admin
+rhde_user_password: R3dh4t1!
 
 ### FDO
 include_fdo: false
 
 ### AAP
-include_aap: false
-aap_controller_fqdn: edge-manager.demo
-aap_admin_password: R3dh4t1!
+include_aap: true
+controller_hostname: "{{ ansible_host }}:8443"
+controller_username: "admin"
+controller_password: "R3dh4t1!"
+controller_validate_certs: false
+controller_configuration_credentials_secure_logging: false
 aap_user_count: 3
 aap_user_name: user
 aap_user_password: password
+
 
 
 ### Gitea

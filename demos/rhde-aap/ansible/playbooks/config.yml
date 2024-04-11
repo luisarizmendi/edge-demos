@@ -8,3 +8,5 @@
         name: ../../../../common/roles/config_edge-mgmt-node
       vars:
         gitea_user_repos_template: ../templates/gitea_repos
+        aap_config_template: ../templates/aap_config.j2
+        aap_repo_name: aap

@@ -1,0 +1,89 @@
+ 
+---
+- name: Embed Kickstart in ISO
+  hosts:
+    - all
+  gather_facts: no 
+  vars:
+    iso_standard: "/home/ansible/rhel.iso"
+    kickstart_http_location: "http://{{ ansible_host }}/student-kickstarts/{{ gitea_user_name }}{{ user_number }}/kickstart.ks"
+    iso_dst_path: "/var/www/html/student-isos/{{ gitea_user_name }}{{ user_number }}"
+    iso_name: "rhel-custom-kickstart.iso"
+    basearch: "x86_64"
+{% raw %}{% endraw %}
+  tasks:
+    - name: Creating ISO image with kickstart embedded
+      block:
+        - name: Create directories
+          file:
+            path: "{% raw %}{{ item }}{% endraw %}"
+            state: directory
+          with_items:
+            - /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso
+            - /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
+            - /var/www/html/student-isos/{{ gitea_user_name }}{{ user_number }}
+
+        - name: Restore context on directory
+          ansible.builtin.command: "restorecon -R /var/www/html/student-isos/{{ gitea_user_name }}{{ user_number }}"
+          changed_when: true
+
+        - name: Mount the ISO
+          mount:
+            path: /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso
+            src: "{% raw %}{{ iso_standard }}{% endraw %}"
+            opts: loop
+            state: mounted
+            fstype: iso9660
+
+        - name: Copy ISO contents to temporary directory
+          shell: cp -avRf /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso/* /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
+
+        - name: Get ISO label
+          shell: blkid "{% raw %}{{ iso_standard }}{% endraw %}" | awk -F 'LABEL="' '{print $2}' | cut -d '"' -f 1
+          register: iso_label
+
+        - name: Modify isolinux configuration
+          replace:
+            path: /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso/isolinux/isolinux.cfg
+            regexp: "quiet"
+            replace: "inst.ks={% raw %}{{ kickstart_http_location }}{% endraw %}"
+
+        - name: Modify isolinux configuration
+          replace:
+            path: /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso/isolinux/isolinux.cfg
+            regexp: "timeout 600"
+            replace: "timeout 1"
+
+        - name: Modify isolinux configuration
+          replace:
+            path: /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso/isolinux/isolinux.cfg
+            regexp: "RHEL-.-.-0-BaseOS-{% raw %}{{ basearch }}{% endraw %}"
+            replace: "{% raw %}{{ iso_label.stdout }}{% endraw %}"
+
+        - name: Create the final ISO image
+          shell: mkisofs -o {% raw %}{{ iso_dst_path }}/{{ iso_name }}{% endraw %} -b isolinux/isolinux.bin -c isolinux/boot.cat --joliet-long --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V "{% raw %}{{ iso_label.stdout }}{% endraw %}" /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
+          changed_when: false
+          args:
+            chdir: /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso/
+
+        - name: Add MD5 checksum
+          shell: implantisomd5 {% raw %}{{ iso_dst_path }}/{{ iso_name }}
+          changed_when: false{% endraw %}
+
+
+        - name: Unmount the file system
+          command: umount /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso
+
+
+        - name: Clean up temporary directories
+          file:
+            path: "{% raw %}{{ item }}{% endraw %}"
+            state: absent
+          with_items:
+            - /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso
+            - /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
+
+
+        - ansible.builtin.debug:
+            msg: "Download the ISO from http://{{ ansible_host }}/student-isos/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ iso_name }}{% endraw %}"
+      become: yes

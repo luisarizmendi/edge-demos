@@ -33,7 +33,7 @@
           delegate_to: localhost
           ansible.builtin.find:
             paths: "{{ gitea_user_repos_template }}"
-            patterns: "*"
+            patterns: ".*"
             recurse: yes
             file_type: file 
           register: _template_files
@@ -48,7 +48,7 @@
 
         - name: Extract repo names
           set_fact:
-            repo_names: "{{ _template_directories | map('regex_replace', '(.+)/.*', '\\1') | unique }}"
+            repo_names: "{{ _template_directories | map('split', '/') | map('first') | unique | list }}"
 
         - name: Create directories for user repos
           file:
@@ -98,16 +98,15 @@
           ignore_errors: true
           ansible.builtin.shell: |
             cd {{ gitea_user_repos_target | default('/tmp/gitea_user_repos') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}
-            git checkout main
+            git checkout -b main
             git add .
             git commit -m "initial commit"
             git remote add origin http://{{ gitea_user_name }}{{ item.0 }}:{{ gitea_user_password }}{{ item.0 }}@{{ ansible_host }}:{{ gitea_port | default('3000') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}.git
           loop: "{{ range(1, gitea_user_count + 1) | product(repo_names) | list }}"
 
-
-
         - name: Push repositories
           ansible.builtin.shell: |
             cd {{ gitea_user_repos_target | default('/tmp/gitea_user_repos') }}/{{ gitea_user_name }}{{ item.0 }}/{{ item.1 }}
+            git checkout -b main
             git push -u origin main
           loop: "{{ range(1, gitea_user_count + 1) | product(repo_names) | list }}"

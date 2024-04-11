@@ -1,7 +1,7 @@
 ---
 
 controller_execution_environments:
-  - name: Device Edge Workshops Execution Environment
+  - name: Device Edge Execution Environment
     image: quay.io/luisarizmendi/provisioner-execution-environment:latest
     pull: missing
 
@@ -17,281 +17,149 @@ controller_credential_types:
           type: string
           label: Controller API Password
           secret: true
-    injectors:
-      extra_vars:
-        controller_hostname: "{{ aap_controller_fqdn }}"
-        controller_username: "{{ aap_admin_name | default('admin') }}"
-        controller_password: "{{ aap_admin_password }}"
-        controller_validate_certs: 'false'
 
-
-
-# These can be templated out for all students
-controller_organizations_yaml: |-
-  {% for user_number in range(1, gitea_user_count + 1) %}
-  - name: "User{{ user_number }} Organization"
-  {% endfor %}
-
-controller_users_yaml: |-
-  {% for user_number in range(1, gitea_user_count + 1) %}
-  - username: "User{{ user_number }}"
-    password: "{{ gitea_user_password }}{{ user_number }}"
-    email: "User{{ user_number }}@dont-email.me"
-    organization: "User{{ user_number }} Organization"
-  {% endfor %}
-
-controller_roles_yaml: |-
-  {% for user_number in range(1, gitea_user_count + 1) %}
-  - user: "User{{ user_number }}"
-    organization: "User{{ user_number }} Organization"
-    role: admin
-  {% endfor %}
-
-
-controller_inventories_yaml: |-
-  {% for user_number in range(1, gitea_user_count + 1) %}
-  - name: Edge Devices
-    organization: "User{{ user_number }} Organization"
-    variables:
-      user_number: "{{ user_number }}"
-  - name: Edge Utilities
-    organization: "User{{ user_number }} Organization"
-    variables:
-      user_number: "{{ user_number }}"
-  - name: Local Actions
-    organization: "User{{ user_number }} Organization"
-    variables:
-      user_number: "{{ user_number }}"
-  {% endfor %}
-
-# These are student specific because we must query the API for credentials under the student user so we only see that student's credentials
-# Loop over these by student number, which is slower but not bad
 controller_hosts:
   - name: localhost
     inventory: Local Actions
     variables:
       ansible_connection: local
-      ansible_python_interpreter: "{  { ansible_playbook_python }}"
+      ansible_python_interpreter: "{{ ansible_playbook_python }}"
     enabled: true
-  - name: "image-builder.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}"
+  - name: "{{ node_utilities_ip | default(ansible_host) }}"
     inventory: Edge Utilities
     variables:
-      ansible_host: "{{ ansible_host }}"
+      ansible_host: "{{ node_utilities_ip | default(ansible_host) }}"
     enabled: true
+
+
+
+{% for user_number in range(1, gitea_user_count + 1) %}
+
+controller_organizations_yaml: |-
+  - name: "{{ gitea_user_name }}{{ user_number }} Organization"
+  
+controller_users_yaml: |-
+  - username: "{{ gitea_user_name }}{{ user_number }}"
+    password: "{{ gitea_user_password }}{{ user_number }}"
+    email: "{{ gitea_user_name }}{{ user_number }}@dont-email.me"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+
+controller_roles_yaml: |-
+  - user: "user{{ user_number }}"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    role: admin
+
+controller_inventories_yaml: |-
+  - name: Edge Devices
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    variables:
+      user_number: "{{ user_number }}"
+  - name: Edge Utilities
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    variables:
+      user_number: "{{ user_number }}"
+  - name: Local Actions
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    variables:
+      user_number: "{{ user_number }}"
 
 controller_credentials:
   - name: Gitea Credentials
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     credential_type: Source Control
     inputs:
-      username: "User{{ user_number }}"
-      password: "{{ admin_password }}"
+      username: "{{ gitea_user_name }}{{ user_number }}"
+      password: "{{ gitea_user_password }}{{ user_number }}"
   - name: Device Credentials
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     credential_type: Machine
     inputs:
-      username: ansible
-      password: "{{ admin_password }}"
-      become_password: "{{ admin_password }}"
+      username: {{ rhde_user_name | default('admin')}}
+      password: "{{ rhde_user_password | default('R3dh4t1!') }}"
+      become_password: "{{ rhde_user_password | default('R3dh4t1!') }}"
   - name: Controller API Credentials
-    organization: "User{{ user_number }} Organization"
-    credential_type: Contrller API Credentials
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+    credential_type: Controller API Credentials
     inputs:
-      controller_username: "User{{ user_number }}"
-      controller_password: "{{ admin_password }}"
+      controller_username: "{{ gitea_user_name }}{{ user_number }}"
+      controller_password: "{{ gitea_user_password }}{{ user_number }}"
   - name: Image Builder Credentials
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     credential_type: Machine
     inputs:
-      username: "{{ ansible_user }}"
-      password: "{{ admin_password }}"
-      become_password: "{{ admin_password }}"
-
+      username: "{{ image_builder_admin_name }}"
+      password: "{{ image_builder_admin_password }}"
+      become_password: "{{ image_builder_admin_password }}"
 
 controller_projects:
   - name: Device Edge Codebase
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     scm_type: git
     scm_branch: main
-    scm_url: https://gitea.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}/student{{ user_number }}/{{ repo_name }}.git
+    scm_url: http://{{ ansible_host }}:{{ gitea_port | default('3000') }}/{{ gitea_user_name }}{{ user_number }}/{{ aap_repo_name | default('aap') }}.git
     credential: Gitea Credentials
 
 controller_templates:
   - name: Test Device Connectivity
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     inventory: Edge Devices
     project: Device Edge Codebase
     playbook: playbooks/hello-world.yml
     credentials:
       - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
+    execution_environment: Device Edge Execution Environment
   - name: Initial Device Configuration
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     inventory: Edge Devices
     project: Device Edge Codebase
     playbook: playbooks/initial-configuration.yml
     credentials:
       - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
+    execution_environment: Device Edge Execution Environment
   - name: Create Host in Controller Inventory
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     inventory: Local Actions
     project: Device Edge Codebase
     playbook: playbooks/manage-hosts-in-controller.yml
     credentials:
       - Controller API Credentials
     ask_variables_on_launch: true
-    execution_environment: Device Edge Workshops Execution Environment
+    execution_environment: Device Edge Execution Environment
     become_enabled: true
 
   - name: Compose Image
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/compose-image.yml
     credentials:
       - Image Builder Credentials
-    execution_environment: Device Edge Workshops Execution Environment
+    execution_environment: Device Edge Execution Environment
     become_enabled: true
 
-
   - name: Create ISO Kickstart
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/create_iso_kickstart.yml
     credentials:
       - Image Builder Credentials
-    execution_environment: Device Edge Workshops Execution Environment
+    execution_environment: Device Edge Execution Environment
     become_enabled: true
-
-  - name: Create Quadlet APP
-    organization: "User{{ user_number }} Organization"
-    inventory: Edge Devices
-    project: Device Edge Codebase
-    playbook: playbooks/podman_quadlet.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-    ask_inventory_on_launch: true
-
-  - name: Microshift APP Update image tag
-    organization: "User{{ user_number }} Organization"
-    inventory: Edge Devices
-    project: Device Edge Codebase
-    playbook: playbooks/update_app_microshift.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-    extra_vars: 
-        namespace: namespace
-        deployment: deployment
-        container: container
-        image: image
-        tag: tag
-    ask_variables_on_launch: true
-
-  - name: Microshift APP Deploy - oc CLI
-    organization: "User{{ user_number }} Organization"
-    inventory: Edge Devices
-    project: Device Edge Codebase
-    playbook: playbooks/deploy_app_microshift_oc.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-    ask_variables_on_launch: true
-    extra_vars: 
-        manifest: https://gitea.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}/student{{ user_number }}/device-edge-configs/raw/branch/main/APPs/microshift/2048/app_2048-microshift.yml
-
-  - name: Microshift APP Deploy - Manifest
-    organization: "User{{ user_number }} Organization"
-    inventory: Edge Devices
-    project: Device Edge Codebase
-    playbook: playbooks/deploy_app_microshift_manifest.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-    ask_inventory_on_launch: true
-    extra_vars: 
-        manifest_repo: "https://gitea.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}/student{{ user_number }}/device-edge-configs/src/branch/main/APPs/microshift/manifest"
-        gitea_username: "User{{ user_number }}"
-        gitea_password: "{{ admin_password }}"
-
-  - name: Microshift APP Deploy - Helm
-    organization: "User{{ user_number }} Organization"
-    inventory: Edge Devices
-    project: Device Edge Codebase
-    playbook: playbooks/deploy_app_microshift_helm.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-    ask_variables_on_launch: true
-    ask_inventory_on_launch: true
-    extra_vars: 
-        helm_repo: https://raw.githubusercontent.com/luisarizmendi/helm-chart-repo/main/packages
-        helm_var_file: https://gitea.{{ ec2_name_prefix }}.{{ workshop_dns_zone }}/student{{ user_number }}/device-edge-configs/raw/branch/main/APPs/microshift/helm/wordpress_vars.yml
-        helm_chart_name: wordpress
-        release_namespace: "wordpress"
 
   - name: Publish Image
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/publish-image.yml
     credentials:
       - Image Builder Credentials
-    execution_environment: Device Edge Workshops Execution Environment
+    execution_environment: Device Edge Execution Environment
     become_enabled: true
-    notification_templates_success: "Slack Notification"
-
-
-
-  - name: Copy config files
-    organization: "User{{ user_number }} Organization"
-    inventory: Edge Devices
-    ask_inventory_on_launch: true
-    project: Device Edge Codebase
-    playbook: playbooks/copy-os-files.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-
-
-  - name: Reboot devices
-    organization: "User{{ user_number }} Organization"
-    ask_inventory_on_launch: true
-    inventory: Edge Devices
-    project: Device Edge Codebase
-    playbook: playbooks/reboot-devices.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-
-
-
-  - name: Run command
-    organization: "User{{ user_number }} Organization"
-    inventory: Edge Devices
-    project: Device Edge Codebase
-    playbook: playbooks/run-command.yml
-    credentials:
-      - Device Credentials
-    execution_environment: Device Edge Workshops Execution Environment
-    become_enabled: true
-    ask_variables_on_launch: true
-    extra_vars: 
-        command_to_execute: date
 
 controller_workflows:
   - name: Provision Edge Device
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     state: present
     allow_simultaneous: true
     survey_enabled: false
@@ -307,12 +175,9 @@ controller_workflows:
           - Initial Device Configuration
       - identifier: Initial Device Configuration
         unified_job_template: Initial Device Configuration
-    notification_templates_success: "Slack Notification"
-
-
 
   - name: New Edge Device Image
-    organization: "User{{ user_number }} Organization"
+    organization: "{{ gitea_user_name }}{{ user_number }} Organization"
     state: present
     allow_simultaneous: false
     survey_enabled: false
@@ -331,67 +196,12 @@ controller_workflows:
       - identifier: Publish Image
         unified_job_template: Publish Image
     webhook_service: github
-    notification_templates_approvals: "Slack Notification"
-    notification_templates_success: "Slack Notification"
+
+{% endfor %}
 
 
-  - name: Configure Edge Device
-    organization: "User{{ user_number }} Organization"
-    state: present
-    allow_simultaneous: false
-    survey_enabled: false
-    inventory: Edge Devices
-    ask_inventory_on_launch: true
-    simplified_workflow_nodes:
-      - identifier: Copy config files
-        unified_job_template: Copy config files
-      #  success_nodes:
-      #    - Reboot approval
-      #- identifier: Reboot approval
-      #  approval_node:
-      #    name: Approve the reboot
-      #    description: Reboot the device if it's needed
-      #    timeout: 0
-      #  success_nodes:
-      #    - Reboot devices
-      #- identifier: Reboot devices
-      #  unified_job_template: Reboot devices
-    webhook_service: github
-    notification_templates_approvals: "Slack Notification"
-    notification_templates_success: "Slack Notification"
 
 
-  - name: OSTree Upgrade
-    organization: "User{{ user_number }} Organization"
-    state: present
-    allow_simultaneous: true
-    survey_enabled: false
-    inventory: Edge Devices
-    simplified_workflow_nodes:
-      - identifier: Run command
-        unified_job_template: Run command
-        extra_vars: 
-            command_to_execute: rpm-ostree upgrade
-        success_nodes:
-          - Reboot approval
-      - identifier: Reboot approval
-        approval_node:
-          name: Approve the reboot
-          description: Reboot the device approval
-          timeout: 0
-        success_nodes:
-          - Reboot devices
-      - identifier: Reboot devices
-        unified_job_template: Reboot devices
-    notification_templates_success: "Slack Notification"
 
 
-controller_notifications:
-  - name: Slack Notification
-    description: "Notification to Slack channel #general"
-    organization: "User{{ user_number }} Organization"
-    notification_type: slack
-    notification_configuration:
-      token: "{{ slack_app_token }}" 
-      channels:
-      - "#general"
+
