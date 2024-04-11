@@ -1,0 +1,23 @@
+---
+
+- name: run a workflow on controller
+  hosts:
+    - all
+  gather_facts: false
+  vars:
+    controller_hostname:  "{{ ansible_host }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    controller_validate_certs: false
+    controller_workflow_launch_jobs:
+      - name: Provision Edge Device
+        wait: true
+{% raw %}
+        organization: "Student{{ student }} Organization"
+        extra_vars:
+          student: "{{ student }}"
+          ip_address: "{{ ip_address }}"
+          mac_address: "{{ mac_address }}"
+{% endraw %}
+  roles:
+    - /opt/eda/collections/ansible_collections/redhat_cop/controller_configuration/roles/workflow_launch

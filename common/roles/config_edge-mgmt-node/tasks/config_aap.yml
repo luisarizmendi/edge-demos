@@ -9,6 +9,18 @@
 - name: Load variables
   ansible.builtin.include_vars: "/tmp/aap_config.yml"
 
+
+### CONTROLLER
+
+- name: Generate AAP config
+  delegate_to: localhost
+  template:
+    src: "{{ aap_config_template }}"
+    dest: /tmp/aap_config.yml
+
+- name: Load variables
+  ansible.builtin.include_vars: "/tmp/aap_config.yml"
+
 ## Cross Organization
 - name: configure execution environments
   when: controller_execution_environments is defined
@@ -57,7 +69,6 @@
   vars:
     controller_username: "{{ gitea_user_name }}{{ user_number }}"
     controller_password: "{{ gitea_user_password }}{{ user_number }}"
-    user_number: "{{ user_number }}"
   loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
   loop_control:
     loop_var: user_number
@@ -69,7 +80,6 @@
   vars:
     controller_username: "{{ gitea_user_name }}{{ user_number }}"
     controller_password: "{{ gitea_user_password }}{{ user_number }}"
-    user_number: "{{ user_number }}"
   loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
   loop_control:
     loop_var: user_number
@@ -81,7 +91,6 @@
   vars:
     controller_username: "{{ gitea_user_name }}{{ user_number }}"
     controller_password: "{{ gitea_user_password }}{{ user_number }}"
-    user_number: "{{ user_number }}"
   loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
   loop_control:
     loop_var: user_number
@@ -93,7 +102,6 @@
   vars:
     controller_username: "{{ gitea_user_name }}{{ user_number }}"
     controller_password: "{{ gitea_user_password }}{{ user_number }}"
-    user_number: "{{ user_number }}"
   loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
   loop_control:
     loop_var: user_number
@@ -105,7 +113,6 @@
   vars:
     controller_username: "{{ gitea_user_name }}{{ user_number }}"
     controller_password: "{{ gitea_user_password }}{{ user_number }}"
-    user_number: "{{ user_number }}"
   loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
   loop_control:
     loop_var: user_number
@@ -116,12 +123,49 @@
   vars:
     controller_username: "{{ gitea_user_name }}{{ user_number }}"
     controller_password: "{{ gitea_user_password }}{{ user_number }}"
-    user_number: "{{ user_number }}"
   loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
   loop_control:
     loop_var: user_number
   when: controller_notifications is defined
 
+
+
+
+
+
+### EDA
+
+- name: configure EDA users
+  when: eda_users_yaml is defined
+  ansible.builtin.include_role:
+    name: infra.eda_configuration.user
+  vars:
+    eda_users: "{{ eda_users_yaml|from_yaml }}"
+
+
+## User specific (needs to look over users)
+
+- name: configure EDA credentials
+  when: eda_credentials is defined
+  ansible.builtin.include_role:
+    name: infra.eda_configuration.credential
+  vars:
+    eda_username: "{{ gitea_user_name }}{{ user_number }}"
+    eda_password: "{{ gitea_user_password }}{{ user_number }}"
+  loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
+  loop_control:
+    loop_var: user_number
+
+- name: configure EDA projects
+  when: eda_projects is defined
+  ansible.builtin.include_role:
+    name: infra.eda_configuration.project
+  vars:
+    eda_username: "{{ gitea_user_name }}{{ user_number }}"
+    eda_password: "{{ gitea_user_password }}{{ user_number }}"
+  loop: "{{ range(1, (gitea_user_count + 1), 1)|list }}"
+  loop_control:
+    loop_var: user_number
 
 
 
