@@ -147,3 +147,16 @@
       shell: |
         cd /home/{{ ansible_user }}/aap_install
         ansible-playbook -i inventory ansible.containerized_installer.install > /home/{{ ansible_user }}/.aap_install.log 2>&1
+
+    - name: Open TCP ports for EDA
+      become: true
+      firewalld:
+        port: "{{ eda_webhook_port | default('5000') }}/tcp"
+        permanent: yes
+        state: enabled
+        zone: public
+
+    - name: Reload firewall
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded

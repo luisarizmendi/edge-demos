@@ -6,36 +6,41 @@
   sources:
     - ansible.eda.webhook:
         host: 0.0.0.0
-        port: 8445
+        port: "{% endraw %}{{ eda_webhook_port | default('5000') }}{% raw %}"
 
   rules:
     - name: Trigger provisioning workflow
-      condition: event.payload.ip_address is defined and event.payload.mac_address is defined and event.payload.student is defined
-
+      condition: 
+        all: 
+            - event.payload.ip_address is defined 
+            - event.payload.mac_address is defined 
+            - event.payload.user is defined
       action:
-        run_playbook:
-          name: run-workflow-provision-device.yml
-          extra_vars:
-            ip_address: "{{ event.payload.ip_address }}"
-            student: "{{ event.payload.student }}"
-            mac_address: "{{ event.payload.mac_address }}"
+        run_workflow_template: 
+          name: Provision Edge Device
+          organization: "{{ user }} Organization"
+          job_args:
+            extra_vars:
+              student: "{{ user }}"
+              ip_address: "{{ ip_address }}"
+              mac_address: "{{ mac_address }}"
 
 
-    - name: Create new device image
-      condition: "'production-image-definition.yml' in event.payload.commits[0].modified"
-      action:
-        run_playbook:
-          name: run-workflow-create-device-image.yml
-          extra_vars:
-            username: "{{ event.payload.repository.owner.login | capitalize }}"
+#    - name: Create new device image
+#      condition: "'production-image-definition.yml' in event.payload.commits[0].modified"
+#      action:
+#        run_playbook:
+#          name: run-workflow-create-device-image.yml
+#          extra_vars:
+#            username: "{{ event.payload.repository.owner.login | capitalize }}"
 
-    - name: Publish new device image
-      condition: "('production-image-deploy.yml' in event.payload.commits[0].modified or 'production-kickstart.ks' in event.payload.commits[0].modified) and 'production-image-definition.yml' not in event.payload.commits[0].modified "
-      action:
-        run_playbook:
-          name: run-task-publish-device-image.yml
-          extra_vars:
-            username: "{{ event.payload.repository.owner.login | capitalize }}"
+#    - name: Publish new device image
+#      condition: "('production-image-deploy.yml' in event.payload.commits[0].modified or 'production-kickstart.ks' in event.payload.commits[0].modified) and 'production-image-definition.yml' not in event.payload.commits[0].modified "
+#      action:
+#        run_playbook:
+#          name: run-task-publish-device-image.yml
+#          extra_vars:
+#            username: "{{ event.payload.repository.owner.login | capitalize }}"
 
 
 {% endraw %}

@@ -1,0 +1,66 @@
+---
+
+- name: Generate AAP config
+  delegate_to: localhost
+  template:
+    src: "{{ aap_config_template }}"
+    dest: /tmp/aap_config.yml
+
+- name: Load variables
+  ansible.builtin.include_vars: "/tmp/aap_config.yml"
+
+
+### CONTROLLER
+
+- name: Generate AAP config
+  delegate_to: localhost
+  template:
+    src: "{{ aap_config_template }}"
+    dest: /tmp/aap_config.yml
+
+- name: Load variables
+  ansible.builtin.include_vars: "/tmp/aap_config.yml"
+
+
+
+
+# Admin Token for EDA
+
+
+- name: Create Personal Access Token
+  shell: |
+    set -x
+    hostname
+    ANSIBLE_CONTROLLER_URL="https://{{ controller_hostname }}"
+    USERNAME="{{ controller_username }}"
+    PASSWORD="{{ controller_password }}"
+
+    cat <<EOF > /tmp/token_request.json
+    {
+      "name": "Admin Token",
+      "scope": "write"
+    }
+    EOF
+
+    response=$(curl -k -X POST -H "Content-Type: application/json" -u "${USERNAME}:${PASSWORD}" -d "@/tmp/token_request.json" "${ANSIBLE_CONTROLLER_URL}/api/v2/tokens/")
+
+    token=$(echo "$response" | grep -o '"token": *"[^"]*"' | awk -F'"' '{print $4}')
+
+    echo "$token"
+  register: _token_output
+  delegate_to: localhost
+
+- name: Set Token as Ansible Variable
+  set_fact:
+    _auth_token: "{{ _token_output.stdout_lines[-1] }}"
+
+- name: configure EDA Tokens
+  when: eda_user_tokens is defined
+  ansible.builtin.include_role:
+    name: infra.eda_configuration.user_token
+  vars: 
+    eda_user_tokens:
+      - name: Controller Token
+        token: "{{ _auth_token }}"
+
+      

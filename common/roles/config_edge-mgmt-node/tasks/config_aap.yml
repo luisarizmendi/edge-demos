@@ -159,8 +159,7 @@
 
 - name: Set Token as Ansible Variable
   set_fact:
-    _auth_token: "{{ _token_output.stdout }}"
-
+    _auth_token: "{{ _token_output.stdout_lines[-1] }}"
 
 
 ### EDA
