@@ -233,3 +233,14 @@ eda_projects:
     url: http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{{ gitea_admin_name }}/{{ eda_repo_name | default('eda') }}.git
     credential: Gitea Credentials
 
+eda_user_tokens:
+  - name: Controller Token
+
+eda_rulebook_activations:
+  - name: Gitea Hook
+    description: Hook to listen for changes in Gitea
+    project: Device Edge Codebase
+    rulebook: rulebook.yml
+    decision_environment: Default Decision Environment
+    enabled: true
+    state: present
