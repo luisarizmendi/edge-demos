@@ -16,6 +16,7 @@
         - "{{ gitea_port | default('3000') }}/tcp"
 
     - name: Reload firewall
+      become: true
       ansible.builtin.systemd:
         name: firewalld
         state: reloaded
@@ -52,6 +53,8 @@
           USER_UID: "1000"
           USER_GID: "1000"
           GITEA__security__INSTALL_LOCK: true
+          GITEA__webhook__ALLOWED_HOST_LIST: "*"
+          GITEA__server__ROOT_URL: "http://{{ ansible_hostname }}:{{ gitea_port | default('3000') }}"
         volumes:
           - /home/{{ ansible_user }}/gitea:/data
           - /etc/localtime:/etc/localtime:ro

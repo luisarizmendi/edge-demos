@@ -9,7 +9,35 @@
         port: "{% endraw %}{{ eda_webhook_port | default('5000') }}{% raw %}"
 
   rules:
-    - name: Trigger provisioning workflow
+    - name: Create new device image
+      condition: "'production-image-definition.yml' in event.payload.commits[0].modified"
+      action:
+        run_workflow_template: 
+          name: Provision Edge Device
+          organization: "{{ event.payload.repository.owner.login | capitalize }} Organization"
+          job_args:
+            extra_vars:
+              images_repo: "rhde/rhde_image"
+              image_definition_file: "production-image-definition.yml"
+
+    - name: Publish new device image
+      condition:
+        all:  
+          - ('production-deploy_version.yml' in event.payload.commits[0].modified or 'production-kickstart.ks' in event.payload.commits[0].modified) 
+          - 'production-image-definition.yml' not in event.payload.commits[0].modified
+      action:
+        run_job_template: 
+          name: Publish Image
+          organization: "{{ event.payload.repository.owner.login | capitalize }} Organization"
+          job_args:
+            extra_vars:
+              images_repo: "device-edge-images"
+              image_definition_file: "production-image-definition.yml"
+              image_deploy_file: "production-image-deploy.yml"
+              builder_blueprint_name: "production-{{ event.payload.repository.owner.login | capitalize }}"
+              image_environment: "prod"
+
+    - name: Initial provisioning 
       condition: 
         all: 
             - event.payload.ip_address is defined 
@@ -21,26 +49,8 @@
           organization: "{{ user }} Organization"
           job_args:
             extra_vars:
-              student: "{{ user }}"
+              user: "{{ user }}"
               ip_address: "{{ ip_address }}"
               mac_address: "{{ mac_address }}"
-
-
-#    - name: Create new device image
-#      condition: "'production-image-definition.yml' in event.payload.commits[0].modified"
-#      action:
-#        run_playbook:
-#          name: run-workflow-create-device-image.yml
-#          extra_vars:
-#            username: "{{ event.payload.repository.owner.login | capitalize }}"
-
-#    - name: Publish new device image
-#      condition: "('production-image-deploy.yml' in event.payload.commits[0].modified or 'production-kickstart.ks' in event.payload.commits[0].modified) and 'production-image-definition.yml' not in event.payload.commits[0].modified "
-#      action:
-#        run_playbook:
-#          name: run-task-publish-device-image.yml
-#          extra_vars:
-#            username: "{{ event.payload.repository.owner.login | capitalize }}"
-
 
 {% endraw %}

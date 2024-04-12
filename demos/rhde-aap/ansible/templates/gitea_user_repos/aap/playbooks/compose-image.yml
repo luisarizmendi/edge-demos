@@ -3,9 +3,6 @@
 - name: compose an image via Image Builder
   hosts:
     - all
-  vars:
-    images_repo: "device-edge-images"
-    image_definition_file: "production-image-definition.yml"
   tasks:
 
     - name: Import Image definition variables from remote file

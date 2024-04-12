@@ -157,6 +157,7 @@
         zone: public
 
     - name: Reload firewall
+      become: true
       ansible.builtin.systemd:
         name: firewalld
         state: reloaded

@@ -4,10 +4,7 @@
 - name: compose an image via Image Builder
   hosts:
     - all
-  vars:
-    images_repo: "device-edge-images"
-    image_definition_file: "production-image-definition.yml"
-    image_deploy_file: "production-image-deploy.yml"
+
   tasks:
 
     - name: Import Image definition variables from remote file
@@ -93,18 +90,18 @@
 
     - name: Create a tmp directory if it does not exist
       ansible.builtin.file:
-        path:  /tmp/student-repos/{{ gitea_user_name }}{{ user_number }}
+        path:  /tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}
         state: directory
 
     - name: Export the compose artifact
       infra.osbuild.export_compose:
         compose_id: "{% raw %}{{ image_id }}{% endraw %}"
-        dest: "/tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/{{ gitea_user_name }}{{ user_number }}-image_{% raw %}{{ image_id }}{% endraw %}.tar"
+        dest: "/tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/{{ gitea_user_name }}{{ user_number }}-image_{% raw %}{{ image_id }}{% endraw %}.tar"
 
     - name: Untar artifact
       ansible.builtin.unarchive:
-        src: /tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/{{ gitea_user_name }}{{ user_number }}-image_{% raw %}{{ image_id }}{% endraw %}.tar
-        dest: /tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/
+        src: /tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/{{ gitea_user_name }}{{ user_number }}-image_{% raw %}{{ image_id }}{% endraw %}.tar
+        dest: /tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/
         remote_src: true
 
 
@@ -121,26 +118,26 @@
 ####################################################
 
 {% raw %}
-#    - shell: ostree refs --repo=/tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/repo
+#    - shell: ostree refs --repo=/tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/repo
 #      register: builder_blueprint_ref
 
 #    - name: Get checksum from artifact
 #      become: true
 #      ansible.builtin.command:
-#        cmd: "/usr/bin/ostree --repo=/tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/repo rev-parse {{ builder_blueprint_ref.stdout  }}"
+#        cmd: "/usr/bin/ostree --repo=/tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/repo rev-parse {{ builder_blueprint_ref.stdout  }}"
 #      register: checksum_output
 #      changed_when: false
 
 #    - name: Pull commit from artifact
 #      become: true
 #      ansible.builtin.command:
-#        cmd: "/usr/bin/ostree --repo=/var/www/html/student-repos/{{ gitea_user_name }}{{ user_number }}/repo pull-local /tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/repo {{ checksum_output['stdout'] }}"
+#        cmd: "/usr/bin/ostree --repo=/var/www/html/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/repo pull-local /tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/repo {{ checksum_output['stdout'] }}"
 #      changed_when: true
 
 #    - name: Commit changes to repository
 #      become: true
 #      ansible.builtin.command:
-#        cmd: "/usr/bin/ostree --repo=/var/www/html/student-repos/{{ gitea_user_name }}{{ user_number }}/repo commit -b {{ builder_blueprint_ref.stdout  }} -s 'Release {{ image_version }}' --add-metadata-string=version={{ image_version }} --tree=ref={{ checksum_output['stdout'] }}"
+#        cmd: "/usr/bin/ostree --repo=/var/www/html/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/repo commit -b {{ builder_blueprint_ref.stdout  }} -s 'Release {{ image_version }}' --add-metadata-string=version={{ image_version }} --tree=ref={{ checksum_output['stdout'] }}"
 #      changed_when: true
 {% endraw %}
 
@@ -148,35 +145,35 @@
 ## IN ORDER TO WORKAROUND WHILE THAT'S FIXED WE CAN JUST COPY THE NEW FILES IN THE HTTP SERVER
 
 
-    - name: Create ostree-repo students directory if it does not exist
+    - name: Create ostree-repo users directory if it does not exist
       ansible.builtin.file:
-        path:  /var/www/html/student-repos/{{ gitea_user_name }}{{ user_number }}
+        path:  /var/www/html/user-repos/{{ gitea_user_name }}{{ user_number }}
         state: directory
 
     - name: Remove old repo directory if it existed
       ansible.builtin.file:
-        path: /var/www/html/student-repos/{{ gitea_user_name }}{{ user_number }}/repo
+        path: /var/www/html/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/repo
         state: absent
 
     - name: Copy the new repo
       ansible.builtin.copy:
         remote_src: true
-        src: /tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/repo
-        dest: /var/www/html/student-repos/{{ gitea_user_name }}{{ user_number }}
+        src: /tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/repo
+        dest: /var/www/html/user-repos/{{ gitea_user_name }}{{ user_number }}
 
 
     - name: Remove tar file
       ansible.builtin.file:
-        path: "/tmp/student-repos/{{ gitea_user_name }}{{ user_number }}/{{ gitea_user_name }}{{ user_number }}-image_{% raw %}{{ image_id }}{% endraw %}.tar"
+        path: "/tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/{{ gitea_user_name }}{{ user_number }}-image_{% raw %}{{ image_id }}{% endraw %}.tar"
         state: absent
 
     - name: Remove tmp directory
       ansible.builtin.file:
-        path: "/tmp/student-repos/{{ gitea_user_name }}{{ user_number }}"
+        path: "/tmp/user-repos/{{ gitea_user_name }}{{ user_number }}"
         state: absent
 
     - name: Restore context on directory
-      ansible.builtin.command: "restorecon -R /var/www/html/student-repos/{{ gitea_user_name }}{{ user_number }}"
+      ansible.builtin.command: "restorecon -R /var/www/html/user-repos/{{ gitea_user_name }}{{ user_number }}"
       changed_when: true
 
 
@@ -184,21 +181,21 @@
 # Copy kickstart
 ############
 
-    - name: Create kickstart students directory if it does not exist
+    - name: Create kickstart users directory if it does not exist
       ansible.builtin.file:
-        path:  /var/www/html/student-kickstarts/{{ gitea_user_name }}{{ user_number }}
+        path:  /var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}
         state: directory
 
-    - name: Create tmp kickstart students directory if it does not exist
+    - name: Create tmp kickstart users directory if it does not exist
       ansible.builtin.file:
-        path:  /tmp/student-kickstarts/{{ gitea_user_name }}{{ user_number }}
+        path:  /tmp/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}
         state: directory
 
     - name: Download production kickstart
       shell: |
-        curl -k -o /var/www/html/student-kickstarts/{{ gitea_user_name }}{{ user_number }}/kickstart.ks -H "Authorization: Basic $(echo -n '{{ gitea_user_name }}{{ user_number }}:{{  gitea_user_password }}{{ user_number  }}' | base64)" http://{{ ansible_hostname }}/{{ gitea_user_name }}{{ user_number }}/rhde/raw/branch/main/prod/rhde_image/kickstart.ks
+        curl -k -o /var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}/kickstart.ks -H "Authorization: Basic $(echo -n '{{ gitea_user_name }}{{ user_number }}:{{  gitea_user_password }}{{ user_number  }}' | base64)" http://{{ ansible_hostname }}/{{ gitea_user_name }}{{ user_number }}/rhde/raw/branch/main/prod/rhde_image/kickstart.ks
 
     - name: Restore context on directory
-      ansible.builtin.command: "restorecon -R /var/www/html/student-kickstarts/{{ gitea_user_name }}{{ user_number }}"
+      ansible.builtin.command: "restorecon -R /var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{{ image_environment }}"
       changed_when: true
 
