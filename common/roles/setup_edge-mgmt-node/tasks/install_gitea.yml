@@ -14,7 +14,11 @@
         zone: public
       loop:
         - "{{ gitea_port | default('3000') }}/tcp"
-        - 3306/tcp
+
+    - name: Reload firewall
+      ansible.builtin.systemd:
+        name: firewalld
+        state: reloaded
 
     - name: Ensure required directories exist
       file:

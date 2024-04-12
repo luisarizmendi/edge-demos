@@ -6,7 +6,7 @@
   sources:
     - ansible.eda.webhook:
         host: 0.0.0.0
-        port: 5000
+        port: 8445
 
   rules:
     - name: Trigger provisioning workflow
@@ -14,7 +14,7 @@
 
       action:
         run_playbook:
-          name: run-workflow.yml
+          name: run-workflow-provision-device.yml
           extra_vars:
             ip_address: "{{ event.payload.ip_address }}"
             student: "{{ event.payload.student }}"
@@ -38,73 +38,4 @@
             username: "{{ event.payload.repository.owner.login | capitalize }}"
 
 
-    - name: Create APPs
-      condition: "event.payload.commits[0].modified is search('APPs/podman/quadlet',ignorecase=true)"
-      action:
-        run_playbook:
-          name: run-task-app-quadlet.yml
-          extra_vars:
-            username: "{{ event.payload.repository.owner.login | capitalize }}"
-
-
-    - name: Config all devices
-      condition: "event.payload.commits[0].modified is search('OS/',ignorecase=true)  or event.payload.commits[0].added is search('OS/',ignorecase=true)"
-      action:
-        run_playbook:
-          name: run-workflow-configure-devices.yml
-          extra_vars:
-            username: "{{ event.payload.repository.owner.login | capitalize }}"
-  
-
-
-    - name: Config specific device
-      condition: "event.payload.inventory is defined and event.payload.student is defined"
-      action:
-        run_playbook:
-          name: run-workflow-configure-devices.yml
-          extra_vars:
-            username: "Student{{ event.payload.student }}"
-            inventory: "{{ event.payload.inventory }}"
-  
-
-############ CONFIGURE this in Quay:
-# URL
-# https://eda.xxx.xxx.xxx/endpoint
-
-# POST body template 
-#
-#{
-#"name": "${name}",
-#"repository": "${repository}",
-#"updated_tags": "${updated_tags}",
-#"student": "1"
-#}
-#
-    - name: Update APP container image in microshift
-      condition: event.payload.name is defined and event.payload.repository is defined and event.payload.updated_tags is defined and event.payload.student is defined
-      action:
-        run_playbook:
-          name: update-container-image-microshift.yml
-          extra_vars:
-            name: "{{ event.payload.name }}"
-            image: "{{ event.payload.repository }}"
-            tag: "{{ event.payload.updated_tags[0] }}"
-            student: "{{ event.payload.student }}"
-############
-
-    - name: Deploy Microshift APP with manifest
-      condition: "event.payload.commits[0].modified is search('APPs/microshift/manifest',ignorecase=true)"
-      action:
-        run_playbook:
-          name: run-task-microshift-manifest.yml
-          extra_vars:
-            username: "{{ event.payload.repository.owner.login | capitalize }}"
-
-    - name: Deploy Microshift APP with helm
-      condition: "event.payload.commits[0].modified is search('APPs/microshift/helm',ignorecase=true)"
-      action:
-        run_playbook:
-          name: run-task-microshift-helm.yml
-          extra_vars:
-            username: "{{ event.payload.repository.owner.login | capitalize }}"
 {% endraw %}
