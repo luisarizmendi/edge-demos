@@ -18,7 +18,7 @@
 
             - name: Set EDA webhook URL
               set_fact:
-                eda_webhook_url: "http:/{{ eda_ip | default(ansible_host) }}:{{ eda_webhook_port | default('5000') }}"
+                eda_webhook_url: "http://{{ eda_ip | default(ansible_host) }}:{{ eda_webhook_port | default('5000') }}"
 
             - name: Set Webhook URL
               set_fact:
