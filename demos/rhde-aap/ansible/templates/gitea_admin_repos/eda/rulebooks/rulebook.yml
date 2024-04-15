@@ -9,29 +9,29 @@
         port: "{% endraw %}{{ eda_webhook_port | default('5000') }}{% raw %}"
 
   rules:
-    - name: Create new device image
-      condition: "'production-image-definition.yml' in event.payload.commits[0].modified"
+    - name: New Edge Device Image
+      condition: "'prod/rhde_image/production-image-definition.yml' in event.payload.commits[0].modified"
       action:
         run_workflow_template: 
-          name: Provision Edge Device
-          organization: "{{ event.payload.repository.owner.login | capitalize }} Organization"
+          name: New Edge Device Image
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
           job_args:
             extra_vars:
-              images_repo: "rhde/rhde_image"
-              image_definition_file: "production-image-definition.yml"
+              images_repo: "rhde"
+              image_definition_file: "prod/rhde_image/production-image-definition.yml"
 
     - name: Publish new device image
-      condition: ('production-deploy_version.yml' in event.payload.commits[0].modified or 'production-kickstart.ks' in event.payload.commits[0].modified) and 'production-image-definition.yml' not in event.payload.commits[0].modified
+      condition: "('prod/rhde_image/production-deploy_version.yml' in event.payload.commits[0].modified or 'prod/rhde_image/production-kickstart.ks' in event.payload.commits[0].modified) and 'prod/rhde_image/production-image-definition.yml' not in event.payload.commits[0].modified"
       action:
         run_job_template:
           name: Publish Image
-          organization: "{{ event.payload.repository.owner.login | capitalize }} Organization"
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
           job_args:
             extra_vars:
               images_repo: "device-edge-images"
               image_definition_file: "production-image-definition.yml"
               image_deploy_file: "production-image-deploy.yml"
-              builder_blueprint_name: "production-{{ event.payload.repository.owner.login | capitalize }}"
+              builder_blueprint_name: "production-{{ event.payload.repository.owner.login }}"
               image_environment: "prod"
 
     - name: Initial provisioning 

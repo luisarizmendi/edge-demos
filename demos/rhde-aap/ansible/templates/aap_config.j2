@@ -142,6 +142,7 @@ controller_templates:
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/compose-image.yml
+    ask_variables_on_launch: true
     credentials:
       - Image Builder Credentials
     execution_environment: Device Edge Execution Environment
@@ -162,6 +163,7 @@ controller_templates:
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/publish-image.yml
+    ask_variables_on_launch: true
     credentials:
       - Image Builder Credentials
     execution_environment: Device Edge Execution Environment
@@ -191,6 +193,7 @@ controller_workflows:
     state: present
     allow_simultaneous: false
     survey_enabled: false
+    ask_variables_on_launch: true
     simplified_workflow_nodes:
       - identifier: Compose Image
         unified_job_template: Compose Image
