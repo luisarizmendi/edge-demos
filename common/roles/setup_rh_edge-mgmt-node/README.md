@@ -9,6 +9,12 @@ This Ansible Role was created to be used as a simple way of deploying all Manage
 
 ## Pre-requisites
 
+
+### Hardware Resources
+
+I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate.
+
+
 ### Ansible Collections
 
 You need to have a couple of Collections installed on your laptop:
@@ -64,7 +70,7 @@ This Pull Secret will be needed to pull the container images used by `Microshift
 
 ### Create Vault Secret file
 
-In order to now passing your secrets in plain test, you should create a vault secrets file:
+Instead of passing your secrets in plain text, it's better that you create a vault secret file:
 
 ```bash
 mkdir vars
@@ -167,7 +173,7 @@ ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml
 
 ### Access the services
 
-Once the role finish (you might need to wait a little bit after the role completion), you will be able to access the service in these ports (if you didn't customize them):
+Once the role finishes (you might need to wait a little bit after the role completion), you will be able to access the service in these ports (if you didn't customize them):
 
 * Ansible Automation Platform Controller: 8080 (HTTP) / 8443 (HTTPS)
 * Ansible Automation Platform Hub:  8081 (HTTP) / 8444 (HTTPS)

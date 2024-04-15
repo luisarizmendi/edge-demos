@@ -5,6 +5,12 @@
         state: latest
         name: "git"
 
+    - name: Install Podman
+      become: true
+      ansible.builtin.dnf:
+        state: latest
+        name: "podman"
+
     - name: Open TCP ports for AAP Controller
       become: true
       firewalld:
