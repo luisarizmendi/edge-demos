@@ -1,0 +1,61 @@
+
+        - name: Configure webhooks
+          block:
+            - name: Get webhooks from Gitea
+              ansible.builtin.uri:
+                url: "http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/api/v1/repos/{{  gitea_user_name }}{{ item[0] }}/{{ item[1]  }}/hooks"
+                method: GET
+                user: "{{  gitea_user_name }}{{ item[0] }}"
+                password: "{{   gitea_user_password }}{{ item[0]   }}"
+                force_basic_auth: true
+                return_content: yes
+              register: existing_webhooks
+              changed_when: false
+              delegate_to: localhost
+
+            - set_fact:
+                existing_webhooks_json: "{{ existing_webhooks.content  | from_json }}"
+
+            - name: Set EDA webhook URL
+              set_fact:
+                eda_webhook_url: "http:/{{ eda_ip | default(ansible_host) }}:{{ eda_webhook_port | default('5000') }}"
+
+            - name: Set Webhook URL
+              set_fact:
+                gitea_webhook_url: "http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/api/v1/repos/{{  gitea_user_name }}{{ item[0] }}/{{ item[1]  }}/hooks/"
+
+
+            - name: Check if webhook exists
+              set_fact:
+                webhook_exists: "{{ eda_webhook_url in existing_webhooks_json[0].config.url }}"
+              when: existing_webhooks.content is defined and existing_webhooks.content | length > 3
+
+
+            - name: Check if webhook exists
+              set_fact:
+                webhook_exists: false
+              when: existing_webhooks.content is not defined or existing_webhooks.content | length < 4
+
+
+            - name: Create Webhook
+              ansible.builtin.uri:
+                url: "{{ gitea_webhook_url }}"
+                validate_certs: false
+                user: "{{  gitea_user_name }}{{ item[0] }}"
+                password: "{{   gitea_user_password }}{{ item[0]   }}"
+                force_basic_auth: true
+                body_format: json
+                method: POST
+                body:
+                  branch_filter: "main"
+                  type: "gitea"
+                  config: "{ \"url\": \"{{ eda_webhook_url }}\" , \"content_type\": \"json\" , \"secret\": \"\" }"
+                  events: 
+                    - push
+                  active: true
+                status_code:
+                  - 201
+                  - 409
+              when: not webhook_exists or webhook_exists is undefined
+              delegate_to: localhost
+

@@ -1,11 +1,5 @@
 ---
 
-
-#- name: import aap tasks
-#  ansible.builtin.import_tasks: test.yml
-#  when: include_aap | default(false)
-
-
 #- name: import image-builder tasks
 #  ansible.builtin.import_tasks: config_image-builder.yml
 #  when: include_image_builder | default(false)

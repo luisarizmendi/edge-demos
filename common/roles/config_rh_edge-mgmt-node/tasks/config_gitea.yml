@@ -203,3 +203,10 @@
             git checkout -b main
             git push -u origin main
           loop: "{{ range(1, gitea_user_count + 1) | product(repo_names) | list }}"
+
+        - name: Config webhook for all users
+          when: gitea_webhook_target is defined
+          ansible.builtin.include_tasks: config_gitea_webhooks.yml
+          with_nested: 
+            - "{{ range(1, (gitea_user_count + 1), 1)|list }}"
+            - "{{ repo_names }}"

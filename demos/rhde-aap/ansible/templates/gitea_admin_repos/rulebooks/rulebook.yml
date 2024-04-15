@@ -21,12 +21,9 @@
               image_definition_file: "production-image-definition.yml"
 
     - name: Publish new device image
-      condition:
-        all:  
-          - ('production-deploy_version.yml' in event.payload.commits[0].modified or 'production-kickstart.ks' in event.payload.commits[0].modified) 
-          - 'production-image-definition.yml' not in event.payload.commits[0].modified
+      condition: ('production-deploy_version.yml' in event.payload.commits[0].modified or 'production-kickstart.ks' in event.payload.commits[0].modified) and 'production-image-definition.yml' not in event.payload.commits[0].modified
       action:
-        run_job_template: 
+        run_job_template:
           name: Publish Image
           organization: "{{ event.payload.repository.owner.login | capitalize }} Organization"
           job_args:
@@ -52,5 +49,5 @@
               user: "{{ user }}"
               ip_address: "{{ ip_address }}"
               mac_address: "{{ mac_address }}"
-
+  execution_strategy: "parallel"
 {% endraw %}

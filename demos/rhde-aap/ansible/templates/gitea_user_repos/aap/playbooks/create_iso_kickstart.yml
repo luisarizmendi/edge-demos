@@ -3,14 +3,14 @@
 - name: Embed Kickstart in ISO
   hosts:
     - all
-  gather_facts: no 
+  gather_facts: false 
   vars:
     iso_standard: "/home/ansible/rhel.iso"
     kickstart_http_location: "http://{{ ansible_host }}/student-kickstarts/{{ gitea_user_name }}{{ user_number }}/kickstart.ks"
     iso_dst_path: "/var/www/html/student-isos/{{ gitea_user_name }}{{ user_number }}"
     iso_name: "rhel-custom-kickstart.iso"
     basearch: "x86_64"
-{% raw %}{% endraw %}
+
   tasks:
     - name: Creating ISO image with kickstart embedded
       block:
@@ -86,4 +86,4 @@
 
         - ansible.builtin.debug:
             msg: "Download the ISO from http://{{ ansible_host }}/student-isos/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ iso_name }}{% endraw %}"
-      become: yes
+      become: true
