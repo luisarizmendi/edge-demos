@@ -1,4 +1,4 @@
-# setup_edge-mgmt-node role
+# setup_rh_edge-mgmt-node role
 
 This Ansible Role was created to be used as a simple way of deploying all Management components that you would need to run a Red Hat Edge Management DEMO:
 

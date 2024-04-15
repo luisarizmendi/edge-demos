@@ -17,16 +17,16 @@
 
             - name: Clone repo 
               ansible.builtin.shell:            
-                cmd: "git clone http://{{ gitea_user_name }}{{ user_number }}:'{{  gitea_user_password }}{{ user_number  }}'@{{ ansible_host }}:3001/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ images_repo }}{% endraw %}.git /tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images"
+                cmd: "git clone http://{{ gitea_user_name }}{{ user_number }}:'{{  gitea_user_password }}{{ user_number  }}'@{{ ansible_host }}:{{ gitea_port | default('3000') }}/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ images_repo }}{% endraw %}.git /tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images"
                 #chdir: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}"
 
             - name: Import image definition
               ansible.builtin.include_vars:
-                file: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images/{% raw %}{{ image_definition_file }}{% endraw %}"
+                file: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images/{% raw %}{{ files_path }}/{{ image_definition_file }}{% endraw %}"
 
             - name: Import version to deploy
               ansible.builtin.include_vars:
-                file: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images/{% raw %}{{ image_deploy_file }}{% endraw %}"
+                file: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images/{% raw %}{{ files_path }}/{{ image_deploy_file }}{% endraw %}"
 
             - name: Remove tmp directory
               ansible.builtin.file:
@@ -39,7 +39,7 @@
 
 {% raw %}
     - ansible.builtin.debug:
-        msg: "Selected version: {{ production_image_version }}"
+        msg: "Selected version: {{ image_version }}"
 
 
     - name: Export the compose artifact
@@ -66,9 +66,9 @@
 
         - name: Set version number
           set_fact:
-            production_image_version: "{{ latest_image_version_blueprint }}"
+            image_version: "{{ latest_image_version_blueprint }}"
 
-      when: production_image_version == "latest"
+      when: image_version == "latest"
 
 
     - set_fact:
@@ -80,7 +80,7 @@
     - set_fact:
         image_id:  "{{ all_image_from_blueprint|json_query(id_query) | join(',')  }}"
       vars:
-        id_query: "[?version =='{{ production_image_version }}'].id"
+        id_query: "[?version =='{{ image_version }}'].id"
 
     - debug:
         msg:  "Selected image id: {{ image_id }}"
@@ -90,8 +90,8 @@
 
     - name: Create a tmp directory if it does not exist
       ansible.builtin.file:
-        path:  /tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}
-        state: directory
+        path:  "/tmp/user-repos/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}"
+        state: directory{% endraw %}
 
     - name: Export the compose artifact
       infra.osbuild.export_compose:
@@ -146,17 +146,17 @@
 
     - name: Create kickstart users directory if it does not exist
       ansible.builtin.file:
-        path:  /var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}
-        state: directory
+        path:  "/var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}"
+        state: directory{% endraw %}
 
     - name: Create tmp kickstart users directory if it does not exist
       ansible.builtin.file:
-        path:  /tmp/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}
-        state: directory
+        path:  "/tmp/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}"
+        state: directory{% endraw %}
 
-    - name: Download production kickstart
+    - name: Download kickstart
       shell: |
-        curl -k -o /var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}/kickstart.ks -H "Authorization: Basic $(echo -n '{{ gitea_user_name }}{{ user_number }}:{{  gitea_user_password }}{{ user_number  }}' | base64)" http://{{ ansible_hostname }}/{{ gitea_user_name }}{{ user_number }}/rhde/raw/branch/main/prod/rhde_image/kickstart.ks
+        curl -k -o /var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}/kickstart.ks -H "Authorization: Basic $(echo -n '{{ gitea_user_name }}{{ user_number }}:{{  gitea_user_password }}{{ user_number  }}' | base64)" http://{{ ansible_hostname }}/{{ gitea_user_name }}{{ user_number }}/rhde/raw/branch/main/{% raw %}{{ files_path }}{% endraw %}/kickstart.ks
 
     - name: Restore context on directory
       ansible.builtin.command: "restorecon -R /var/www/html/user-kickstarts/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}"

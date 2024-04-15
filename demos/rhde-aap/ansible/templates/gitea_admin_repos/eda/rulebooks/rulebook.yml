@@ -18,7 +18,11 @@
           job_args:
             extra_vars:
               images_repo: "rhde"
-              image_definition_file: "prod/rhde_image/production-image-definition.yml"
+              files_path: "prod/rhde_image"
+              image_definition_file: "production-image-definition.yml"
+              image_deploy_file: "production-deploy_version.yml"
+              builder_blueprint_name: "production-{{ event.payload.repository.owner.login }}"
+              image_environment: "prod"
 
     - name: Publish new device image
       condition: "('prod/rhde_image/production-deploy_version.yml' in event.payload.commits[0].modified or 'prod/rhde_image/production-kickstart.ks' in event.payload.commits[0].modified) and 'prod/rhde_image/production-image-definition.yml' not in event.payload.commits[0].modified"
@@ -28,9 +32,10 @@
           organization: "{{ event.payload.repository.owner.login  }} Organization"
           job_args:
             extra_vars:
-              images_repo: "device-edge-images"
+              images_repo: "rhde"
+              files_path: "prod/rhde_image"
               image_definition_file: "production-image-definition.yml"
-              image_deploy_file: "production-image-deploy.yml"
+              image_deploy_file: "production-deploy_version.yml"
               builder_blueprint_name: "production-{{ event.payload.repository.owner.login }}"
               image_environment: "prod"
 

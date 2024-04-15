@@ -19,7 +19,7 @@
                 #chdir: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}"
 
             - ansible.builtin.include_vars:
-                file: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images/{% raw %}{{ image_definition_file }}{% endraw %}"
+                file: "/tmp/{{ ansible_host }}/repos/{{ gitea_user_name }}{{ user_number }}/images/{% raw %}{{ files_path }}/{{ image_definition_file }}{% endraw %}"
 
             - name: Remove tmp directory
               ansible.builtin.file:
