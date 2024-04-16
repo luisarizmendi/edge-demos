@@ -107,7 +107,7 @@ The deployment will take some time, depending on the edge management device/VM.
 ### 4 - Create an ISO to deploy the image
 
 * Launch the `Create ISO Kickstart` task under "Templates" view in AAP Controller. Default variables should be ok unless you are not using default values for this demo
-* Download the ISO from the URL shown in the last `debug` message that you will find in the `Create ISO Kickstart` task output
+* Download the ISO from the URL shown in the last `debug` message that you will find in the `Create ISO Kickstart` task output (maybe you need to "Reload output" when the task is done to see the debug message at the end)
 
   >**Note**
   >

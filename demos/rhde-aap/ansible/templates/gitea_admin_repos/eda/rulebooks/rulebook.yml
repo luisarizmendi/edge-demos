@@ -46,7 +46,7 @@
       action:
         run_workflow_template: 
           name: Provision Edge Device
-          organization: "{{ event.payload.user }}} Organization"
+          organization: "{{ event.payload.user }} Organization"
           job_args:
             extra_vars:
               user: "{{ event.payload.user }}"
