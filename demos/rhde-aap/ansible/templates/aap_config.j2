@@ -147,16 +147,32 @@ controller_templates:
       - Image Builder Credentials
     execution_environment: Device Edge Execution Environment
     become_enabled: true
+    extra_vars: 
+      images_repo: "rhde"
+      files_path: "prod/rhde_image"
+      image_definition_file: "production-image-definition.yml"
+      image_deploy_file: "production-deploy_version.yml"
+      builder_blueprint_name: "production-{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}"
+      image_environment: "prod"
+
 
   - name: Create ISO Kickstart
     organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Edge Utilities
     project: Device Edge Codebase
     playbook: playbooks/create_iso_kickstart.yml
+    ask_variables_on_launch: true
     credentials:
       - Image Builder Credentials
     execution_environment: Device Edge Execution Environment
     become_enabled: true
+    extra_vars:
+      iso_standard: "/home/{{ ansible_user }}/rhel.iso"
+      kickstart_http_location: "http://{{ ansible_hostname }}/{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}/prod/production-kickstart.ks"
+      iso_dst_path: "/var/www/html/{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}/isos"
+      iso_name: "rhel-custom-kickstart.iso"
+      basearch: "x86_64"
+      kickstart_name: "production-kickstart.ks"
 
   - name: Publish Image
     organization: "{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
@@ -168,6 +184,15 @@ controller_templates:
       - Image Builder Credentials
     execution_environment: Device Edge Execution Environment
     become_enabled: true
+    extra_vars: 
+      images_repo: "rhde"
+      files_path: "prod/rhde_image"
+      image_definition_file: "production-image-definition.yml"
+      image_deploy_file: "production-deploy_version.yml"
+      builder_blueprint_name: "production-{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}"
+      image_environment: "prod"
+      kickstart_name: "production-kickstart.ks"
+
 
 controller_workflows:
   - name: Provision Edge Device

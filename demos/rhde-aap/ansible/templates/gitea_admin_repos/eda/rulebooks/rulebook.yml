@@ -38,6 +38,8 @@
               image_deploy_file: "production-deploy_version.yml"
               builder_blueprint_name: "production-{{ event.payload.repository.owner.login }}"
               image_environment: "prod"
+              kickstart_name: "production-kickstart.ks"
+
 
     - name: Initial provisioning 
       condition: 

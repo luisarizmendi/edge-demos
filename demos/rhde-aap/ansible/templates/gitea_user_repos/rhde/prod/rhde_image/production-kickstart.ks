@@ -16,7 +16,7 @@ graphical
 user --name=ansible --groups=wheel --password='{{  gitea_user_password }}{{ user_number  }}'
 rootpw --plaintext --lock '{{  gitea_user_password }}{{ user_number  }}'
 services --enabled=ostree-remount
-ostreesetup --nogpg --url=http://{{ image_builder_ip | default(ansible_host) }}/user-repos/prod/{{  gitea_user_name }}{{ user_number  }}/repo --osname=rhel --ref=rhel/9/x86_64/edge
+ostreesetup --nogpg --url=http://{{ image_builder_ip | default(ansible_host) }}/{{  gitea_user_name }}{{ user_number  }}/prod/repo --osname=rhel --ref=rhel/9/x86_64/edge
 
 %post --log=/root/kickstart-post.log
 set -x

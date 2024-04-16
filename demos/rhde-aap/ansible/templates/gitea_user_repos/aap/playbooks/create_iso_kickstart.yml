@@ -4,12 +4,6 @@
   hosts:
     - all
   gather_facts: false 
-  vars:
-    iso_standard: "/home/ansible/rhel.iso"
-    kickstart_http_location: "http://{{ ansible_host }}/student-kickstarts/{{ gitea_user_name }}{{ user_number }}/kickstart.ks"
-    iso_dst_path: "/var/www/html/student-isos/{{ gitea_user_name }}{{ user_number }}"
-    iso_name: "rhel-custom-kickstart.iso"
-    basearch: "x86_64"
 
   tasks:
     - name: Creating ISO image with kickstart embedded
@@ -21,10 +15,10 @@
           with_items:
             - /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso
             - /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
-            - /var/www/html/student-isos/{{ gitea_user_name }}{{ user_number }}
+            - /var/www/html/{{ gitea_user_name }}{{ user_number }}/isos
 
         - name: Restore context on directory
-          ansible.builtin.command: "restorecon -R /var/www/html/student-isos/{{ gitea_user_name }}{{ user_number }}"
+          ansible.builtin.command: "restorecon -R /var/www/html/{{ gitea_user_name }}{{ user_number }}/isos"
           changed_when: true
 
         - name: Mount the ISO
@@ -85,5 +79,5 @@
 
 
         - ansible.builtin.debug:
-            msg: "Download the ISO from http://{{ ansible_host }}/student-isos/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ iso_name }}{% endraw %}"
+            msg: "Download the ISO from http://{{ ansible_host }}/{{ gitea_user_name }}{{ user_number }}/isos/{% raw %}{{ iso_name }}{% endraw %}"
       become: true
