@@ -7,6 +7,18 @@ This demo is a new way of deploying the same components that you can find in [th
 It does not contain all the playbooks that you might find in  [this Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) because the idea was not to recreate it completely, but giving the enough pieces to make the demo easy to extend and customize.
 
 
+## Overview of the workflow
 
 
+## Pre-requisites
 
+
+```shell
+ansible-galaxy collection install luisarizmendi.rh_edge_mgmt
+```
+
+
+## Demo preparation
+
+
+## DEMO steps

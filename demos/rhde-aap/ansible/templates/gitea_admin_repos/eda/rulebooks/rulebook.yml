@@ -42,19 +42,15 @@
 
 
     - name: Initial provisioning 
-      condition: 
-        all: 
-            - event.payload.ip_address is defined 
-            - event.payload.mac_address is defined 
-            - event.payload.user is defined
+      condition: event.payload.ip_address is defined and event.payload.mac_address is defined and event.payload.user is defined
       action:
         run_workflow_template: 
           name: Provision Edge Device
-          organization: "{{ user }} Organization"
+          organization: "{{ event.payload.user }}} Organization"
           job_args:
             extra_vars:
-              user: "{{ user }}"
-              ip_address: "{{ ip_address }}"
-              mac_address: "{{ mac_address }}"
+              user: "{{ event.payload.user }}"
+              ip_address: "{{ event.payload.ip_address }}"
+              mac_address: "{{ event.payload.mac_address }}"
   execution_strategy: "parallel"
 {% endraw %}
