@@ -136,7 +136,7 @@
         state: absent
 
     - name: Restore context on directory
-      ansible.builtin.command: "restorecon -R /var/www/html/user-repos/{{ gitea_user_name }}{{ user_number }}"
+      ansible.builtin.command: "restorecon -R /var/www/html/{{ gitea_user_name }}{{ user_number }}"
       changed_when: true
 
 
