@@ -22,6 +22,49 @@
     - isomd5sum
     - lorax
 
+- name: Download RHEL ISO
+  when: rhel_iso_download is defined and rhel_iso_download != False
+  become: true
+  block: 
+    - name: Include secrets file with offline_token
+      include_vars:
+        file: "../vars/secrets.yml"
+
+    - name: Create installer iso path
+      ansible.builtin.file:
+        path: "{{ rhel_iso_path | default('/usr/share/rhel-iso') }}"
+        state: directory
+
+    - name: Generating an access token
+      ansible.builtin.uri:
+        url: https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+        method: POST
+        body_format: form-urlencoded
+        return_content: true
+        body:
+          grant_type: "refresh_token"
+          client_id: "rhsm-api"
+          refresh_token: "{{ offline_token }}"
+      register: temp_token
+      until: temp_token is not failed
+      retries: 15
+      delay: 20
+
+    - name: Download rhel boot iso
+      ansible.builtin.get_url:
+        url: "https://api.access.redhat.com/management/v1/images/{{ rhel_iso_download }}/download"
+        headers:
+          accept: "application/json"
+          Authorization: "Bearer {{ temp_token.json.access_token }}"
+        dest: "{{ rhel_iso_path | default('/usr/share/rhel-iso') }}/rhel-boot.iso"
+        mode: "0644"
+        checksum: "sha256: {{ rhel_iso_download }}"
+      register: download_rhel_boot_iso
+      until: download_rhel_boot_iso is not failed
+      retries: 15
+      delay: 20
+
+
 - name: Prepare Image Builder for Microshift
   become: true
   when: microshift | default(false)

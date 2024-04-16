@@ -10,7 +10,7 @@ include_image_builder: true
 microshift: true
 microshift_release: 4.14
 microshift_get_offline_images: true
-rhe_iso_download: true
+rhel_iso_download: 6a9f135b8836edd06aba1b94fd6d0e72bd97b4115a3d2a61496b33f73e0a13a5
 
 ### FDO
 include_fdo: true

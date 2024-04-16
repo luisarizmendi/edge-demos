@@ -1,4 +1,4 @@
-# setup_rh_edge-mgmt-node role
+# setup_rh_edge_mgmt_node role
 
 This Ansible Role was created to be used as a simple way of deploying all Management components that you would need to run a Red Hat Edge Management DEMO:
 
@@ -47,7 +47,7 @@ Save apart your `manifest.zip` file (location configured with the `manifest_file
 
 ### Red Hat Customer Portal Offline Token
 
-This token is used to authenticate to the customer portal and download software. It is needed to deploy the Ansible Automation Platform server.
+This token is used to authenticate to the customer portal and download software. It is needed to deploy the Ansible Automation Platform server and in order to download the standard RHEL ISO.
 
 It can be generated [here](https://access.redhat.com/management/api).
 

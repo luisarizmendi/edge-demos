@@ -15,10 +15,10 @@
           with_items:
             - /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso
             - /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
-            - /var/www/html/{{ gitea_user_name }}{{ user_number }}/isos
+            - /var/www/html/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}/isos
 
         - name: Restore context on directory
-          ansible.builtin.command: "restorecon -R /var/www/html/{{ gitea_user_name }}{{ user_number }}/isos"
+          ansible.builtin.command: "restorecon -R /var/www/html/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}/isos"
           changed_when: true
 
         - name: Mount the ISO
@@ -79,5 +79,5 @@
 
 
         - ansible.builtin.debug:
-            msg: "Download the ISO from http://{{ ansible_host }}/{{ gitea_user_name }}{{ user_number }}/isos/{% raw %}{{ iso_name }}{% endraw %}"
+            msg: "Download the ISO from http://{{ ansible_host }}/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}/isos/{% raw %}{{ iso_name }}{% endraw %}"
       become: true
