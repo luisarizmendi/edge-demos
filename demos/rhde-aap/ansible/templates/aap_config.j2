@@ -139,7 +139,7 @@ controller_templates:
     become_enabled: true
     extra_vars: 
       controller_hostname: "{{ controller_hostname }}"
-      controller_username: "{{ aap_user_password }}{% raw %}{{ user_number }}{% endraw %}"
+      controller_username: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %}"
       controller_password: "{{ aap_user_password }}{% raw %}{{ user_number }}{% endraw %}"
 
   - name: Compose Image
