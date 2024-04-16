@@ -5,7 +5,11 @@
   hosts:
     - all
   gather_facts: false
-
+  vars:
+    ansible_python_interpreter: "{{ ansible_playbook_python }}"
+    controller_validate_certs: false
+    controller_configuration_credentials_secure_logging: false
+    
   tasks:
     - name: set fact when needed
       ansible.builtin.set_fact:
@@ -19,8 +23,8 @@
           - name: "edge-{{ mac_address }}"
             inventory: Edge Devices
             enabled: true
-            state: "{{ resource_state | default('present') }}"
             variables:
+              ansible_python_interpreter: "{{ ansible_playbook_python }}"
               ansible_host: "{{ ip_address }}"
 
     - name: Run the redhat_cop.controller_configuration.hosts role
