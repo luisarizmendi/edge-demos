@@ -67,4 +67,4 @@ EOF
 systemctl daemon-reload
 systemctl enable aap-auto-registration.service
 
-
+%end
