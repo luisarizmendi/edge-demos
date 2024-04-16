@@ -37,9 +37,9 @@
         controller_inventories:
           - name: "edge-{{ mac_address }}"
             description: "Inventory containing just device edge-{{ mac_address }}"
-            organization: "{{ gitea_user_name }}{{ user_number }} Organization"
+            organization: "{{ controller_username }} Organization"
             variables:
-              student_number: "{{ student }}"
+              user_number: "{{ user }}"
             state: present
 
     - name: create dedicated inventory
