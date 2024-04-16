@@ -170,7 +170,6 @@ controller_templates:
       iso_standard: "/usr/share/rhel-iso/rhel-boot.iso"
       kickstart_http_location: "http://{{ ansible_hostname }}/{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}/prod/production-kickstart.ks"
       iso_dst_path: "/var/www/html/{{ gitea_user_name }}{% raw %}{{ user_number }}{% endraw %}/isos"
-      iso_name: "rhel-custom-kickstart.iso"
       basearch: "x86_64"
       kickstart_name: "production-kickstart.ks"
       image_environment: "prod"

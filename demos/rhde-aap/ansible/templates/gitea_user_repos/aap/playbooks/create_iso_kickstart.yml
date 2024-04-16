@@ -55,13 +55,13 @@
             replace: "{% raw %}{{ iso_label.stdout }}{% endraw %}"
 
         - name: Create the final ISO image
-          shell: mkisofs -o {% raw %}{{ iso_dst_path }}/{{ iso_name }}{% endraw %} -b isolinux/isolinux.bin -c isolinux/boot.cat --joliet-long --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V "{% raw %}{{ iso_label.stdout }}{% endraw %}" /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
+          shell: mkisofs -o {% raw %}{{ iso_dst_path }}/{% endraw %}{{ gitea_user_name }}{{ user_number }}{% raw %}-{{ image_environment }}-rhel.iso{% endraw %} -b isolinux/isolinux.bin -c isolinux/boot.cat --joliet-long --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V "{% raw %}{{ iso_label.stdout }}{% endraw %}" /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
           changed_when: false
           args:
             chdir: /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso/
 
         - name: Add MD5 checksum
-          shell: implantisomd5 {% raw %}{{ iso_dst_path }}/{{ iso_name }}
+          shell: implantisomd5 {% raw %}{{ iso_dst_path }}/{% endraw %}{{ gitea_user_name }}{{ user_number }}{% raw %}-{{ image_environment }}-rhel.iso
           changed_when: false{% endraw %}
 
 
@@ -79,5 +79,5 @@
 
 
         - ansible.builtin.debug:
-            msg: "Download the ISO from http://{{ ansible_host }}/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}/isos/{% raw %}{{ iso_name }}{% endraw %}"
+            msg: "Download the ISO from http://{{ ansible_host }}/{{ gitea_user_name }}{{ user_number }}/{% raw %}{{ image_environment }}{% endraw %}/isos/{% raw %}{% endraw %}{{ gitea_user_name }}{{ user_number }}{% raw %}-{{ image_environment }}-rhel.iso{% endraw %}"
       become: true
