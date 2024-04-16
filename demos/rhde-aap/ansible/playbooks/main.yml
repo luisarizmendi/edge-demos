@@ -5,11 +5,11 @@
   tasks:
     - name: Install management node
       ansible.builtin.include_role:
-        name: ../../../../common/roles/setup_rh_edge-mgmt-node
+        name: luisarizmendi.rh_edge_mgmt.setup_rh_edge_mgmt_node
 
     - name: Config management node
       ansible.builtin.include_role:
-        name: ../../../../common/roles/config_rh_edge-mgmt-node
+        name: luisarizmendi.rh_edge_mgmt.config_rh_edge_mgmt_node
       vars:
         gitea_admin_repos_template: ../templates/gitea_admin_repos
         gitea_user_repos_template: ../templates/gitea_user_repos
