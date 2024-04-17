@@ -77,7 +77,7 @@ Prepare the Ansible inventory file and the variables in the `main.yml` playbook 
 
 ## DEMO deployment
 
-Once you have all the re-requisites ready, including the Ansible Vault secret file, you need to run the main playbook including the Vault password by adding the `--ask-vault-pass` option:
+Once you have all the pre-requisites ready, including the Ansible Vault secret file, you need to run the main playbook including the Vault password by adding the `--ask-vault-pass` option:
 
 ```shell
 ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml 
