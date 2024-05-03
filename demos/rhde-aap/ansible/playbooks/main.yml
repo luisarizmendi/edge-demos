@@ -11,6 +11,8 @@
       ansible.builtin.include_role:
         name: luisarizmendi.rh_edge_mgmt.config_rh_edge_mgmt_node
       vars:
+        image_builder_admin_name: admin
+        image_builder_admin_password: R3dh4t1!
         gitea_admin_repos_template: ../templates/gitea_admin_repos
         gitea_user_repos_template: ../templates/gitea_user_repos
         aap_config_template: ../templates/aap_config.j2

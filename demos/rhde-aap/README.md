@@ -1,6 +1,6 @@
 # RHDE management with AAP Demo
 
-## Background 
+## Background
 
 This demo is a new way of deploying the same components that you can find in [this Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) but making it easier and faster to deploy, by using the [rh_edge_mgmt Ansble collection](https://github.com/luisarizmendi/rh_edge_mgmt) that was developed for such propose.
 
@@ -74,14 +74,18 @@ You can also take a look at the pre-requistes of the config role, but mainly is 
 
 Prepare the Ansible inventory file and the variables in the `main.yml` playbook as explained in the roles README files.
 
+  >**Note**
+  >
+  > If you are using the directory tree of this example you could keep the variables that you find there (`gitea_admin_repos_template`, `aap_config_template`, ...), but probably you will need to configure the `image_builder_admin_name` and `image_builder_admin_password` with the user with `sudo` privileges in the RHEL server where you installed the Image Builder.
+
 
 ## DEMO deployment
 
 Once you have all the pre-requisites ready, including the Ansible Vault secret file, you need to run the main playbook including the Vault password by adding the `--ask-vault-pass` option:
 
 ```shell
-ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml 
-``` 
+ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml
+```
 
 The deployment will take some time, depending on the edge management device/VM.
 
@@ -97,7 +101,7 @@ The deployment will take some time, depending on the edge management device/VM.
 ### 2 - Check that an Ansible Workflow automatically starts and build the new image
 
 * Log in the AAP Controller (port `8443`) as a regular user (by default `user<number>`/`password<number>`)
-* Check the "Jobs" view and see if a new Workflow has started 
+* Check the "Jobs" view and see if a new Workflow has started
 
 ### 3 - Accept the image publishing in that Workflow once the image is created
 

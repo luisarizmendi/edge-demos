@@ -26,6 +26,7 @@ set -x
 
 cat > /var/tmp/aap-auto-registration.sh <<EOF
 #!/bin/bash
+sleep 5
 conn_name=\$(nmcli con show | grep -v UUID | head -n 1 | awk '{print \$1}')
 IP_ADDRESS=\$(nmcli conn show \$conn_name | grep ip_address | awk '{print \$4}')
 MAC_ADDRESS=\$(ip addr | grep \$conn_name -A 1 | grep link | awk '{print \$2}' | sed 's/://g')
