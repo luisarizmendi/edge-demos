@@ -120,7 +120,7 @@ The deployment will take some time, depending on the edge management device/VM.
 
 ### 5 - Deploy the image in the edge device
 
-* Start the edge device from the ISO that you downloaded (using an USB if it's a physical device)
+* Start the edge device from the ISO that you downloaded (using an USB if it's a physical device).Be sure that you are using Legacy BIOS boot since the generated ISO is prepared for that one.
 * Wait until the deployment finishes. Then the device will reboot and use the local drive as first boot option
 * Wait a little bit until you see in AAP Controller a new Workflow execution (`Provision Edge Device` Workflow)
 
