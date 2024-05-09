@@ -24,9 +24,9 @@ echo
 
 cd terraform
 
-terraform init -input=false -backend=false -reconfigure -lock=false -force-copy -var-file="${TF_VARS}" > "${TF_LOG}"
+#terraform init -input=false -backend=false -reconfigure -lock=false -force-copy -var-file="${TF_VARS}" > "${TF_LOG}"
 
-terraform apply -input=false -auto-approve -var-file="${TF_VARS}" > "${TF_LOG}"
+#terraform apply -input=false -auto-approve -var-file="${TF_VARS}" > "${TF_LOG}"
 
 # Retrieve public IP of the created VM
 VM_IP=$(terraform output -state="${TF_STATE}" public_ip  | sed 's/"//g')
@@ -52,8 +52,6 @@ sed -i "s/ansible_host: .*/ansible_host: ${VM_IP}/" inventory
 echo "Running Ansible playbooks"
 
 ansible-playbook -vvi inventory --vault-password-file <(echo "$VAULT_SECRET") playbooks/main.yml
-
-cd ..
 
 
 echo ""

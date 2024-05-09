@@ -68,9 +68,9 @@ ansible-galaxy collection install luisarizmendi.rh_edge_mgmt
 
 At least two devices/VMs:
 
-* Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate.
+* Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate. In this demoo, the VM will be created by Terraform in AWS.
 
-* Edge Device: This will depend on what you install on top, but for the base deployment you can use 1.5 vCores, 3GB of memory and 50GB disk.
+* Edge Device: This will depend on what you install on top, but for the base deployment you can use 1.5 vCores, 3GB of memory (It could be less if you don't have enough resources, but 3GB is a safe number if you want to install Microshift and apps on top) and 50GB disk. This VM could be created in your own laptop.
 
 
 ### Roles pre-requisites

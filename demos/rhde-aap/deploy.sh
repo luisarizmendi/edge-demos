@@ -53,8 +53,6 @@ echo "Running Ansible playbooks"
 
 ansible-playbook -vvi inventory --vault-password-file <(echo "$VAULT_SECRET") playbooks/main.yml
 
-cd ..
-
 
 echo ""
 echo "###############################################"
