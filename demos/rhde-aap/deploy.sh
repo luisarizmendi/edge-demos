@@ -4,8 +4,7 @@
 TF_SCRIPT="rhel_vm.tf"
 TF_VARS="rhel_vm.tfvars"
 TF_STATE="terraform.tfstate"
-VM_READY=false
-
+VM_STARTING=1
 
 result=$(grep "rhde_user_name:" ansible/playbooks/main.yml)
 if [ -n "$result" ]; then
@@ -50,8 +49,12 @@ terraform apply -input=false -auto-approve -var-file="${TF_VARS}"
 # Retrieve public IP of the created VM
 VM_IP=$(terraform output -state="${TF_STATE}" public_ip  | sed 's/"//g')
 
-while ! ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ${ADMIN_USER}@${VM_IP} 'exit' &>/dev/null; do
-    echo "Waiting to SSH ${VM_IP}..."
+echo "Wait until the cloud-init script is done (it could take 5-8 minutes)"
+
+while [ $VM_STARTING -ne 0 ] ; do
+    ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ${ADMIN_USER}@${VM_IP} 'exit' &>/dev/null
+    VM_STARTING=$?
+    echo "Waiting to SSH ${VM_IP} with user ${ADMIN_USER}..."
     sleep 60
 done
 

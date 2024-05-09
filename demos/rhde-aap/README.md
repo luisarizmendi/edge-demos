@@ -94,16 +94,38 @@ You can also take a look at the pre-requistes of the config role, but mainly is 
   >
   > You can ignore the additional Collections installation since those should be installed as part of the `luisarizmendi.rh_edge_mgmt` collection install.
 
+This is the summary:
+
+
+1. Obtain the AAP Manifest file following the steps that you [find in this section of the setup role](roles/setup_rh_edge_mgmt_node/README.md#ansible-automation-platform-manifest) and place it in the directory `ansible/files` with the name `manifest.zip`.
+
+
+2. Create a new Ansible vault file in the `vars` directory (remember the password that you configure):
+
+```shell
+ansible-vault create ansible/vars/secrets.yml
+```
+
+In that file, add your Red Hat account username and password, the pull-secret ([obtain it here](https://cloud.redhat.com/openshift/install/pull-secret)) and a Red Hat offline ([obtain it here](https://access.redhat.com/management/api)) token following variables:
+
+```shell
+pull_secret: '<your pull secret>'
+offline_token: '<your offline token>'
+red_hat_user: <your RHN user>
+red_hat_password: <your RHN password>
+```
+
 
 
 ### Ansible inventory and variables
 
-Prepare the Ansible inventory file and the variables in the `main.yml` playbook as explained in the roles README files.
+Prepare the Ansible variables in the `ansible/playbooks/main.yml` playbook as explained in the roles README files.
 
   >**Note**
   >
   > If you are using the directory tree of this example you could keep the variables that you find there (`gitea_admin_repos_template`, `aap_config_template`, ...), but probably you will need to configure the `image_builder_admin_name` and `image_builder_admin_password` with the user with `sudo` privileges in the RHEL server where you installed the Image Builder.
 
+You don't need to "prepare" the ansible inventory yet since you will need the IP of the VM that is created by Terraform... but if you use the `deploy.sh` script you won't need to even care about it because the changes in the inventory are autometed.
 
 ## DEMO deployment
 
