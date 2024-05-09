@@ -18,11 +18,15 @@ variable "key_pair_name" {
   default     = "myrhelkey"
 }
 
-variable "user_name" {
-  description = "Name of your AWS key pair"
+variable "admin_user" {
+  description = "Name of admin userr"
   default     = "admin"
 }
 
+variable "admin_pass" {
+  description = "Password of admin user"
+  default     = "R3dh4t1!"
+}
 
 provider "aws" {
   region = var.aws_region
@@ -99,13 +103,18 @@ resource "aws_instance" "edge_mgmt_vm" {
   user_data = <<-EOF
               #!/bin/bash
               sudo yum -y update
-              sudo useradd -m ${var.user_name}
-              sudo usermod -aG wheel ${var.user_name}
-              echo "${var.user_name} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
-              sudo -u ${var.user_name} mkdir -p /home/${var.user_name}/.ssh
-              sudo -u ${var.user_name} bash -c "echo '${aws_key_pair.keypair.public_key}' > /home/${var.user_name}/.ssh/authorized_keys"
-              sudo -u ${var.user_name} chmod 700 /home/${var.user_name}/.ssh
-              sudo -u ${var.user_name} chmod 600 /home/${var.user_name}/.ssh/authorized_keys
+              sudo useradd -m ${var.admin_user}
+              sudo usermod -aG wheel ${var.admin_user}
+              echo "${var.admin_user} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+              sudo -u ${var.admin_user} mkdir -p /home/${var.admin_user}/.ssh
+              sudo -u ${var.admin_user} bash -c "echo '${aws_key_pair.keypair.public_key}' > /home/${var.admin_user}/.ssh/authorized_keys"
+              sudo -u ${var.admin_user} ssh-keygen -t rsa -f /home/admin/.ssh/id_rsa -N ""
+              sudo -u ${var.admin_user} cat .ssh/id_rsa.pub >> .ssh/authorized_keys
+              sudo -u ${var.admin_user} chmod 700 /home/${var.admin_user}/.ssh
+              sudo -u ${var.admin_user} chmod 600 /home/${var.admin_user}/.ssh/authorized_keys
+              sudo usermod --password $(echo ${var.admin_pass} | openssl passwd -1 -stdin) ${var.admin_user}
+              sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+              sudo systemctl restart sshd
               EOF
 }
 

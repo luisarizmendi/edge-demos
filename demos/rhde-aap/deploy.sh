@@ -4,8 +4,27 @@
 TF_SCRIPT="rhel_vm.tf"
 TF_VARS="rhel_vm.tfvars"
 TF_STATE="terraform.tfstate"
-TF_LOG="terraform.log"
 VM_READY=false
+
+
+result=$(grep "rhde_user_name:" ansible/playbooks/main.yml)
+if [ -n "$result" ]; then
+    ADMIN_USER=$(echo "$result" | awk -F ' ' '{print $2}')
+else
+    ADMIN_USER="admin"
+fi
+
+result=$(grep "rhde_user_password" ansible/playbooks/main.yml)
+if [ -n "$result" ]; then
+    ADMIN_PASS=$(echo "$result" | awk -F ' ' '{print $2}')
+else
+    ADMIN_PASS="R3dh4t1!"
+fi
+
+# add Terrafor variables
+sed -i "s/admin_user\s*=\s*\"[^\"]*\"/admin_user = \"$ADMIN_USER\"/" terraform/rhel_vm.tfvars
+sed -i "s/admin_pass\s*=\s*\"[^\"]*\"/admin_pass = \"$ADMIN_PASS\"/" terraform/rhel_vm.tfvars
+
 
 
 
@@ -24,19 +43,19 @@ echo
 
 cd terraform
 
-terraform init -input=false -backend=false -reconfigure -lock=false -force-copy -var-file="${TF_VARS}" > "${TF_LOG}"
+terraform init -input=false -backend=false -reconfigure -lock=false -force-copy -var-file="${TF_VARS}"
 
-terraform apply -input=false -auto-approve -var-file="${TF_VARS}" > "${TF_LOG}"
+terraform apply -input=false -auto-approve -var-file="${TF_VARS}"
 
 # Retrieve public IP of the created VM
 VM_IP=$(terraform output -state="${TF_STATE}" public_ip  | sed 's/"//g')
 
-while ! ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ec2-user@${VM_IP} 'exit' &>/dev/null; do
-    echo "Waiting for SSH to IP ${VM_IP}..."
+while ! ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=no ${ADMIN_USER}@${VM_IP} 'exit' &>/dev/null; do
+    echo "Waiting to SSH ${VM_IP}..."
     sleep 60
 done
 
-echo "SSH is accessible. VM is ready."
+echo "VM is ready."
 cd ..
 
 ############################
