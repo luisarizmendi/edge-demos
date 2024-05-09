@@ -5,6 +5,7 @@ builder_wait_compose_timeout: 2400
 builder_compose_type: edge-commit
 builder_skip_repo: true
 builder_compose_pkgs:
+  - libreswan
   - microshift
   - microshift-greenboot
   - NetworkManager-wifi

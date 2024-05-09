@@ -67,6 +67,10 @@ controller_inventories_yaml: |-
     organization: "{{ aap_user_name }}{{ user_number }} Organization"
     variables:
       user_number: "{{ user_number }}"
+  - name: Onboarding
+    organization: "{{ aap_user_name }}{{ user_number }} Organization"
+    variables:
+      user_number: "{{ user_number }}"
 {% endfor %}
 
 
@@ -112,7 +116,7 @@ controller_projects:
 controller_templates:
   - name: Test Device Connectivity
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
-    inventory: Edge Devices
+    inventory: Onboarding
     project: Device Edge Codebase
     playbook: playbooks/hello-world.yml
     credentials:
@@ -120,7 +124,7 @@ controller_templates:
     execution_environment: Device Edge Execution Environment
   - name: Initial Device Configuration
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
-    inventory: Edge Devices
+    inventory: Onboarding
     project: Device Edge Codebase
     playbook: playbooks/initial-configuration.yml
     credentials:
@@ -131,7 +135,7 @@ controller_templates:
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Local Actions
     project: Device Edge Codebase
-    playbook: playbooks/manage-hosts-in-controller.yml
+    playbook: playbooks/aap-inventory-onboarding-add.yml
     credentials:
       - Controller API Credentials
     ask_variables_on_launch: true
@@ -141,6 +145,23 @@ controller_templates:
       controller_hostname: "{{ controller_hostname }}"
       controller_username: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %}"
       controller_password: "{{ aap_user_password }}{% raw %}{{ user_number }}{% endraw %}"
+
+
+  - name: Remove Host from Onboarding Inventory
+    organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
+    inventory: Local Actions
+    project: Device Edge Codebase
+    playbook: playbooks/aap-inventory-onboarding-remove.yml
+    credentials:
+      - Controller API Credentials
+    ask_variables_on_launch: true
+    execution_environment: Device Edge Execution Environment
+    become_enabled: true
+    extra_vars: 
+      controller_hostname: "{{ controller_hostname }}"
+      controller_username: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %}"
+      controller_password: "{{ aap_user_password }}{% raw %}{{ user_number }}{% endraw %}"
+
 
   - name: Compose Image
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
@@ -217,6 +238,11 @@ controller_workflows:
           - Initial Device Configuration
       - identifier: Initial Device Configuration
         unified_job_template: Initial Device Configuration
+        success_nodes:
+          - Remove Host from Onboarding Inventory
+      - identifier: Remove Host from Onboarding Inventory
+        unified_job_template: Remove Host from Onboarding Inventory
+
 
   - name: New Edge Device Image
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"

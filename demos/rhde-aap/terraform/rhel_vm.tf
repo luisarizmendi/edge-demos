@@ -1,0 +1,194 @@
+variable "aws_region" {
+  description = "AWS region where the instance will be launched"
+  default     = "eu-west-1"
+}
+
+variable "ami_id" {
+  description = "AMI ID for RHEL 9"
+  default     = "ami-028f9616b17ba1d53"
+}
+
+variable "instance_type" {
+  description = "Instance type for the RHEL VM"
+  default     = "t2.large"
+}
+
+variable "key_pair_name" {
+  description = "Name of your AWS key pair"
+  default     = "myrhelkey"
+}
+
+variable "user_name" {
+  description = "Name of your AWS key pair"
+  default     = "admin"
+}
+
+
+provider "aws" {
+  region = var.aws_region
+}
+
+resource "aws_vpc" "edge_mgmt_vpc" {
+  cidr_block = "10.0.0.0/16"
+
+  tags = {
+    Name = "edge_mgmt_vpc"
+  }
+}
+
+
+resource "aws_subnet" "edge_mgmt_subnet" {
+  vpc_id            = aws_vpc.edge_mgmt_vpc.id
+  cidr_block        = "10.0.0.0/24"
+  map_public_ip_on_launch = true
+
+  tags = {
+    Name = "edge_mgmt_subnet"
+  }
+}
+
+
+resource "aws_internet_gateway" "gw" {
+  vpc_id = aws_vpc.edge_mgmt_vpc.id
+
+  tags = {
+    Name = "InternetGateway"
+  }
+}
+
+
+resource "aws_route_table" "public" {
+  vpc_id = aws_vpc.edge_mgmt_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.gw.id
+  }
+}
+
+
+resource "aws_route_table_association" "public_association" {
+  subnet_id      = aws_subnet.edge_mgmt_subnet.id
+  route_table_id = aws_route_table.public.id
+}
+
+resource "aws_key_pair" "keypair" {
+  key_name   = var.key_pair_name
+  public_key = file("~/.ssh/id_rsa.pub")
+}
+
+resource "aws_instance" "edge_mgmt_vm" {
+  ami           = var.ami_id
+  instance_type = var.instance_type
+  key_name      = aws_key_pair.keypair.key_name
+  subnet_id     = aws_subnet.edge_mgmt_subnet.id
+  associate_public_ip_address = true
+
+  root_block_device {
+    volume_size = 100
+  }
+
+  tags = {
+    Name = "Edge_MGMT_VM"
+  }
+
+  depends_on = [aws_vpc.edge_mgmt_vpc]
+
+  vpc_security_group_ids = [aws_security_group.edge_mgmt_sg.id]
+
+  user_data = <<-EOF
+              #!/bin/bash
+              sudo yum -y update
+              sudo useradd -m ${var.user_name}
+              sudo usermod -aG wheel ${var.user_name}
+              echo "${var.user_name} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+              sudo -u ${var.user_name} mkdir -p /home/${var.user_name}/.ssh
+              sudo -u ${var.user_name} bash -c "echo '${aws_key_pair.keypair.public_key}' > /home/${var.user_name}/.ssh/authorized_keys"
+              sudo -u ${var.user_name} chmod 700 /home/${var.user_name}/.ssh
+              sudo -u ${var.user_name} chmod 600 /home/${var.user_name}/.ssh/authorized_keys
+              EOF
+}
+
+resource "aws_security_group" "edge_mgmt_sg" {
+  vpc_id      = aws_vpc.edge_mgmt_vpc.id
+  name        = "RHEL_Security_Group"
+  description = "Security group for Edge_MGMT_VM"
+
+  ingress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    from_port   = 8443
+    to_port     = 8443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8444
+    to_port     = 8444
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8445
+    to_port     = 8445
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+}
+
+resource "aws_security_group_rule" "ipsec_ports" {
+  type              = "ingress"
+  from_port         = 500
+  to_port           = 500
+  protocol          = "udp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.edge_mgmt_sg.id
+}
+
+resource "aws_security_group_rule" "ipsec_protocol" {
+  type              = "ingress"
+  from_port         = 4500
+  to_port           = 4500
+  protocol          = "udp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.edge_mgmt_sg.id
+}
+
+output "public_ip" {
+  value = aws_instance.edge_mgmt_vm.public_ip
+}

@@ -16,3 +16,6 @@ demos/microshift-disconnected/files/others/upgrades/usb/v3/*
 aap.tar.gz
 manifest.zip
 microshift-embedded-images.toml
+.terraform*
+terraform.log
+terraform.tfstate*

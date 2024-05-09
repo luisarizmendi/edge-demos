@@ -1,0 +1,25 @@
+---
+- name: RHDE and AAP Demo
+  hosts:
+    - edge_management
+  tasks:
+
+    - name: Install management node
+      ansible.builtin.include_role:
+        name: ../../../../roles/setup_rh_edge_mgmt_node
+      vars:
+        include_image_builder: false
+        include_fdo: false
+        include_gitea: false
+        include_aap: false
+
+    - name: Install management node
+      ansible.builtin.include_role:
+        name: ../../../../roles/config_rh_edge_mgmt_node
+      vars:
+        include_image_builder: false
+        include_fdo: false
+        include_gitea: false
+        include_aap: false
+
+

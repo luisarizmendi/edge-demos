@@ -17,6 +17,7 @@
       when:
         - resource_state is not defined
 
+    ## Edge Devices inventory
     - name: set host facts
       ansible.builtin.set_fact:
         controller_hosts:
@@ -31,7 +32,22 @@
       ansible.builtin.include_role:
         name: redhat_cop.controller_configuration.hosts
 
+    ## Onboarding inventory
+    - name: set host facts
+      ansible.builtin.set_fact:
+        controller_hosts:
+          - name: "edge-{{ mac_address }}"
+            inventory: Onboarding
+            enabled: true
+            variables:
+              ansible_python_interpreter: "{{ ansible_playbook_python }}"
+              ansible_host: "{{ ip_address }}"
 
+    - name: Run the redhat_cop.controller_configuration.hosts role
+      ansible.builtin.include_role:
+        name: redhat_cop.controller_configuration.hosts
+
+    ## Single host inventory
     - name: set host facts
       ansible.builtin.set_fact:
         controller_inventories:

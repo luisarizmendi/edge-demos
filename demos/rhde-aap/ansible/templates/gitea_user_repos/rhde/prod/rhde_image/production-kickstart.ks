@@ -22,7 +22,34 @@ ostreesetup --nogpg --url=http://{{ image_builder_ip | default(ansible_host) }}/
 set -x
 
 
+if rpm -q libreswan &> /dev/null; then
 
+cat > /etc/ipsec.conf <<EOF
+config setup
+    protostack=netkey
+
+conn edgedevices
+    left=192.168.122.40
+    right=192.168.140.2
+    authby=secret
+    # use auto=start when done testing the tunnel
+    auto=add
+EOF
+
+
+
+cat > /etc/ipsec.secrets <<EOF
+192.168.122.40 192.168.140.2 : PSK "R3dh4t1!"
+EOF
+
+systemctl enable ipsec
+systemctl start ipsec 
+
+ipsec auto --up edgedevices
+
+ 
+
+fi
 
 cat > /var/tmp/aap-auto-registration.sh <<EOF
 #!/bin/bash

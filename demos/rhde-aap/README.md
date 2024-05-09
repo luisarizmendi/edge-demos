@@ -8,9 +8,18 @@ It does not contain all the playbooks that you might find in [this Red Hat Devic
 
 The explanation of the demo steps is not as extensive as what you can find in the original [Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) so if you have any doubt you probably will find the answer.
 
+For this demo, the script creates a VM on AWS, installs the required services and then configures them.
+
 ## Overview of the workflow
 
-First you need to deploy the edge management node. The demo deployment will use two Ansible roles:
+First you need to deploy the services, which implies two things:
+
+* Create the VM
+* Install and configure the services
+
+For the first point, I provide a Terraform script to create a RHEL VM on AWS. Then the Ansible collection will be used to install and configure the management services on top of it.
+
+The demo deployment will use two Ansible roles part of a collection:
 
 1) [setup_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/setup_rh_edge_mgmt_node) will deploy the different management services
 
@@ -28,6 +37,23 @@ After the deployment you will use one of the configured users to:
 
 
 ## Pre-requisites
+
+
+### VM creation with Terraform
+
+You will need to:
+
+* Install Terraform in your laptop
+
+* Prepare your AWS credentials in `~/.aws/credentials`
+
+```
+[default]
+aws_access_key_id = your_access_key_id
+aws_secret_access_key = your_secret_access_key
+```
+
++ Prepare Terraform variables in file `terraform/rhel_vm.tfvars`
 
 
 ### Ansible Collection
@@ -81,14 +107,32 @@ Prepare the Ansible inventory file and the variables in the `main.yml` playbook 
 
 ## DEMO deployment
 
-Once you have all the pre-requisites ready, including the Ansible Vault secret file, you need to run the main playbook including the Vault password by adding the `--ask-vault-pass` option:
+Once you have all the pre-requisites ready, including the Ansible Vault secret file, you need to:
+
+1) Run Terraform to create the VM
 
 ```shell
+cd terraform
+terraform init -var-file="rhel_vm.tfvars"
+terraform apply  -var-file="rhel_vm.tfvars"
+cd ..
+```
+
+2) run the main playbook including the Vault password by adding the `--ask-vault-pass` option:
+
+```shell
+cd ansible
 ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml
+cd ..
 ```
 
 The deployment will take some time, depending on the edge management device/VM.
 
+I've also created a shell script that you can use if you don't want to perform those steps manually, in that case you just need to run:
+
+```shell
+./deploy.sh
+```
 
 ## DEMO steps
 
