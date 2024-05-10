@@ -1,25 +1,33 @@
-# RHDE management with AAP Demo
+# RHDE management with AAP on AWS Demo
+
+This demo deploys the following architecture:
+
+![demo-arch](https://raw.githubusercontent.com/luisarizmendi/rh_edge_mgmt/main/docs/images/demo-arch.png)
 
 ## Background
 
-This demo is a new way of deploying the same components that you can find in [this Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) but making it easier and faster to deploy, by using the [rh_edge_mgmt Ansble collection](https://github.com/luisarizmendi/rh_edge_mgmt) that was developed for such propose.
+Sometimes you need to deploy a demo environment to show how to manage Red Hat Device Edge with Ansible Automation Platform following a GitOps approach, but you don't have two physical server or you relize that you don't have enough resources in your laptop as VMs, these scripts will help in that case.
 
-It does not contain all the playbooks that you might find in [this Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) because the idea was not to recreate it completely, but giving enough pieces to make the demo easy to extend and customize.
+For this demo, the script `create.sh` creates a VM on AWS where it will install/configure AAP, EDA and Gitea using the  [rh_edge_mgmt Ansble collection](https://github.com/luisarizmendi/rh_edge_mgmt).
 
-The explanation of the demo steps is not as extensive as what you can find in the original [Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) so if you have any doubt you probably will find the answer.
+The edge device could be any VMs that is deployed anywhere else, for example in you laptop, since an IPSec VPN is configured to let Ansible Automation Platform reach the device without needed to configure any inbouad NAT rule
 
-For this demo, the script `create.sh` creates a VM on AWS, installs/configures the [rh_edge_mgmt Ansble collection](https://github.com/luisarizmendi/rh_edge_mgmt) default example on it
+  >**Note**
+  >
+  > This demo is a new way of deploying the same components that you can find in [this Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) but making it easier and faster to deploy, by using the [rh_edge_mgmt Ansble collection](https://github.com/luisarizmendi/rh_edge_mgmt) that was developed for such propose. It does not contain all the playbooks that you might find in [this Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) because the idea was not to recreate it completely, but giving enough pieces to make the demo easy to extend and customize. The explanation of the demo steps is not as extensive as what you can find in the original [Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) so if you have any doubt you probably will find the answer.
+
+
 
 ## Overview of the workflow
 
-Before jumping into the demo steps, you need to deploy the services, which implies two things:
+Before jumping into the demo steps, you need to:
 
 * Create the Edge management VM (in this case in AWS)
-* Install and configure the services
+* Install and configure the edge management services (AAP, EDA, Gitea)
 
 For the first point, I provide a Terraform script to create a RHEL VM on AWS. Then the Ansible collection will be used to install and configure the management services on top of it.
 
-The demo deployment will use two Ansible roles part of a collection:
+The demo deployment will use two Ansible roles part of that collection:
 
 1) [setup_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/setup_rh_edge_mgmt_node) will deploy the different management services
 

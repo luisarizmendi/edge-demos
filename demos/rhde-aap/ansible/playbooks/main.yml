@@ -12,6 +12,7 @@
       ansible.builtin.include_role:
         name: luisarizmendi.rh_edge_mgmt.config_rh_edge_mgmt_node
       vars:
+        include_vpn: true
         image_builder_admin_name: admin
         image_builder_admin_password: R3dh4t1!
         gitea_admin_repos_template: ../templates/gitea_admin_repos
