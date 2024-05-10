@@ -10,7 +10,7 @@ Sometimes you need to deploy a demo environment to show how to manage Red Hat De
 
 For this demo, the script `create.sh` creates a VM on AWS where it will install/configure AAP, EDA and Gitea using the  [rh_edge_mgmt Ansble collection](https://github.com/luisarizmendi/rh_edge_mgmt).
 
-The edge device could be any VMs that is deployed anywhere else, for example in you laptop, since an IPSec VPN is configured to let Ansible Automation Platform reach the device without needed to configure any inbouad NAT rule
+The edge device could be any VMs that is deployed anywhere else, for example in you laptop, since an IPSec VPN is configured to let Ansible Automation Platform reach the device without needed to configure any inbound NAT rule. This is just for demo propuses, in production other topologies should be deployed, such as Ansible Execution Nodes or Site-to-Site VPNs.
 
   >**Note**
   >
