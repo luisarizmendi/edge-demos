@@ -65,6 +65,12 @@ cd ..
 ####### INSTALL DEMO
 ############################
 
+
+# Upgrade Collection
+ansible-galaxy collection install luisarizmendi.rh_edge_mgmt --upgrade
+
+echo "Ready to apply Ansible Collection"
+
 cd ansible
 
 
