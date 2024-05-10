@@ -2,7 +2,7 @@
 
 This demo deploys the following architecture:
 
-![demo-arch](https://raw.githubusercontent.com/luisarizmendi/rh_edge_mgmt/main/docs/images/demo-arch.png)
+![demo-arch](docs/images/demo-arch.png)
 
 ## Background
 
