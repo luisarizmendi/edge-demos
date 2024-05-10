@@ -123,12 +123,7 @@ You can also take a look at the pre-requistes of the config role, but mainly is 
   > You can ignore the additional Collections installation since those should be installed as part of the `luisarizmendi.rh_edge_mgmt` collection install.
 
 
-
-
-
-
-
-### Ansible inventory and variables
+### Ansible variables
 
 Prepare the Ansible variables in the `ansible/playbooks/main.yml` playbook as explained in the roles README files.
 
@@ -140,28 +135,7 @@ You don't need to "prepare" the ansible inventory yet since you will need the IP
 
 ## DEMO deployment
 
-Once you have all the pre-requisites ready, including the Ansible Vault secret file, you need to:
-
-1) Run Terraform to create the VM
-
-```shell
-cd terraform
-terraform init -var-file="rhel_vm.tfvars"
-terraform apply  -var-file="rhel_vm.tfvars"
-cd ..
-```
-
-2) run the main playbook including the Vault password by adding the `--ask-vault-pass` option:
-
-```shell
-cd ansible
-ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml
-cd ..
-```
-
-The deployment will take some time, depending on the edge management device/VM.
-
-I've also created a shell script that you can use if you don't want to perform those steps manually, in that case you just need to run:
+You just need to run:
 
 ```shell
 ./create.sh
