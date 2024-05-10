@@ -24,22 +24,40 @@ set -x
 
 if rpm -q libreswan &> /dev/null; then
 
+conn_name=$(nmcli con show | grep -v UUID | head -n 1 | awk '{print $1}')
+IP_ADDRESS=$(nmcli conn show $conn_name | grep ip_address | awk '{print $4}')
+IP_AAP_PRIVATE={{ aap_ip_private }}
+IP_AAP_PUBLIC={{ eda_ip | default(ansible_host) }}
+
 cat > /etc/ipsec.conf <<EOF
 config setup
     protostack=netkey
 
+conn %default
+    ikelifetime=28800s
+    keylife=3600s
+    rekeymargin=3m
+    keyingtries=1
+    keyexchange=ike
+    ikev2=yes
+
 conn edgedevices
-    left=192.168.122.40
-    right=192.168.140.2
+    encapsulation=yes
+    left=${IP_AAP_PUBLIC}
+    leftid=${IP_AAP_PRIVATE}
+    right=${IP_ADDRESS}
     authby=secret
-    # use auto=start when done testing the tunnel
-    auto=add
+    auto=start
+    ike=3des-sha1,aes-sha1
+    esp=aes-sha2_512+sha2_256
+    leftsubnet=${IP_AAP_PRIVATE}/32
+    rightsubnets={192.168.0.0/16 172.16.0.0/12}
 EOF
 
 
 
 cat > /etc/ipsec.secrets <<EOF
-192.168.122.40 192.168.140.2 : PSK "R3dh4t1!"
+%any %any : PSK "R3dh4t1!"
 EOF
 
 systemctl enable ipsec

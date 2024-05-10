@@ -18,4 +18,3 @@
         gitea_user_repos_template: ../templates/gitea_user_repos
         aap_config_template: ../templates/aap_config.j2
         aap_repo_name: aap
-        wireguard_server_conf_template: ../templates/wireguard_server.conf.j2

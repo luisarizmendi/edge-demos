@@ -89,7 +89,7 @@ resource "aws_instance" "edge_mgmt_vm" {
   associate_public_ip_address = true
 
   root_block_device {
-    volume_size = 100
+    volume_size = 250
   }
 
   tags = {
@@ -125,8 +125,71 @@ resource "aws_security_group" "edge_mgmt_sg" {
   description = "Security group for Edge_MGMT_VM"
 
   ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "ESP"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 500
+    to_port     = 500
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 4500
+    to_port     = 4500
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 4510
+    to_port     = 4510
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 4511
+    to_port     = 4511
+    protocol    = "udp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
     from_port   = 80
     to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 18080
+    to_port     = 18080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 18081
+    to_port     = 18081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 18082
+    to_port     = 18082
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 18083
+    to_port     = 18083
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -144,9 +207,31 @@ resource "aws_security_group" "edge_mgmt_sg" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   ingress {
     from_port   = 8443
     to_port     = 8443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 8082
+    to_port     = 8082
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
