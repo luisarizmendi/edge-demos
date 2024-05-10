@@ -125,13 +125,6 @@ resource "aws_security_group" "edge_mgmt_sg" {
   description = "Security group for Edge_MGMT_VM"
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "ESP"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
     from_port   = 500
     to_port     = 500
     protocol    = "udp"
@@ -271,13 +264,20 @@ resource "aws_security_group" "edge_mgmt_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"  # Use -1 to specify all protocols
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow ESP protocol"
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 }
 
 resource "aws_security_group_rule" "ipsec_ports" {
