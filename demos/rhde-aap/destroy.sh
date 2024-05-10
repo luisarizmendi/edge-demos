@@ -2,4 +2,4 @@
 
 cd terraform
 
-terraform apply --destroy
+terraform apply --destroy -input=false -auto-approve

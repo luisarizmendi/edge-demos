@@ -105,7 +105,8 @@ resource "aws_instance" "edge_mgmt_vm" {
               sudo yum -y update
               sudo useradd -m ${var.admin_user}
               sudo usermod -aG wheel ${var.admin_user}
-              echo "${var.admin_user} ALL=(ALL) NOPASSWD:ALL" | sudo tee -a /etc/sudoers
+              sudo sed -i -e 's/^# %wheel/%wheel/' -e 's/^%wheel/# %wheel/' /etc/sudoers
+              sudo sed -i -e 's/^%wheel/# %wheel/' -e 's/^# %wheel/%wheel/' /etc/sudoers
               sudo -u ${var.admin_user} mkdir -p /home/${var.admin_user}/.ssh
               sudo -u ${var.admin_user} bash -c "echo '${aws_key_pair.keypair.public_key}' > /home/${var.admin_user}/.ssh/authorized_keys"
               sudo -u ${var.admin_user} ssh-keygen -t rsa -f /home/admin/.ssh/id_rsa -N ""
@@ -122,6 +123,13 @@ resource "aws_security_group" "edge_mgmt_sg" {
   vpc_id      = aws_vpc.edge_mgmt_vpc.id
   name        = "RHEL_Security_Group"
   description = "Security group for Edge_MGMT_VM"
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
   ingress {
     from_port   = 3000

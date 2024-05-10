@@ -8,13 +8,13 @@ It does not contain all the playbooks that you might find in [this Red Hat Devic
 
 The explanation of the demo steps is not as extensive as what you can find in the original [Red Hat Device Edge GitOps demo](https://github.com/redhat-manufacturing/device-edge-workshops/blob/gitops-demo/exercises/rhde_gitops/demo/README.md) so if you have any doubt you probably will find the answer.
 
-For this demo, the script creates a VM on AWS, installs the required services and then configures them.
+For this demo, the script `create.sh` creates a VM on AWS, installs/configures the [rh_edge_mgmt Ansble collection](https://github.com/luisarizmendi/rh_edge_mgmt) default example on it
 
 ## Overview of the workflow
 
-First you need to deploy the services, which implies two things:
+Before jumping into the demo steps, you need to deploy the services, which implies two things:
 
-* Create the VM
+* Create the Edge management VM (in this case in AWS)
 * Install and configure the services
 
 For the first point, I provide a Terraform script to create a RHEL VM on AWS. Then the Ansible collection will be used to install and configure the management services on top of it.
@@ -82,20 +82,6 @@ This is the summary of the pre-requisites (all for installing the services):
 * Red Hat Pull Secret
 * Red Hat User and Password
 
-You can find more details about them in the role README file:
-
-* [setup_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/setup_rh_edge_mgmt_node)
-
-You can also take a look at the pre-requistes of the config role, but mainly is demo config customization, you could deploy using the default values.
-
-* [config_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/config_rh_edge_mgmt_node)
-
-  >**Note**
-  >
-  > You can ignore the additional Collections installation since those should be installed as part of the `luisarizmendi.rh_edge_mgmt` collection install.
-
-This is the summary:
-
 
 1. Obtain the AAP Manifest file following the steps that you [find in this section of the setup role](roles/setup_rh_edge_mgmt_node/README.md#ansible-automation-platform-manifest) and place it in the directory `ansible/files` with the name `manifest.zip`.
 
@@ -116,6 +102,23 @@ red_hat_password: <your RHN password>
 ```
 
 
+You can find more details about pre-requisites in the role README file:
+
+* [setup_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/setup_rh_edge_mgmt_node)
+
+You can also take a look at the pre-requistes of the config role, but mainly is demo config customization, you could deploy using the default values.
+
+* [config_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/config_rh_edge_mgmt_node)
+
+  >**Note**
+  >
+  > You can ignore the additional Collections installation since those should be installed as part of the `luisarizmendi.rh_edge_mgmt` collection install.
+
+
+
+
+
+
 
 ### Ansible inventory and variables
 
@@ -125,7 +128,7 @@ Prepare the Ansible variables in the `ansible/playbooks/main.yml` playbook as ex
   >
   > If you are using the directory tree of this example you could keep the variables that you find there (`gitea_admin_repos_template`, `aap_config_template`, ...), but probably you will need to configure the `image_builder_admin_name` and `image_builder_admin_password` with the user with `sudo` privileges in the RHEL server where you installed the Image Builder.
 
-You don't need to "prepare" the ansible inventory yet since you will need the IP of the VM that is created by Terraform... but if you use the `deploy.sh` script you won't need to even care about it because the changes in the inventory are autometed.
+You don't need to "prepare" the ansible inventory yet since you will need the IP of the VM that is created by Terraform... but if you use the `deploy.sh` script you won't need to even care about it because the changes in the inventory are  .
 
 ## DEMO deployment
 
@@ -153,7 +156,7 @@ The deployment will take some time, depending on the edge management device/VM.
 I've also created a shell script that you can use if you don't want to perform those steps manually, in that case you just need to run:
 
 ```shell
-./deploy.sh
+./create.sh
 ```
 
 ## DEMO steps
