@@ -47,7 +47,16 @@ After the deployment you will use one of the configured users to:
 ## Pre-requisites
 
 
-### VM creation with Terraform
+### Hardware requirements
+
+At least two devices/VMs:
+
+* Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate. In this demoo, the VM will be created by Terraform in AWS.
+
+* Edge Device: This will depend on what you install on top, but for the base deployment you can use 1.5 vCores, 3GB of memory (It could be less if you don't have enough resources, but 3GB is a safe number if you want to install Microshift and apps on top) and 50GB disk. This VM could be created in your own laptop.
+
+
+### Terraform
 
 You will need to:
 
@@ -72,16 +81,7 @@ You need to install the [Ansible Collection](https://github.com/luisarizmendi/rh
 ansible-galaxy collection install luisarizmendi.rh_edge_mgmt
 ```
 
-### Hardware requirements
-
-At least two devices/VMs:
-
-* Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate. In this demoo, the VM will be created by Terraform in AWS.
-
-* Edge Device: This will depend on what you install on top, but for the base deployment you can use 1.5 vCores, 3GB of memory (It could be less if you don't have enough resources, but 3GB is a safe number if you want to install Microshift and apps on top) and 50GB disk. This VM could be created in your own laptop.
-
-
-### Roles pre-requisites
+#### Roles pre-requisites
 
 This is the summary of the pre-requisites (all for installing the services):
 
@@ -123,7 +123,7 @@ You can also take a look at the pre-requistes of the config role, but mainly is 
   > You can ignore the additional Collections installation since those should be installed as part of the `luisarizmendi.rh_edge_mgmt` collection install.
 
 
-### Ansible variables
+#### Ansible variables
 
 Prepare the Ansible variables in the `ansible/playbooks/main.yml` playbook as explained in the roles README files.
 
