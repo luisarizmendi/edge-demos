@@ -46,7 +46,7 @@ This is the architecture deployed thanks to the [Ansible Collection](https://gal
 ## Recommended Hardware
 If you plan to use VMs you just need enough free resources in your laptop/server (more or less >6vCPUs, >14GB RAM, >150GB disk) for a couple of VMs:
 
-* Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate. In this demo, a Terraform script is provided to create this VM in AWS for you.
+* Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate.
 
 * Edge Device: This will depend on what you install on top, but for the base deployment you can use 2 vCores, 3GB of memory and 50GB disk.
 
@@ -64,7 +64,6 @@ If you use physical hardware you probably will need:
   >**Note**
   >
   > You can also mix VMs and physical servers if you don't have enough Hardware.
-
 
 
 
@@ -259,8 +258,3 @@ The demo of Ansible Automation Platform and Red Hat Device Edge showcased severa
 In addition to these benefits, the demo also emphasized the scalability and adaptability of these solutions. As our edge computing infrastructure continues to grow, the ability to automate tasks and processes at scale becomes increasingly important. Ansible Automation Platform and Red Hat Device Edge can help us meet these demands by efficiently managing and orchestrating our edge devices and applications.
 
 Overall, the combination of Ansible Automation Platform and Red Hat Device Edge, with their self-healing capabilities and automation at scale, promises to simplify management, enable efficient over-the-air updates, ensure platform consistency, and provide unattended resilience for our edge computing solutions. These advantages are essential for our organization's success in the rapidly evolving world of edge computing.
-
-
-
-
-

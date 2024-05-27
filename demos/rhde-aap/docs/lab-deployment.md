@@ -14,7 +14,7 @@
   - [Create Vault Secret file](#create-vault-secret-file)
   - [Prepare Ansible inventory and variables](#prepare-ansible-inventory-and-variables)
 
-
+* [Terraform prerequisites](#terraform-prerequisites)
 * [Demo specific prerequisites](#demo-specific-prerequisites)
  
   - [Copy the container images to your Quay account](#copy-the-container-images-to-your-quay-account)
@@ -59,6 +59,7 @@ Your laptop will need Ansible installed to run the playbooks contained in the [E
 
 
 
+
 ## Clone demo repo
 
 Clone the this repo and move your CLI prompt to the `ansible` directory on the path where the actual demo is located. The demo directory should have a similar organization as the one shown below, you will need to move inside the `ansible` directory which will contain, among others, the inventory, playbooks and vars used for the demo. 
@@ -86,6 +87,7 @@ When you find a reference to a path during this lab deploymend guide it will con
   >**Note**
   >
   >  You might find that you don't have the vars/secrets.yaml file since that file is created as part of the prerequisites.
+
 
 
 ## Edge Management Ansible Collection prerequisites
@@ -228,6 +230,27 @@ Also prepare the variables in the `playbooks/main.yml` playbook.
   > If you are using the directory tree of this example you could keep the variables that you find there (`gitea_admin_repos_template`, `aap_config_template`, ...), but probably you will need to configure the `image_builder_admin_name` and `image_builder_admin_password` with the user with `sudo` privileges in the RHEL server where you installed the Image Builder. You will also need to include your container repository (see next point).
 
 
+
+
+## Terraform prerequisites
+
+As part of this demo, an optional Terraform script is provided to simplify the creation of the Edge Management server in AWS. It has some prerequisites if you want to use it:
+
+* You will need to Install Terraform in your laptop
+
+* Prepare your AWS credentials in `~/.aws/credentials`
+
+```
+[default]
+aws_access_key_id = your_access_key_id
+aws_secret_access_key = your_secret_access_key
+```
+
++ Prepare Terraform variables in file `../terraform/rhel_vm.tfvars`
+
+
+
+
 ## Demo specific prerequisites
 
 So far you prepared the prerequisites of any demo/lab deployed with the [Edge Management Ansible Collection](https://galaxy.ansible.com/ui/repo/published/luisarizmendi/rh_edge_mgmt/), but this demo also has some specific requirements that are mentioned below.
@@ -268,6 +291,15 @@ The deployment will take some time, depending on the edge management device/VM a
   >**Note**
   >
   > Expect something like 60 minutes or so
+
+
+If you want to use the provided terraform script to create the server in AWS, you will need to move one level up in the directory and run:
+
+```shell
+./create.sh
+```
+
+
 
 ## Pre-flight checks
 
