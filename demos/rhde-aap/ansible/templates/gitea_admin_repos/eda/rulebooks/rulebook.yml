@@ -9,10 +9,68 @@
         port: "{% endraw %}{{ eda_webhook_port | default('5000') }}{% raw %}"
 
   rules:
-    - name: New Edge Device Image
+    - name: Single device Config Change
+      condition: "event.payload.inventory is defined and event.payload.user is defined and event.payload.running_env is defined"
+      action:
+        run_job_template:
+          name: Copy config files
+          organization: "{{ event.payload.user }} Organization"
+          inventory: "{{ event.payload.inventory }}"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.user | capitalize }}/rhde"
+              git_user:  "{{ event.payload.user }}"
+              path_prefix: "rhde_config"
+              env: "{{ event.payload.running_env }}"
+              path: "os"
+              
+
+    - name: Prod Config Change
+      condition: "event.payload.commits[0].modified is search('prod/rhde_config/os/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/os/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Copy config files
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "prod"
+              path: "os"
+
+    - name: Test Config Change
+      condition: "event.payload.commits[0].modified is search('test/rhde_config/os/',ignorecase=true)  or event.payload.commits[0].added is search('test/rhde_config/os/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Copy config files
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "test"
+              path: "os"
+
+    - name: Dev Config Change
+      condition: "event.payload.commits[0].modified is search('dev/rhde_config/os/',ignorecase=true)  or event.payload.commits[0].added is search('dev/rhde_config/os/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Copy config files
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "dev"
+              path: "os"
+
+    - name: New prod Edge Device Image
       condition: "'prod/rhde_image/production-image-definition.yml' in event.payload.commits[0].modified"
       action:
-        run_workflow_template: 
+        run_workflow_template:
           name: New Edge Device Image
           organization: "{{ event.payload.repository.owner.login  }} Organization"
           job_args:
@@ -24,7 +82,37 @@
               builder_blueprint_name: "production-{{ event.payload.repository.owner.login }}"
               image_environment: "prod"
 
-    - name: Publish new device image
+    - name: New test Edge Device Image
+      condition: "'test/rhde_image/production-image-definition.yml' in event.payload.commits[0].modified"
+      action:
+        run_workflow_template:
+          name: New Edge Device Image
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              images_repo: "rhde"
+              files_path: "test/rhde_image"
+              image_definition_file: "test-image-definition.yml"
+              image_deploy_file: "test-deploy_version.yml"
+              builder_blueprint_name: "test-{{ event.payload.repository.owner.login }}"
+              image_environment: "test"
+
+    - name: New dev Edge Device Image
+      condition: "'dev/rhde_image/production-image-definition.yml' in event.payload.commits[0].modified"
+      action:
+        run_workflow_template:
+          name: New Edge Device Image
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              images_repo: "rhde"
+              files_path: "dev/rhde_image"
+              image_definition_file: "dev-image-definition.yml"
+              image_deploy_file: "dev-deploy_version.yml"
+              builder_blueprint_name: "dev-{{ event.payload.repository.owner.login }}"
+              image_environment: "dev"
+
+    - name: Publish new production device image
       condition: "('prod/rhde_image/production-deploy_version.yml' in event.payload.commits[0].modified or 'prod/rhde_image/production-kickstart.ks' in event.payload.commits[0].modified) and 'prod/rhde_image/production-image-definition.yml' not in event.payload.commits[0].modified"
       action:
         run_job_template:
@@ -41,10 +129,46 @@
               kickstart_name: "production-kickstart.ks"
 
 
-    - name: Initial provisioning 
+
+    - name: Publish new test device image
+      condition: "('test/rhde_image/test-deploy_version.yml' in event.payload.commits[0].modified or 'test/rhde_image/test-kickstart.ks' in event.payload.commits[0].modified) and 'test/rhde_image/test-image-definition.yml' not in event.payload.commits[0].modified"
+      action:
+        run_job_template:
+          name: Publish Image
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              images_repo: "rhde"
+              files_path: "test/rhde_image"
+              image_definition_file: "test-image-definition.yml"
+              image_deploy_file: "test-deploy_version.yml"
+              builder_blueprint_name: "test-{{ event.payload.repository.owner.login }}"
+              image_environment: "test"
+              kickstart_name: "test-kickstart.ks"
+
+
+    - name: Publish new dev device image
+      condition: "('dev/rhde_image/dev-deploy_version.yml' in event.payload.commits[0].modified or 'dev/rhde_image/dev-kickstart.ks' in event.payload.commits[0].modified) and 'dev/rhde_image/dev-image-definition.yml' not in event.payload.commits[0].modified"
+      action:
+        run_job_template:
+          name: Publish Image
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              images_repo: "rhde"
+              files_path: "dev/rhde_image"
+              image_definition_file: "dev-image-definition.yml"
+              image_deploy_file: "dev-deploy_version.yml"
+              builder_blueprint_name: "dev-{{ event.payload.repository.owner.login }}"
+              image_environment: "dev"
+              kickstart_name: "dev-kickstart.ks"
+
+
+
+    - name: Initial provisioning
       condition: event.payload.ip_address is defined and event.payload.mac_address is defined and event.payload.user is defined
       action:
-        run_workflow_template: 
+        run_workflow_template:
           name: Provision Edge Device
           organization: "{{ event.payload.user }} Organization"
           job_args:
@@ -52,5 +176,138 @@
               user: "{{ event.payload.user }}"
               ip_address: "{{ event.payload.ip_address }}"
               mac_address: "{{ event.payload.mac_address }}"
+              env: "{{ event.payload.env }}"
+
+
+
+
+    - name: Prod APP Change - Microshift Manifest
+      condition: "event.payload.commits[0].modified is search('prod/rhde_config/apps/microshift/manifest/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/apps/microshift/manifest/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Microshift APPs Deploy - Manifest
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "prod"
+              path: "os"
+
+    - name: Prod APP Change - Microshift Helm
+      condition: "event.payload.commits[0].modified is search('prod/rhde_config/apps/microshift/helm/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/apps/microshift/helm/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Microshift APPs Deploy - Helm
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "prod"
+              path: "os"
+
+    - name: Prod APP Change - Podman Quadlet
+      condition: "event.payload.commits[0].modified is search('prod/rhde_config/apps/podman/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/apps/podman/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Podman Quadlet APPs Deploy
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "prod"
+              path: "os"
+
+    - name: Test APP Change - Microshift Manifest
+      condition: "event.payload.commits[0].modified is search('test/rhde_config/apps/microshift/manifest/',ignorecase=true)  or event.payload.commits[0].added is search('test/rhde_config/apps/microshift/manifest/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Microshift APPs Deploy - Manifest
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "test"
+              path: "os"
+
+    - name: Test APP Change - Microshift Helm
+      condition: "event.payload.commits[0].modified is search('test/rhde_config/apps/microshift/helm/',ignorecase=true)  or event.payload.commits[0].added is search('test/rhde_config/apps/microshift/helm/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Microshift APPs Deploy - Helm
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "test"
+              path: "os"
+
+    - name: Test APP Change - Podman Quadlet
+      condition: "event.payload.commits[0].modified is search('test/rhde_config/apps/podman/',ignorecase=true)  or event.payload.commits[0].added is search('test/rhde_config/apps/podman/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Podman Quadlet APPs Deploy
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "test"
+              path: "os"
+
+    - name: Dev APP Change - Microshift Manifest
+      condition: "event.payload.commits[0].modified is search('dev/rhde_config/apps/microshift/manifest/',ignorecase=true)  or event.payload.commits[0].added is search('dev/rhde_config/apps/microshift/manifest/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Microshift APPs Deploy - Manifest
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "dev"
+              path: "os"
+
+    - name: Dev APP Change - Microshift Helm
+      condition: "event.payload.commits[0].modified is search('dev/rhde_config/apps/microshift/helm/',ignorecase=true)  or event.payload.commits[0].added is search('dev/rhde_config/apps/microshift/helm/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Microshift APPs Deploy - Helm
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "dev"
+              path: "os"
+
+    - name: Dev APP Change - Podman Quadlet
+      condition: "event.payload.commits[0].modified is search('dev/rhde_config/apps/podman/',ignorecase=true)  or event.payload.commits[0].added is search('dev/rhde_config/apps/podman/',ignorecase=true)"
+      action:
+        run_job_template:
+          name: Podman Quadlet APPs Deploy
+          organization: "{{ event.payload.repository.owner.login  }} Organization"
+          job_args:
+            extra_vars:
+              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
+              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
+              path_prefix: "rhde_config"
+              env: "dev"
+              path: "os"
+
+
+
   execution_strategy: "parallel"
 {% endraw %}

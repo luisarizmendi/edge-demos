@@ -1,0 +1,3 @@
+git_user={{ gitea_user_name }}{{ user_number }}
+eda_ip={{ eda_ip | default(ansible_host) }}
+eda_port={{ eda_webhook_port | default('5000') }}

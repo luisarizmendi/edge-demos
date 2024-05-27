@@ -28,6 +28,11 @@ variable "admin_pass" {
   default     = "R3dh4t1!"
 }
 
+variable "ssh_key_file" {
+  description = "Location of the Public SSH key"
+  default     = "~/.ssh/id_rsa.pub"
+}
+
 provider "aws" {
   region = var.aws_region
 }
@@ -78,7 +83,7 @@ resource "aws_route_table_association" "public_association" {
 
 resource "aws_key_pair" "keypair" {
   key_name   = var.key_pair_name
-  public_key = file("~/.ssh/id_rsa.pub")
+  public_key = file(var.ssh_key_file)
 }
 
 resource "aws_instance" "edge_mgmt_vm" {

@@ -79,6 +79,8 @@ sed -i "s/ansible_host: .*/ansible_host: ${VM_IP}/" inventory
 
 echo "Running Ansible playbooks"
 
+ssh-keyscan -H ${VM_IP} >> ~/.ssh/known_hosts
+
 ansible-playbook -vvi inventory --vault-password-file <(echo "$VAULT_SECRET") playbooks/main.yml
 
 
