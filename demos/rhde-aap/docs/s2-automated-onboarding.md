@@ -16,6 +16,20 @@ Now it's time to prepare your edge device:
 
 * If you plan to use a VM: You will need to create a VM with at least 2vCPUs, (at least) 3GB Memory, 50GB disk (it could be less but some services such as `wordpress` won't start) and 1 NIC connected to Internet. If you use `Virtual Machine Manager` (so `libvirt`) you should upload/locate the ISO file in any of the configured Libvirt Storage Pools so it can be selected to be used as boot method during the VM creation.
 
+* You need to include your pull secret in a file on your Gitea repository. Create the `openshift-pull-secret` file in the path shown below and copy the content of you pull-secret:
+
+```bash
+cd <your rhde cloned repo>
+vi prod/rhde_config/os/etc/crio/openshift-pull-secret
+git add prod/rhde_config/os/etc/crio/openshift-pull-secret
+git commit -m "Add pull-secret"
+git push
+```
+
+  >**Note**
+  >
+  > This is important, if you don't do that your Microshift won't come up
+
 Once everyting is ready, go ahead with the device onboarding:
 
 
