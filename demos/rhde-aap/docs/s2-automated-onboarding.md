@@ -30,7 +30,7 @@ git push
   >
   > This is important, if you don't do that your Microshift won't come up
 
-Once everyting is ready, go ahead with the device onboarding:
+Once everything is ready, go ahead with the device onboarding:
 
 
 1. Open the "Jobs" page in the AAP and keep it visible while performing the following steps.
