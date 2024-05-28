@@ -9,7 +9,10 @@ demos/microshift-disconnected/files/others/upgrades/usb/v2/*
 demos/microshift-disconnected/files/others/upgrades/usb/v3/*
 
 *pull-secret*
+<<<<<<< HEAD
 bfg*
+=======
+>>>>>>> 3124880cc4a7a556ee6cdb47d18b640d41b6b009
 
 !**/.keep
 
