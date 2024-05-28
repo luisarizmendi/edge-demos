@@ -8,7 +8,7 @@ rhde_automation_encryption_key
 demos/microshift-disconnected/files/others/upgrades/usb/v2/*
 demos/microshift-disconnected/files/others/upgrades/usb/v3/*
 
-
+*pull-secret*
 
 !**/.keep
 
