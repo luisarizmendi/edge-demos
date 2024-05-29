@@ -21,6 +21,7 @@ builder_compose_pkgs:
   - "git"
   - inotify-gitops
   - workload-manifests
+  - tcpdump
 builder_compose_customizations:
   user:
     name: "{{ rhde_user_name }}"

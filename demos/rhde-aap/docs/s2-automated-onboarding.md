@@ -57,7 +57,7 @@ Once everything is ready, go ahead with the device onboarding:
 
   >**Note**
   >
-  > The VPN is prepared to support only one single edge device behind the same public IP at this moment, bear that in mind if you need to deploy more than one device in your demo.
+  > You can deploy more than one device in the local edge site, but if you need to make use of the VPN be aware that the first node that you onboard in AAP will be the gateway of all your local LAN, so it must be running in order to access the local network and the devices deployed there from the Edge Management server (remember that the VPN setup is for demo propouses and this config is not intended be used in production)
 
     - Initial Device Configuration: Here is where the "real" onboarding automation is made. In our example we are only doing one thing with our systems: changing the host name from `localhost` to `edge-<system mac address with no : characters>`
 

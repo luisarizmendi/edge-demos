@@ -44,16 +44,16 @@ conn %default
 
 conn $MAC_ADDRESS
     encapsulation=yes
-    left=${IP_AAP_PUBLIC}
-    leftid=${IP_AAP_PRIVATE}
-    right=${IP_ADDRESS}
-    rightid=${IP_ADDRESS}
+    left=%defaultroute
+    leftid=$MAC_ADDRESS
+    right=${IP_AAP_PUBLIC}
+    rightid=${IP_AAP_PRIVATE}
     authby=secret
     auto=start
     ike=3des-sha1,aes-sha1
     esp=aes-sha2_512+sha2_256
-    leftsubnet=${IP_AAP_PRIVATE}/32
-    rightsubnets=${IP_ADDRESS}/32
+    leftsubnets={192.168.0.0/16 172.16.0.0/12}
+    rightsubnet=${IP_AAP_PRIVATE}/32
 EOF
 
 
@@ -67,9 +67,23 @@ systemctl start ipsec
 
 ipsec auto --up edgedevices
 
- 
+
+
+# Add masquerade rule for the private IP
+firewall-offline-cmd  --permanent --zone=public --add-masquerade
+
+# Add forwarding rules using direct rules
+firewall-offline-cmd  --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s ${IP_AAP_PRIVATE}/32 -d 192.168.0.0/16 -j MASQUERADE
+firewall-offline-cmd  --permanent --direct --add-rule ipv4 nat POSTROUTING 0 -s ${IP_AAP_PRIVATE}/32 -d 172.16.0.0/12 -j MASQUERADE
+firewall-offline-cmd  --permanent --direct --add-rule ipv4 filter FORWARD 0 -s ${IP_AAP_PRIVATE}/32 -d 192.168.0.0/16 -j ACCEPT
+firewall-offline-cmd  --permanent --direct --add-rule ipv4 filter FORWARD 0 -s ${IP_AAP_PRIVATE}/32 -d 172.16.0.0/12 -j ACCEPT
+
 
 fi
+
+
+
+
 
 cat > /var/tmp/aap-auto-registration.sh <<EOF
 #!/bin/bash

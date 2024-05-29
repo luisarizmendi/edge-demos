@@ -75,7 +75,7 @@ The lab architecture has been designed so you can deploy it where you don't have
 
   >**Note**
   >
-  > The VPN is prepared to support only one single edge device behind the same public IP at this moment, bear that in mind if you need to deploy more than one device in your demo.
+  > You can deploy more than one device in the local edge site, but if you need to make use of the VPN be aware that the first node that you onboard in AAP will be the gateway of all your local LAN, so it must be running in order to access the local network and the devices deployed there from the Edge Management server (remember that the VPN setup is for demo propouses and this config is not intended be used in production)
 
 ## Pre-recorded video
 

@@ -44,10 +44,6 @@ AAP does not bring out of the box any "agent" that could be installed in the edg
 
 During the next steps we will see an example where we created a python script that monitors changes in `/etc/` and if it detects any, it will inform AAP, who will enforce again the desired configuration file, overwritting the manually configured changes.
 
-  >**Note**
-  >
-  > There is something that is not working properly in the EDA rulebooks, since instead of getting the configured inventory for the task (in this case it will be the device where the change happens) it takes the default inventory for the Job Template (all production devices). This makes that if any of the devices that you have configured in the "Edge Device" inventory is not reachable, the task will fail. I will try to find out why this is happening and try to solve it in the future but bear this in mind until the fix is released.
-
 1. Open an SSH Terminal in the edge device as root user and keep the "Jobs" page in AAP visible while performing the next step.
 
 2. Edit the `sudoers` file with `vi /etc/sudoers` command and revert the change made while demonstrating "Configuration consistency across all devices" in the step 3. The file will have this content in the file:

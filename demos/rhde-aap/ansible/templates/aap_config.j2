@@ -139,7 +139,7 @@ controller_templates:
       - Device Credentials
     execution_environment: Device Edge Execution Environment
 
-  - name: Create Host in Controller Inventory
+  - name: Create Host in Onboarding Inventory
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     inventory: Local Actions
     project: Device Edge Codebase
@@ -155,6 +155,21 @@ controller_templates:
       controller_password: "{{ aap_user_password }}{% raw %}{{ user_number }}{% endraw %}"
       env: "prod"
 
+  - name: Create Host in Permanent Inventory
+    organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
+    inventory: Local Actions
+    project: Device Edge Codebase
+    playbook: playbooks/aap-inventory-edge_devices-add.yml
+    credentials:
+      - Controller API Credentials
+    ask_variables_on_launch: true
+    execution_environment: Device Edge Execution Environment
+    become_enabled: true
+    extra_vars: 
+      controller_hostname: "{{ controller_hostname }}"
+      controller_username: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %}"
+      controller_password: "{{ aap_user_password }}{% raw %}{{ user_number }}{% endraw %}"
+      env: "prod"
 
   - name: Remove Host from Onboarding Inventory
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
@@ -239,6 +254,7 @@ controller_templates:
       - Device Credentials
     execution_environment: Device Edge Execution Environment
     become_enabled: true
+    ask_limit_on_launch: true
     ask_variables_on_launch: true
     extra_vars: 
         git_repo_url: "http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %}/rhde"
@@ -404,8 +420,8 @@ controller_workflows:
     survey_enabled: false
     ask_variables_on_launch: true
     simplified_workflow_nodes:
-      - identifier: Create Host in Controller Inventory
-        unified_job_template: Create Host in Controller Inventory
+      - identifier: Create Host in Onboarding Inventory
+        unified_job_template: Create Host in Onboarding Inventory
         success_nodes:
           - Test Device Connectivity
       - identifier: Test Device Connectivity
@@ -422,7 +438,13 @@ controller_workflows:
           - Remove Host from Onboarding Inventory
       - identifier: Configure Edge Device
         unified_job_template: Configure Edge Device
-        always_nodes:
+        failure_nodes:
+          - Remove Host from Onboarding Inventory
+        success_nodes:
+          - Create Host in Permanent Inventory
+      - identifier: Create Host in Permanent Inventory
+        unified_job_template: Create Host in Permanent Inventory
+        success_nodes:
           - Remove Host from Onboarding Inventory
       - identifier: Remove Host from Onboarding Inventory
         unified_job_template: Remove Host from Onboarding Inventory

@@ -15,8 +15,8 @@
         run_job_template:
           name: Copy config files
           organization: "{{ event.payload.user }} Organization"
-          inventory: "{{ event.payload.inventory }}"
           job_args:
+            limit: "{{ event.payload.inventory }}"
             extra_vars:
               git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.user | capitalize }}/rhde"
               git_user:  "{{ event.payload.user }}"
