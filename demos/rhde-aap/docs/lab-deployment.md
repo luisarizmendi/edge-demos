@@ -6,6 +6,7 @@
 * [Overview of the preparation workflow](#overview-of-the-preparation-workflow)
 * [Prepare your environment](#prepare-your-environment)
 * [Clone demo repo ](#clone-demo-repo)
+* [Terraform prerequisites](#terraform-prerequisites)
 * [Edge Management Ansible Collection prerequisites](#edge-management-ansible-collection-prerequisites)
  
   - [Get your Ansible Controller Manifest](#get-your-ansible-controller-manifest)
@@ -14,7 +15,6 @@
   - [Create Vault Secret file](#create-vault-secret-file)
   - [Prepare Ansible inventory and variables](#prepare-ansible-inventory-and-variables)
 
-* [Terraform prerequisites](#terraform-prerequisites)
 * [Demo specific prerequisites](#demo-specific-prerequisites)
  
   - [Copy the container images to your Quay account](#copy-the-container-images-to-your-quay-account)
@@ -48,11 +48,13 @@ In order to deploy/prepare the lab you will only the Edge Management node, the E
 Remember that there are two devices/VMs involved in the demo:
 
 * Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate.
+The Edge Management node will nee to have a RHEL 9.x installed (this lab has been tested with RHEL 9.3), "minimal install" is enough. You will need to either have a passwordless sudo user in that system or include the sudo password in the Ansible inventory.
+
+  >**Note**
+  >
+  > Remember that, as part of this demo, a Terraform script is provided to create, install RHEL and perform the required config in that VM. This is not required to deploy the lab but it will simplify it in case you want to directly run this server in AWS.
 
 * Edge Device: This will depend on what you install on top, but for the base deployment you can use 1.5 vCores, 3GB of memory and 50GB disk.
-
-
-The Edge Management node will nee to have a RHEL 9.x installed (this lab has been tested with RHEL 9.3), "minimal install" is enough. You will need to either have a passwordless sudo user in that system or include the sudo password in the Ansible inventory.
 
 
 Your laptop will need Ansible installed to run the playbooks contained in the [Edge Management Ansible Collection](https://galaxy.ansible.com/ui/repo/published/luisarizmendi/rh_edge_mgmt/) (see next section). You will also need `git` to clone the repo in the next step and, if using VMs, a virtualization hypervisor (`libvirt` and  Virtual Machine Manager are recommended).
@@ -65,7 +67,8 @@ Your laptop will need Ansible installed to run the playbooks contained in the [E
 Clone the this repo and move your CLI prompt to the `ansible` directory on the path where the actual demo is located. The demo directory should have a similar organization as the one shown below, you will need to move inside the `ansible` directory which will contain, among others, the inventory, playbooks and vars used for the demo. 
 
 ```bash
-
+├── terraform
+...
 ├── ansible
 │   ├── files
 ...
@@ -87,6 +90,27 @@ When you find a reference to a path during this lab deploymend guide it will con
   >**Note**
   >
   >  You might find that you don't have the vars/secrets.yaml file since that file is created as part of the prerequisites.
+
+## (Optional) Terraform prerequisites
+
+An optional Terraform script is provided to simplify the creation of the Edge Management server in AWS. It has some prerequisites if you want to use it:
+
+* You will need to Install Terraform in your laptop
+
+* Prepare your AWS credentials in `~/.aws/credentials`
+
+```
+[default]
+aws_access_key_id = your_access_key_id
+aws_secret_access_key = your_secret_access_key
+```
+
+  >**Note**
+  >
+  > If you are a Red Hatter you could order an AWS Blank environment in demo.redhat.com in order to get a valid AWS access key and secret
+
++ Prepare Terraform variables in file `../terraform/rhel_vm.tfvars`
+
 
 
 
@@ -231,26 +255,6 @@ Also prepare the variables in the `playbooks/main.yml` playbook.
 
 
 
-
-## Terraform prerequisites
-
-As part of this demo, an optional Terraform script is provided to simplify the creation of the Edge Management server in AWS. It has some prerequisites if you want to use it:
-
-* You will need to Install Terraform in your laptop
-
-* Prepare your AWS credentials in `~/.aws/credentials`
-
-```
-[default]
-aws_access_key_id = your_access_key_id
-aws_secret_access_key = your_secret_access_key
-```
-
-+ Prepare Terraform variables in file `../terraform/rhel_vm.tfvars`
-
-
-
-
 ## Demo specific prerequisites
 
 So far you prepared the prerequisites of any demo/lab deployed with the [Edge Management Ansible Collection](https://galaxy.ansible.com/ui/repo/published/luisarizmendi/rh_edge_mgmt/), but this demo also has some specific requirements that are mentioned below.
@@ -280,24 +284,27 @@ Remember to change visibility of both 2048 and simple-http images to "public" in
 
 ## Deploy the lab
 
+  >**Note**
+  >
+  > The deployment will take long, expect something like 45-60 minutes depending on VM resources and network connectivity
+
+
+### If you want to use the optional Terraform script
+If you want to use the provided terraform script to create the server in AWS, you will need to move one level up in the directory and run:
+
+```shell
+cd ..
+./create.sh
+```
+
+
+### If you have your VM prepared manually
+
 Once you have all the pre-requisites ready, including the Ansible Vault secret file, you need to run the main playbook including the Vault password by adding the `--ask-vault-pass` option:
 
 ```shell
 ansible-playbook -vvi inventory --ask-vault-pass playbooks/main.yml 
 ``` 
-
-The deployment will take some time, depending on the edge management device/VM and internet connection.
-
-  >**Note**
-  >
-  > Expect something like 60 minutes or so
-
-
-If you want to use the provided terraform script to create the server in AWS, you will need to move one level up in the directory and run:
-
-```shell
-./create.sh
-```
 
 
 

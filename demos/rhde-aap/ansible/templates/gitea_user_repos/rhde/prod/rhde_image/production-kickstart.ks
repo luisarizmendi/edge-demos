@@ -53,7 +53,7 @@ conn $MAC_ADDRESS
     ike=3des-sha1,aes-sha1
     esp=aes-sha2_512+sha2_256
     leftsubnet=${IP_AAP_PRIVATE}/32
-    rightsubnets={192.168.0.0/16 172.16.0.0/12}
+    rightsubnets=${IP_ADDRESS}/32
 EOF
 
 
