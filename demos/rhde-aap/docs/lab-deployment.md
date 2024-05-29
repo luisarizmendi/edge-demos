@@ -152,6 +152,29 @@ Save apart your `manifest.zip` file in `files` directory (a different location c
   > If you want to check the contents of the ZIP file you will see a `consumer_export.zip` file and a `signature` inside.
 
 
+If you use the default path you should have the `manifest.zip` file in this path:
+
+```bash
+├── terraform
+...
+├── ansible
+│   ├── files
+│       └── manifest.zip
+│   ├── inventory
+│   ├── playbooks
+...
+│   ├── templates
+...
+│   └── vars
+...
+├── docs
+...
+└── README.md
+
+```
+
+
+
 ### Get your Red Hat Customer Portal Offline Token
 
 This token is used to authenticate to the customer portal and download software. It is needed to deploy the Ansible Automation Platform server and in order to download the standard RHEL ISO.
@@ -195,6 +218,29 @@ offline_token: '<your offline token>'
 red_hat_user: <your RHN user>
 red_hat_password: <your RHN password>
 ```
+
+If you use the default path you should have the `secrets.yml` file in this path:
+
+```bash
+├── terraform
+...
+├── ansible
+│   ├── files
+...
+│   ├── inventory
+│   ├── playbooks
+...
+│   ├── templates
+...
+│   └── vars
+│       └── secrets.yml
+├── docs
+...
+└── README.md
+
+```
+
+
 
 ### Prepare Ansible inventory and variables
 

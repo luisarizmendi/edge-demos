@@ -20,7 +20,13 @@ Now it's time to prepare your edge device:
 
 ```bash
 cd <your rhde cloned repo>
+mkdir prod/rhde_config/os/etc/crio/
 vi prod/rhde_config/os/etc/crio/openshift-pull-secret
+```
+
+After including your pull-secret in that file, push your changes to Gitea
+
+```bash
 git add prod/rhde_config/os/etc/crio/openshift-pull-secret
 git commit -m "Add pull-secret"
 git push
