@@ -91,15 +91,16 @@ for event in i.event_gen(yield_nones=False):
       _, file_extension = os.path.splitext(filename)
 
       if file_extension not in ('.swp', '.ddf', '.db'):
-        #print("variable: {}".format(type_names))
-        if any(event_type in ['IN_CREATE', 'IN_MODIFY', 'IN_DELETE', 'IN_MOVE'] for event_type in type_names):
-            print("PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(path, filename, type_names))
-            # Check if the "/root/inotify-wait" file exists
-            if not inotify_wait_exists():
-                # Send a webhook notification with JSON data
-                send_webhook(path, filename, type_names, git_user, inventory, running_env )
-                # Create the "/root/inotify-wait" file
-                open('/root/inotify-wait', 'w').close()
+        if '/etc/containers' not in path:
+            #print("variable: {}".format(type_names))
+            if any(event_type in ['IN_CREATE', 'IN_MODIFY', 'IN_DELETE', 'IN_MOVE'] for event_type in type_names):
+                print("PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(path, filename, type_names))
+                # Check if the "/root/inotify-wait" file exists
+                if not inotify_wait_exists():
+                    # Send a webhook notification with JSON data
+                    send_webhook(path, filename, type_names, git_user, inventory, running_env )
+                    # Create the "/root/inotify-wait" file
+                    open('/root/inotify-wait', 'w').close()
 
 i.remove_watch(DIRECTORY)
 {% endraw %}
