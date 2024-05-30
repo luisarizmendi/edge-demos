@@ -50,6 +50,9 @@ conn $MAC_ADDRESS
     rightid=${IP_AAP_PRIVATE}
     authby=secret
     auto=start
+    dpdaction=restart
+    dpddelay=10
+    dpdtimeout=30
     ike=3des-sha1,aes-sha1
     esp=aes-sha2_512+sha2_256
     leftsubnets={192.168.0.0/16 172.16.0.0/12}
