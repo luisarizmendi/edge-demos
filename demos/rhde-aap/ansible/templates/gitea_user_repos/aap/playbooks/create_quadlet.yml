@@ -67,14 +67,27 @@
     - name: Get list of .container files in /etc/containers/systemd/
       find:
         paths: /etc/containers/systemd/
-        patterns: "*.container,*.kube"
+        patterns: "*.container"
       register: container_files
       changed_when: false
 
-    - name: Restart systemd units
+    - name: Restart systemd .container files units
       systemd:
         name: "{{ item.path | basename | regex_replace('(.*)\\.container', '\\1.service') }}"
         state: restarted
       loop: "{{ container_files.files }}"
+
+    - name: Get list of .kube files in /etc/containers/systemd/
+      find:
+        paths: /etc/containers/systemd/
+        patterns: "*.kube"
+      register: kube_files
+      changed_when: false
+
+    - name: Restart systemd .kube files units
+      systemd:
+        name: "{{ item.path | basename | regex_replace('(.*)\\.kube', '\\1.service') }}"
+        state: restarted
+      loop: "{{ kube_files.files }}"
       
 {% endraw %}
