@@ -309,9 +309,15 @@ Also prepare the variables in the `playbooks/main.yml` playbook.
 
 So far you prepared the prerequisites of any demo/lab deployed with the [Edge Management Ansible Collection](https://galaxy.ansible.com/ui/repo/published/luisarizmendi/rh_edge_mgmt/), but this demo also has some specific requirements that are mentioned below.
 
-### Copy the container images to your Quay account
+### (Optional) Copy the container images to your Quay account
 
-During the demo you will need to push or move tags in certain container images (take a look at [minute 25:25 in the video](https://www.youtube.com/watch?v=XCtfy7AqLLY&t=25m25s)), so you will need to have access to a container image repository. Probably you want to use Quay.io so first, check that you can login:
+During the demo there are some optional steps where you will need to push or move tags in certain container images (take a look at [minute 25:25 in the video](https://www.youtube.com/watch?v=XCtfy7AqLLY&t=25m25s)), so you will need to have access to a container image repository (the one that you configured in the `apps_registry` variable in the `playbooks/main.yml` playbook).
+
+  >**Note**
+  >
+  > If you don't want to show those demo steps, you can keep `apps_registry: quay.io/luisarizmendi` and the applications will be deployed, although you won't be able to alter the container tags in the registry...
+
+Probably you want to use Quay.io so first, check that you can login:
 
 ```bash
 podman login -u <your-quay-user> quay.io

@@ -1,0 +1,100 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgresql-data
+  labels:
+    app: odoo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: db-pod
+  name: db-pod
+spec:
+  containers:
+  - args:
+    - postgres
+    env:
+    - name: POSTGRES_PASSWORD
+      value: odoo
+    - name: POSTGRES_DB
+      value: postgres
+    - name: POSTGRES_USER
+      value: odoo
+    image: docker.io/library/postgres:latest
+    name: db
+    volumeMounts:
+    - mountPath: /var/lib/postgresql/data
+      name: postgresql-data-pvc
+  volumes:
+  - name: postgresql-data-pvc
+    persistentVolumeClaim:
+      claimName: postgresql-data
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: extra-addons
+  labels:
+    app: odoo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: odoo-lib
+  labels:
+    app: odoo
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: odoo-pod
+  name: odoo-pod
+spec:
+  containers:
+  - args:
+    - odoo
+    env:
+    - name: TERM
+      value: xterm
+    image: docker.io/library/odoo:latest
+    name: odoo
+    ports:
+    - containerPort: 8069
+      hostPort: 8069
+    securityContext: {}
+    tty: true
+    volumeMounts:
+    - mountPath: /mnt/extra-addons
+      name: extra-addons-pvc
+    - mountPath: /var/lib/odoo
+      name: odoo-lib-pvc
+  volumes:
+  - name: extra-addons-pvc
+    persistentVolumeClaim:
+      claimName: extra-addons
+  - name: odoo-lib-pvc
+    persistentVolumeClaim:
+      claimName: odoo-lib
+

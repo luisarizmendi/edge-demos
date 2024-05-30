@@ -29,7 +29,7 @@
     - name: set host facts
       ansible.builtin.set_fact:
         controller_hosts:
-          - name: "edge-{{ mac_address }}"
+          - name: "{{ nodename }}"
             inventory: "{{ device_inventory }}"
             enabled: true
             variables:
@@ -45,8 +45,8 @@
     - name: set host facts
       ansible.builtin.set_fact:
         controller_inventories:
-          - name: "edge-{{ mac_address }}"
-            description: "Inventory containing just device edge-{{ mac_address }}"
+          - name: "{{ nodename }}"
+            description: "Inventory containing just device {{ nodename }}"
             organization: "{{ controller_username }} Organization"
             variables:
               user_number: "{{ user }}"
@@ -59,8 +59,8 @@
     - name: set host facts
       ansible.builtin.set_fact:
         controller_hosts:
-          - name: "edge-{{ mac_address }}"
-            inventory: "edge-{{ mac_address }}"
+          - name: "{{ nodename }}"
+            inventory: "{{ nodename }}"
             enabled: true
             state: "{{ resource_state | default('present') }}"
             variables:

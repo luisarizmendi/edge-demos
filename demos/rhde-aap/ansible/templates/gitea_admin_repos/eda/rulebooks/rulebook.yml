@@ -166,7 +166,7 @@
 
 
     - name: Initial provisioning
-      condition: event.payload.ip_address is defined and event.payload.mac_address is defined and event.payload.user is defined
+      condition: event.payload.ip_address is defined and event.payload.nodename is defined and event.payload.user is defined
       action:
         run_workflow_template:
           name: Provision Edge Device
@@ -175,7 +175,7 @@
             extra_vars:
               user: "{{ event.payload.user }}"
               ip_address: "{{ event.payload.ip_address }}"
-              mac_address: "{{ event.payload.mac_address }}"
+              nodename: "{{ event.payload.nodename | string }}"
               env: "{{ event.payload.env }}"
 
 

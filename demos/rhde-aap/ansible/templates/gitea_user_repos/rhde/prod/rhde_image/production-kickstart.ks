@@ -102,7 +102,7 @@ fi
 JSON="{\
 \"ip_address\": \"\$IP_ADDRESS\", \
 \"user\": \"\$USER\", \
-\"mac_address\": \"\$MAC_ADDRESS\", \
+\"nodename\": \"edge-\$MAC_ADDRESS\", \
 \"env\": \"prod\" \
 }"
 

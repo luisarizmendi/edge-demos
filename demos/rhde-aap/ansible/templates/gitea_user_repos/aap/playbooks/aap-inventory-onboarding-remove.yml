@@ -22,7 +22,7 @@
     - name: set host facts
       ansible.builtin.set_fact:
         controller_hosts:
-          - name: "edge-{{ mac_address }}"
+          - name: "{{ nodename }}"
             inventory: Onboarding
             enabled: true
             state: absent
