@@ -67,7 +67,7 @@
     - name: Get list of .container files in /etc/containers/systemd/
       find:
         paths: /etc/containers/systemd/
-        patterns: "*.container"
+        patterns: "*.container,*.kube"
       register: container_files
       changed_when: false
 
