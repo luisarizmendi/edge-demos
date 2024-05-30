@@ -76,7 +76,7 @@ firewall-offline-cmd   --direct --add-rule ipv4 nat POSTROUTING 0 -s ${IP_AAP_PR
 firewall-offline-cmd   --direct --add-rule ipv4 filter FORWARD 0 -s ${IP_AAP_PRIVATE}/32 -d 192.168.0.0/16 -j ACCEPT
 firewall-offline-cmd   --direct --add-rule ipv4 filter FORWARD 0 -s ${IP_AAP_PRIVATE}/32 -d 172.16.0.0/12 -j ACCEPT
 
-
+firewall-offline-cmd --runtime-to-permanent
 fi
 
 
