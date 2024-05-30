@@ -65,12 +65,10 @@ EOF
 systemctl enable ipsec
 systemctl start ipsec 
 
-ipsec auto --up edgedevices
-
 
 
 # Add masquerade rule for the private IP
-firewall-offline-cmd  --permanent --zone=public --add-masquerade
+firewall-offline-cmd  --zone=public --add-masquerade
 
 # Add forwarding rules using direct rules
 firewall-offline-cmd   --direct --add-rule ipv4 nat POSTROUTING 0 -s ${IP_AAP_PRIVATE}/32 -d 192.168.0.0/16 -j MASQUERADE
