@@ -93,7 +93,11 @@ When you find a reference to a path during this lab deploymend guide it will con
 
 ## (Optional) Terraform prerequisites
 
-An optional Terraform script is provided to simplify the creation of the Edge Management server in AWS. It has some prerequisites if you want to use it:
+An optional Terraform script is provided to simplify the creation of the Edge Management server in AWS.
+
+First, you will need to [install Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli) in your laptop.
+
+It also has some prerequisites if you want to use it:
 
 * You will need to Install Terraform in your laptop
 
