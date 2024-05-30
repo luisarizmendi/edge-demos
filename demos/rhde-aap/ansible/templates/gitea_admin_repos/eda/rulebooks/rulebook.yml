@@ -23,7 +23,7 @@
               path_prefix: "rhde_config"
               env: "{{ event.payload.running_env }}"
               path: "os"
-              
+
 
     - name: Prod Config Change
       condition: "event.payload.commits[0].modified is search('prod/rhde_config/os/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/os/',ignorecase=true)"
@@ -193,21 +193,7 @@
               git_user: "{{ event.payload.repository.owner.login | capitalize }}"
               path_prefix: "rhde_config"
               env: "prod"
-              path: "os"
-
-    - name: Prod APP Change - Microshift Helm
-      condition: "event.payload.commits[0].modified is search('prod/rhde_config/apps/microshift/helm/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/apps/microshift/helm/',ignorecase=true)"
-      action:
-        run_job_template:
-          name: Microshift APPs Deploy - Helm
-          organization: "{{ event.payload.repository.owner.login  }} Organization"
-          job_args:
-            extra_vars:
-              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
-              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
-              path_prefix: "rhde_config"
-              env: "prod"
-              path: "os"
+              path: "apps/microshift/manifest"
 
     - name: Prod APP Change - Podman Quadlet
       condition: "event.payload.commits[0].modified is search('prod/rhde_config/apps/podman/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/apps/podman/',ignorecase=true)"
@@ -221,7 +207,7 @@
               git_user: "{{ event.payload.repository.owner.login | capitalize }}"
               path_prefix: "rhde_config"
               env: "prod"
-              path: "os"
+              path: "apps/podman/quadlet"
 
     - name: Test APP Change - Microshift Manifest
       condition: "event.payload.commits[0].modified is search('test/rhde_config/apps/microshift/manifest/',ignorecase=true)  or event.payload.commits[0].added is search('test/rhde_config/apps/microshift/manifest/',ignorecase=true)"
@@ -235,21 +221,8 @@
               git_user: "{{ event.payload.repository.owner.login | capitalize }}"
               path_prefix: "rhde_config"
               env: "test"
-              path: "os"
+              path: "apps/microshift/manifest"
 
-    - name: Test APP Change - Microshift Helm
-      condition: "event.payload.commits[0].modified is search('test/rhde_config/apps/microshift/helm/',ignorecase=true)  or event.payload.commits[0].added is search('test/rhde_config/apps/microshift/helm/',ignorecase=true)"
-      action:
-        run_job_template:
-          name: Microshift APPs Deploy - Helm
-          organization: "{{ event.payload.repository.owner.login  }} Organization"
-          job_args:
-            extra_vars:
-              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
-              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
-              path_prefix: "rhde_config"
-              env: "test"
-              path: "os"
 
     - name: Test APP Change - Podman Quadlet
       condition: "event.payload.commits[0].modified is search('test/rhde_config/apps/podman/',ignorecase=true)  or event.payload.commits[0].added is search('test/rhde_config/apps/podman/',ignorecase=true)"
@@ -263,7 +236,7 @@
               git_user: "{{ event.payload.repository.owner.login | capitalize }}"
               path_prefix: "rhde_config"
               env: "test"
-              path: "os"
+              path: "apps/podman/quadlet"
 
     - name: Dev APP Change - Microshift Manifest
       condition: "event.payload.commits[0].modified is search('dev/rhde_config/apps/microshift/manifest/',ignorecase=true)  or event.payload.commits[0].added is search('dev/rhde_config/apps/microshift/manifest/',ignorecase=true)"
@@ -277,21 +250,8 @@
               git_user: "{{ event.payload.repository.owner.login | capitalize }}"
               path_prefix: "rhde_config"
               env: "dev"
-              path: "os"
+              path: "apps/microshift/manifest"
 
-    - name: Dev APP Change - Microshift Helm
-      condition: "event.payload.commits[0].modified is search('dev/rhde_config/apps/microshift/helm/',ignorecase=true)  or event.payload.commits[0].added is search('dev/rhde_config/apps/microshift/helm/',ignorecase=true)"
-      action:
-        run_job_template:
-          name: Microshift APPs Deploy - Helm
-          organization: "{{ event.payload.repository.owner.login  }} Organization"
-          job_args:
-            extra_vars:
-              git_repo_url: {% endraw %}"http://{{ gitea_ip | default(ansible_host) }}:{{ gitea_port | default('3000') }}/{% raw %}{{ event.payload.repository.owner.login | capitalize }}/rhde"
-              git_user: "{{ event.payload.repository.owner.login | capitalize }}"
-              path_prefix: "rhde_config"
-              env: "dev"
-              path: "os"
 
     - name: Dev APP Change - Podman Quadlet
       condition: "event.payload.commits[0].modified is search('dev/rhde_config/apps/podman/',ignorecase=true)  or event.payload.commits[0].added is search('dev/rhde_config/apps/podman/',ignorecase=true)"
@@ -305,7 +265,7 @@
               git_user: "{{ event.payload.repository.owner.login | capitalize }}"
               path_prefix: "rhde_config"
               env: "dev"
-              path: "os"
+              path: "apps/podman/quadlet"
 
 
 
