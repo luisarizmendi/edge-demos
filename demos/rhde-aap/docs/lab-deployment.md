@@ -119,8 +119,12 @@ aws_secret_access_key = your_secret_access_key
 You need to install the [Ansible Collection](https://github.com/luisarizmendi/rh_edge_mgmt) on your laptop:
 
 ```shell
-ansible-galaxy collection install luisarizmendi.rh_edge_mgmt
+ansible-galaxy collection install luisarizmendi.rh_edge_mgmt --upgrade
 ```
+
+  >**Note**
+  >
+  > Even if you have already installed the collection, it is a good idea to run the command above so the collection playbooks are updated if there has been any change since you downloaded it for the first time.
 
 The Collection [setup_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/setup_rh_edge_mgmt_node) and [config_rh_edge_mgmt_node role](https://github.com/luisarizmendi/rh_edge_mgmt/tree/main/roles/config_rh_edge_mgmt_node) have some pre-requisites. This is the summary (all for installing the services):
 
