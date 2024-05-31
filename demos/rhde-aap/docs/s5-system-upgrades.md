@@ -1,10 +1,12 @@
 # Section 5 - Bulletproof system upgrades
 
-In this section we will modify the image that we created in Section 1 by removing and adding packages to the definition.
+In this section we will modify the image that we created in Section 1 by removing and adding packages to the definition. We will demonstrate how the system will realize that we made "a mistake" excluding those packages and how it will rollback to the previous image version were those packages were present.
 
   >**Note**
   >
-  > We will remove (intentionally) some of the packages that are, in fact, needed to make the manual overwrite prevention system that we have seen in Section 3 work (such as `python3-inotify`). We will do it in order to demonstrate how the system will realize that we made a mistake excluding those packages and how it will rolback to the previous image version were those packages were present.   
+  > We will remove (intentionally) some of the packages that are, in fact, needed. For example, you can prevent the manual overwrite prevention system that we have seen in Section 3 work if you remove the package `python3-inotify`, or if you are using the "Kiosk Mode", then you can disrupt the service in the console if you remove the package `kiosk-mode`.
+
+
 
 1. Open a Terminal en the edge system and run `watch "rpm-ostree upgrade --preview"` command as root to verify that there are no system updates available and to watch changes while we publish the new image in the following steps. Keep this CLI Terminal visible.
 
@@ -17,7 +19,7 @@ Note: --check and --preview may be unreliable.  See https://github.com/coreos/rp
 No updates available
 ```
 
-2. Open `rhde/prod/rhde_image/production-image-definition.yaml` in Gitea and review the `builder_compose_pkgs` packages. Remove the custom rpm `inotify-gitops` package (which will remove also the `python3-inotify` dependancy) and include an additional one (ie. `zsh`), so we are simulating that someone wants to add a package but, when he reviews the image definition, he thinks that the `inotify-gitops` package can be safely removed (which is not the case) too.
+2. Open `rhde/prod/rhde_image/production-image-definition.yaml` in Gitea and review the `builder_compose_pkgs` packages. Remove the custom rpm `inotify-gitops` package (which will remove also the `python3-inotify` dependancy) and, if you want, the `kiosk-mode` package too. You can include an additional package (ie. `zsh`) to the definition, so we are simulating that someone wants to add a package but, when he reviews the image definition, he thinks that the `inotify-gitops` package can be safely removed (which is not the case) too.
 
 ```bash
 ---
@@ -58,7 +60,7 @@ builder_compose_customizations:
 
   >**Note**
   >
-  > The example above is for `user1` using the default `admin` username to connect to the devices, modify the required lines if you are using a different user or not using the default values. 
+  > The example above is for `user1` using the default `admin` username to connect to the devices, modify the required lines if you are using a different user or not using the default values.
 
 
 3. As soon as you change the image definition you can open the AAP and show the Workflow running in the "Jobs" page which will use the Image Builder service to create the new Red Hat Device Edge.
@@ -96,7 +98,7 @@ echo "python3-inotify is installed."
 
   >**Note**
   >
-  > If you deployed Microshift you will find an auto-generated required script named `40_microshift_running_check.sh` to check the Microshift status. 
+  > If you deployed Microshift you will find an auto-generated required script named `40_microshift_running_check.sh` to check the Microshift status.
 
 
 5. Check "Jobs" page in AAP until the "Compose Image" Job finish. Then click the "New Edge Device Image" Workflow Job, click the "Publish Image Approval" box and finally click on "Approve" (button left) to let the workflow progress
@@ -179,14 +181,14 @@ AvailableUpdate:
 
  ```
 
-7. You have two options now. You can perform the upgrade manually from that same edge device CLI terminal, or you can use the pre-configured "OSTree Upgrade" Workflow Template in AAP that will upgrade all devices contained in the inventory (in our case just one...). If you choose to run manually the Template, a new Workflow Job will be launched. It will execute the "Run command" Job and then wait for "Reboot approval". 
+7. You have two options now. You can perform the upgrade manually from that same edge device CLI terminal, or you can use the pre-configured "OSTree Upgrade" Workflow Template in AAP that will upgrade all devices contained in the inventory (in our case just one...). If you choose to run manually the Template, a new Workflow Job will be launched. It will execute the "Run command" Job and then wait for "Reboot approval".
 
-If you follow the CLI option, you can run `sudo rpm-ostree upgrade` as root user in the edge system and that will download the system image changes. Then you will need to reboot your system (`systemctl reboot`) to move the system to the new image version. 
+If you follow the CLI option, you can run `sudo rpm-ostree upgrade` as root user in the edge system and that will download the system image changes. Then you will need to reboot your system (`systemctl reboot`) to move the system to the new image version.
 
 
   >**Note**
   >
-  > Ostree images work like your IOS or Android phones, where you reboot to use a new upgraded image, so we will need to reboot our system. 
+  > Ostree images work like your IOS or Android phones, where you reboot to use a new upgraded image, so we will need to reboot our system.
 
 No matter if you are using the AAP Job or the CLI, before performing the upgrade be sure that you are showing the edge device Console terminal to see the device booting. This terminal is not an SSH terminal but the actual video output of the system. If you are using VMs for your demo/workshop you can do it just by opening the VM's console but if you are using physical servers you will need either an external screen connected to your device or a Video Capture Card (as the one shown in the [Recommended Hardware Section](README.md#recommended-hardware) to show the output on your laptop.
 
@@ -211,7 +213,7 @@ No matter if you are using the AAP Job or the CLI, before performing the upgrade
 
 ```bash
 [ansible@edge-manager-local ~]$ ssh <edge device ip>
-ansible@<edge device ip>'s password: 
+ansible@<edge device ip>'s password:
 Boot Status is GREEN - Health Check SUCCESS
 FALLBACK BOOT DETECTED! Default rpm-ostree deployment has been rolled back.
 Health check logs from previous boot:
@@ -290,7 +292,7 @@ If you check `rhde/prod/rhde_image/production-image-deploy.yml` file in Gitea yo
 
 1. Create the base image (Section 1)
 2. Create the upgrade where we remove `pyhton-inotify` and add `zsh`. You can use the "Compose Image" or just use the GitOps approach or the Workflow without approving the publishing (it's just to save time, it does not affect if you publish in any case)
-3. Create the second upgrade where we include `pyhton-inotify` again 
+3. Create the second upgrade where we include `pyhton-inotify` again
 4. Change the `rhde/prod/rhde_image//production-image-deploy.yml` to `production_image_version: "0.0.1"`. That will trigger the "Publish Image" Job in AAP.
 
 At that time you will have the base image published. You can go through the different Sections and now, when you reach this Section where you have to perform the upgrade you can just change to `production_image_version: "0.0.2"` and that will publish the second image (first upgrade without `pyhton-inotify`) without having to create the image, because it's already there in the system. You can repeat that step with `production_image_version: "0.0.3"` for the final image.

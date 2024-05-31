@@ -140,8 +140,7 @@ For `production-kickstart.ks`:
 
   >**Note**
   >
-  > You can deploy more than one device in the local edge site, but if you need to make use of the VPN be aware that the first node that you onboard in AAP will be the gateway of all your local LAN, so it must be running in order to access the local network and the devices deployed there from the Edge Management server (remember that the VPN setup is for demo propouses and this config is not intended be used in production)
-
+  > In order to connect a machine in the local network to the remote node you will need to use a local subnet contained in `192.168.0.0/16` or `172.16.0.0/12`
 
 * It creates a script for AAP auto-registration, so the new device is included in the AAP inventory directly without human intervention 
 

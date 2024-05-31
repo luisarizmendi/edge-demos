@@ -346,7 +346,7 @@ Remember to change visibility of both 2048 and simple-http images to "public" in
 
   >**Note**
   >
-  > The deployment will take long, expect something like 45-60 minutes depending on VM resources and network connectivity
+  > The deployment will take long, expect something like 60-70 minutes depending on the number of configured users, VM/device resources and network connectivity
 
 
 ### If you want to use the optional Terraform script

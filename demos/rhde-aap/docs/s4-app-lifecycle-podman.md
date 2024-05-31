@@ -5,23 +5,21 @@ In this section we will explore how you could use Podman applications using Ansi
 
 ## Deploying an APP in Podman in a declarative way
 
-After the onboarding, we have two test applications already deployed, both running as rootless containers. The applications where deployed thought the usage of a shell script that you can find in `rhde/prod/rhde_config/scripts/onboarding.sh` which is executed by Ansible Automation Platform while onboarding the device.
+After the onboarding, we will have multiple containerized applications running on "Podman" already deployed, some of them running as rootless containers.
 
-Those APPs, that were included to demonstrate some of the Podman capabilities in the following sections below, were deployed by default as part of the onboarding, but what happens if I need to deploy a specific APP in a specific device? and what If you want to do it in a declarative way? The answer is [Quadlet](https://www.redhat.com/sysadmin/quadlet-podman).
+The applications where deployed in two different ways:
 
-You can create new containerized applications by just putting a descriptor in` /usr/share/containers/systemd/` or `/etc/containers/systemd` (`HOME/.config/containers/systemd/` for rootless containers). During this step we will demo how we can use AAP and EDA to create this kind of APPs in a GitOps way.
+* Some of them where deployed thought the usage of a shell script that you can find in `rhde/prod/rhde_config/scripts/onboarding.sh` which is executed by Ansible Automation Platform while onboarding the device.
+* Others where deployed using a declarative way (check `rhde/prod/rhde_config/apps/podman/quadlet` in Gitea), thanks to  [Quadlet](https://www.redhat.com/sysadmin/quadlet-podman), that permits to create new containerized applications by just putting a descriptor in` /usr/share/containers/systemd/` or `/etc/containers/systemd` (`HOME/.config/containers/systemd/` for rootless containers).
 
-There is Job already created to deploy (root) container images based on a file descriptor located in GIT.
+The applications deployed with the script were included to demonstrate some of the Podman capabilities in the following sections below, such as Podman auto-update and Serverless applications. The applications deployed with Quadlet were created so you can see how you can deploy containerized applications with Podman in a GitOps way.
 
+There is a webhook configured to trigger the deployments througt EDA that deploys the Quadlet apps if you push or change content in Gitea, so let's modify the port where one of the applications is published.
 
 1. Open Gitea and show the `rhde/prod/rhde_config/apps/podman/quadlet` folder. There will be the descriptors that will be created on the edge devices. You have one preloaded: `app_fuxa_scada.container`. Open that file and show the config (mainly the image and port).
 
-  >**Note**
-  >
-  > That application needs quite large container images. If you are running the demo/workshop in an environment with low bandwidth you might use any other container image that you know would work better.
 
-
-2. Here you have two options. First you can go into the AAP and run the Template "Create Quadlet APP" or you can change something (for example, change the port where it is published on the host, from `PublishPort=1881:1881`to `PublishPort=1882:1881`) on the descriptor on Gitea and see how EDA gets the Job launched for you. If you choose the second option remember to open first the "Jobs" page in the AAP so people can see how the Job is auto-launched. 
+2. Here you have two options. First you can go into the AAP and run the Template "Create Quadlet APP" or you can change something (for example, change the port where it is published on the host, from `PublishPort=1881:1881`to `PublishPort=1882:1881`) on the descriptor on Gitea and see how EDA gets the Job launched for you. If you choose the second option remember to open first the "Jobs" page in the AAP so people can see how the Job is auto-launched.
 
   >**Note**
   >
@@ -37,7 +35,7 @@ a164ed35c012  docker.io/frangoteam/fuxa:latest  npm start   17 seconds ago  Up 1
 
 4. Show the APP by visiting `http:<edge device IP>:<configured port>`
 
-5. (Optional) You can go back to Gitea and change something (ie. the port) in the `rhde/prod/rhde_config/apps/podman/quadlet/app_fuxa_scada.container` file and see how that change is applied to the application.
+5. Change the port in Giteain the `rhde/prod/rhde_config/apps/podman/quadlet/app_fuxa_scada.container` file and see how that change is applied to the application.
 
 
 
