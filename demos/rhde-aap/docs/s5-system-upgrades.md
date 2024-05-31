@@ -283,7 +283,6 @@ builder_compose_customizations:
 12. After creating and publishing the new image perform the system upgrade again (either with the CLI on the edge device or using the "	OSTree Upgrade" Job in AAP) and show how this time the system was sucesfully upgraded.
 
 
-
 ## TIP: Reducing the demo/workshop time by pre-creating images in advance
 
 Creating those two additional images takes time. If you feel that you cannot fill that time with something useful or you think you won't have time to invest on that activity you can pre-create the images thanks to a trick that was introduced in the lab when it was deployed.
