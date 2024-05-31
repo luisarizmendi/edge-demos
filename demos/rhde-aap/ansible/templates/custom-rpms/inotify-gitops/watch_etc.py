@@ -91,7 +91,7 @@ for event in i.event_gen(yield_nones=False):
       _, file_extension = os.path.splitext(filename)
 
       if file_extension not in ('.swp', '.ddf', '.db'):
-        if '/etc/containers' not in path:
+        if '/etc/containers' not in path or '/etc/cni' not in path:
             #print("variable: {}".format(type_names))
             if any(event_type in ['IN_CREATE', 'IN_MODIFY', 'IN_DELETE', 'IN_MOVE'] for event_type in type_names):
                 print("PATH=[{}] FILENAME=[{}] EVENT_TYPES={}".format(path, filename, type_names))

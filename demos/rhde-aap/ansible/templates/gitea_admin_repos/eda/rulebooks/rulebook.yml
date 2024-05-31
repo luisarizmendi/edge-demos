@@ -23,7 +23,7 @@
               path_prefix: "rhde_config"
               env: "{{ event.payload.running_env }}"
               path: "os"
-
+              
 
     - name: Prod Config Change
       condition: "event.payload.commits[0].modified is search('prod/rhde_config/os/',ignorecase=true)  or event.payload.commits[0].added is search('prod/rhde_config/os/',ignorecase=true)"

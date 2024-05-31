@@ -89,5 +89,5 @@
         name: "{{ item.path | basename | regex_replace('(.*)\\.kube', '\\1.service') }}"
         state: restarted
       loop: "{{ kube_files.files }}"
-      
+
 {% endraw %}

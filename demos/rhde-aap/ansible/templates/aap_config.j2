@@ -408,8 +408,48 @@ controller_templates:
     execution_environment: Device Edge Execution Environment
     become_enabled: true
 
+  - name: Run command
+    organization:  "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
+    inventory: Edge Devices
+    ask_inventory_on_launch: true
+    project: Device Edge Codebase
+    playbook: playbooks/run-command.yml
+    credentials:
+      - Device Credentials
+    execution_environment: Device Edge Execution Environment
+    become_enabled: true
+    ask_variables_on_launch: true
+    extra_vars: 
+        command_to_execute: date
 
 controller_workflows:
+
+  - name: OSTree Upgrade
+    organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
+    state: present
+    extra_vars: 
+        command_to_execute: rpm-ostree upgrade
+    ask_inventory_on_launch: true
+    ask_variables_on_launch: true
+    allow_simultaneous: true
+    survey_enabled: false
+    inventory: Edge Devices
+    simplified_workflow_nodes:
+      - identifier: Run command
+        unified_job_template: Run command
+        success_nodes:
+          - Reboot approval
+      - identifier: Reboot approval
+        approval_node:
+          name: Approve the reboot
+          description: Reboot the device approval
+          timeout: 0
+        success_nodes:
+          - Reboot device
+      - identifier: Reboot device
+        unified_job_template: Reboot device
+
+
 
   - name: Provision Edge Device
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"

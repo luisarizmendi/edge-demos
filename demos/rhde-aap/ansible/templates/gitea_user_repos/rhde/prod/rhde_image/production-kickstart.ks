@@ -69,7 +69,6 @@ systemctl enable ipsec
 systemctl start ipsec 
 
 
-
 # Add masquerade rule for the private IP
 firewall-offline-cmd  --zone=public --add-masquerade
 
@@ -80,6 +79,7 @@ firewall-offline-cmd   --direct --add-rule ipv4 filter FORWARD 0 -s ${IP_AAP_PRI
 firewall-offline-cmd   --direct --add-rule ipv4 filter FORWARD 0 -s ${IP_AAP_PRIVATE}/32 -d 172.16.0.0/12 -j ACCEPT
 
 firewall-offline-cmd --runtime-to-permanent
+
 fi
 
 
