@@ -8,6 +8,10 @@ In this demo we will be distributing the RHDE image using an ISO. An Ansible Tem
 
 * When the Job is finished, you will see at the end of the output a `debug` message with the URL from where you can download the generated ISO.
 
+  >**Note**
+  >
+  > Probably you will need to click on "Reload output" to see the full Job log if you didn't reload the page.
+
 * If you are using a physical device: Write that ISO into a bootable USB key (ie. using a Software such as "Fedora Media Writer").
 
 Now it's time to prepare your edge device:
