@@ -2,7 +2,7 @@
 
 ## Video
 
-[![Section 1 - Video](https://img.youtube.com/vi/m1TdoDZRJAI/0.jpg)](https://www.youtube.com/watch?v=m1TdoDZRJAI)
+[![Section 5 - Video](https://img.youtube.com/vi/m1TdoDZRJAI/0.jpg)](https://www.youtube.com/watch?v=m1TdoDZRJAI)
 
 <br><br>
 <hr style="border:2px solid gray">
@@ -293,7 +293,7 @@ builder_compose_customizations:
 
 ## TIP: Reducing the demo/workshop time by pre-creating images in advance
 
-[![Section 1 - Video](https://img.youtube.com/vi/_CVHUncDsq8/0.jpg)](https://www.youtube.com/watch?v=_CVHUncDsq8)
+[![Section 5 Bonus - Video](https://img.youtube.com/vi/_CVHUncDsq8/0.jpg)](https://www.youtube.com/watch?v=_CVHUncDsq8)
 
 <hr style="border:2px solid gray">
 

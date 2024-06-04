@@ -1,7 +1,7 @@
 # Section 2 - Automated device onboarding
 ## Video
 
-[![Section 1 - Video](https://img.youtube.com/vi/R64e_BaVtF0/0.jpg)](https://www.youtube.com/watch?v=R64e_BaVtF0)
+[![Section 2 - Video](https://img.youtube.com/vi/R64e_BaVtF0/0.jpg)](https://www.youtube.com/watch?v=R64e_BaVtF0)
 
 <br><br>
 <hr style="border:2px solid gray">
