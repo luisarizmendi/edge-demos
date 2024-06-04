@@ -44,7 +44,7 @@ This is the summary of the demo steps:
     6. Open the Image Builder Cockpit Web console and check that the image is being created
     7. Describe the `rhde/prod/rhde_image/production-image-definition.yml` and `rhde/prod/rhde_image/production-kickstart.ks` that you used to create the image
     8. Go to the "New Edge Device Image" workflow in AAP and Approve the Image Publishing
-    9. Open the ostree-repo contents published, including `kickstarts` and the `repos` directories in `http://192.168.122.2/<user>/prod/`.
+    9. Open the ostree-repo contents published, including `kickstarts` and the `repos` directories in `http://<edge-management-server-ip>/<user>/prod/`.
 
 2. Section 2 - Automated device onboarding
     1. Open the "Jobs" page in the AAP and keep it visible while performing the following steps.

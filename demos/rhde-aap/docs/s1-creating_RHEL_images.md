@@ -163,6 +163,6 @@ For `production-kickstart.ks`:
 11. The "Publish Image" Job does not take as long as the image creation.
 
 
-12. Finally, you can open `http://192.168.122.2/<user>/prod/` and check the contents that have been published, including the `kickstarts` and the `repos` (which is the OSTree image generated with Image Builder) directories.
+12. Finally, you can open `http://<edge-management-server-ip>/<user>/prod/` and check the contents that have been published, including the `kickstarts` and the `repos` (which is the OSTree image generated with Image Builder) directories.
 
 
