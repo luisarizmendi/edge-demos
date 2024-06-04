@@ -295,7 +295,6 @@ builder_compose_customizations:
 
 [![Section 1 - Video](https://img.youtube.com/vi/_CVHUncDsq8/0.jpg)](https://www.youtube.com/watch?v=_CVHUncDsq8)
 
-<br><br>
 <hr style="border:2px solid gray">
 
 Creating those two additional images takes time. If you feel that you cannot fill that time with something useful or you think you won't have time to invest on that activity you can pre-create the images thanks to a trick that was introduced in the lab when it was deployed.
