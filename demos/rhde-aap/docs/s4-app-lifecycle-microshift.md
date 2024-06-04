@@ -44,6 +44,13 @@ oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig -n test expos
   >
   > Microshift, which is a Kubernetes node, will rely on a wildcard domain name to publish the APPs. Since the edge device IP is not fixed by the playbooks we don't setup any DNS entry on the edge local server. The easiest way to obtain a wildcard for this demo is by using the [nio.ip](http://nio.io) service which resolves to the IP that you use as a prefix on the domain name (so `http://1.1.1.1.nip.io` will resolve to `1.1.1.1`). As you can see there is already a deployed test app that you can check on `http://test.apps.<edge device ip>.nip.io` on the Web Browser with the SOCKS proxy configured..
 
+5) We deployed the `2048` app in version `v1`. If you remember that version had a problem that does not load an image. Open `http://frontend-game2048.apps.<edge device ip>.nip.io/` and check that is the case. 
+
+6) Open the SSH CLI on the edge device and run the command `watch "sudo oc --kubeconfig /var/lib/microshift/resources/kubeadmin/kubeconfig get pods --all-namespaces"` to show continuosly the running PODs. Let this CLI terminal visible.
+
+7) Then go to Gitea and in `rhde/prod/rhde_config/microshift/manifest/2048/app_2048-microshift-2-deploy.yml` change the container image from version `v1` to `v3` where the issue is fixed. You will see in thej CLI terminal how a new deployment of the application is created. Once in `Running` status open again the application and you will see how now the image issue has been fixed.
+
+
 ## Apps deployed during onboarding from Manifest in Gitea
 
 As it happens with the Podman Quadlet applications that are deployed automatically thanks to a webhook in Gitea and EDA, all manifests located under `rhde/prod/rhde_config/microshift/manifests` will be automatically deployed in the device during the onboarding.
