@@ -1,5 +1,11 @@
 # APPs with Podman and Systemd
 
+## Video
+
+[![Section 1 - Video](https://img.youtube.com/vi/l9k1R2mq_lc/0.jpg)](https://www.youtube.com/watch?v=l9k1R2mq_lc)
+
+<br><br>
+<hr style="border:2px solid gray">
 
 In this section we will explore how you could use Podman applications using Ansible Automation Platform and Red Hat Device Edge and also how, just using Podman and Systemd, you we can obtain advanced capabilities without using Kubernetes.
 

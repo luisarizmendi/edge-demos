@@ -1,5 +1,12 @@
 # Section 3 - Consistent edge device configuration at scale
 
+## Video
+
+[![Section 1 - Video](https://img.youtube.com/vi/QIzlU79G4ko/0.jpg)](https://www.youtube.com/watch?v=QIzlU79G4ko)
+
+<br><br>
+<hr style="border:2px solid gray">
+
 ## Configuration consistency across all devices
 
 For demo propuses, the edge system has been configured (this is not the default in RHEL) with a non-secure sudoers configuration file that permits the non-root user run root commands wihtout introducing the password `%wheel        ALL=(ALL)       NOPASSWD: ALL`. 

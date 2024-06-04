@@ -1,5 +1,12 @@
 # APPs with Microshift
 
+## Video
+
+[![Section 1 - Video](https://img.youtube.com/vi/tmMjHBq28bY/0.jpg)](https://www.youtube.com/watch?v=tmMjHBq28bY)
+
+<br><br>
+<hr style="border:2px solid gray">
+
 During the onboarding, Applications are deployed automatically into Microshift in two ways during this demo:
   * Using the manifest located in Gitea (`rhde/prod/rhde_config/microshift/manifest`)
   * Using the manifest located in `/usr/lib/microshift/manifests/`. Those manifest were created by a custom RPM (`workload-manifests`) installed while preparing the RHDE image.

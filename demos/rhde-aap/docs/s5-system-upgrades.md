@@ -1,5 +1,12 @@
 # Section 5 - Bulletproof system upgrades
 
+## Video
+
+[![Section 1 - Video](https://img.youtube.com/vi/m1TdoDZRJAI/0.jpg)](https://www.youtube.com/watch?v=m1TdoDZRJAI)
+
+<br><br>
+<hr style="border:2px solid gray">
+
 In this section we will modify the image that we created in Section 1 by removing and adding packages to the definition. We will demonstrate how the system will realize that we made "a mistake" excluding those packages and how it will rollback to the previous image version were those packages were present.
 
   >**Note**
@@ -285,6 +292,11 @@ builder_compose_customizations:
 
 
 ## TIP: Reducing the demo/workshop time by pre-creating images in advance
+
+[![Section 1 - Video](https://img.youtube.com/vi/_CVHUncDsq8/0.jpg)](https://www.youtube.com/watch?v=_CVHUncDsq8)
+
+<br><br>
+<hr style="border:2px solid gray">
 
 Creating those two additional images takes time. If you feel that you cannot fill that time with something useful or you think you won't have time to invest on that activity you can pre-create the images thanks to a trick that was introduced in the lab when it was deployed.
 
