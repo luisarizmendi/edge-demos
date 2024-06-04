@@ -10,7 +10,7 @@ variable "ami_id" {
 
 variable "instance_type" {
   description = "Instance type for the RHEL VM"
-  default     = "t2.large"
+  default     = "m4.xlarge"
 }
 
 variable "key_pair_name" {
