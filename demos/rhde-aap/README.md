@@ -44,15 +44,20 @@ This is the architecture deployed thanks to the [Ansible Collection](https://gal
 
 
 ## Recommended Hardware
+
+  >**Note**
+  >
+  > This Lab has been prepared and tested with x86 machines only.
+
 If you plan to use VMs you just need enough free resources in your laptop/server (more or less >6vCPUs, >14GB RAM, >150GB disk) for a couple of VMs:
 
-* Edge Management node: I've been able to deploy everything on a VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate. In this demo, a Terraform script is provided to create this VM in AWS for you.
+* Edge Management node: I've been able to deploy everything on a x86 VM with 4 vCores and 10GB of memory. Storage will depend on the number of RHDE images that you generate.
 
-* Edge Device: This will depend on what you install on top, but for the base deployment you can use 2 vCores, 3GB of memory and 50GB disk.
+* Edge Device: This will depend on what you install on top, but for the base deployment you can use 2 vCores (x86), 3GB of memory and 50GB disk.
 
 
 If you use physical hardware you probably will need:
-+ Two (mini)servers, one of them with (4vCPUs, 16GB RAM, 50GB+ disk and two network interfaces)
++ Two (mini) x86 servers, one of them with (4vCPUs, 16GB RAM, 50GB+ disk and two network interfaces)
 + One 2GB USB key
 + USB Keyboard (I use one of [this USB RFID mini keyboards](https://www.amazon.es/dp/B07RQBRRR7?psc=1&ref=ppx_yo2ov_dt_b_product_details), but be sure that it does not use just Bluetooth)
 + Video Cable (and HDMI - DisplayPort adapter if needed) and external Monitor to show boot console. If you don't want to use an external screen you can also use a [Video Capture card like this one](https://www.amazon.es/dp/B0CLNHT29F?ref=ppx_yo2ov_dt_b_product_details&th=1) that I use that can show the physical device video output as a video input (camera) in your laptop.
@@ -79,7 +84,11 @@ The lab architecture has been designed so you can deploy it where you don't have
 
 ## Pre-recorded video
 
-You can [take a look at this video](https://youtu.be/XCtfy7AqLLY) where you can see a **similar** flow of the demo (with some differences and no Microshift use cases).
+
+You can [take a look at this video](https://www.youtube.com/watch?v=0lUhneAHwEE&list=PL8w3r6_M2eTrZtAcvB2-RjBey1SZ7PFu-) where you can see all the demo steps (you will also find these videos in each demo step section).
+
+
+You can also watch this [other video](https://youtu.be/XCtfy7AqLLY) where you will find a **similar** flow of the demo but that is explained step by step.
 
 
 # Red Hat Device Edge GitOps Lab deployment and demo steps

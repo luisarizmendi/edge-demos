@@ -1,5 +1,7 @@
 # Section 1 - Creating RHEL Images the GitOps way
 
+[![Section 1 - Video](https://img.youtube.com/vi/GBNGv4zVuOY/0.jpg)](https://www.youtube.com/watch?v=GBNGv4zVuOY)
+
 1. Open Gitea in `http://<edge-management-server-ip>:3000` and use one of the configured users/passwords (by default `user1` to `user3` are created with `password1` to `password3`).
 
   >**Note**

@@ -342,4 +342,9 @@ restorecon -vFr /var/home/{{ rhde_user_name }}
 
 
 
+### MADE TO SPEED UP THE GREENBOOT AUTOMATIC ROLLBACK USE CASE DEMO
+
+rm -rf /etc/greenboot/check/required.d/*microshift*
+
+
 

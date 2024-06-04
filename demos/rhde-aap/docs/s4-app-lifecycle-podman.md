@@ -41,6 +41,50 @@ a164ed35c012  docker.io/frangoteam/fuxa:latest  npm start   17 seconds ago  Up 1
 
 
 
+## (Optional) Example of Podman additional capabilities for edge: Serverless APP with just Podman and Systemd
+
+When deploying applications at Edge you need to save as much hardware resources as you can, so for some suitable applications it could be useful to deploy them as Serverless applications, so they will be only using resources when they are used.
+
+
+The "simple HTTP server" is deployed as a Serverless container at the port `8080`, which means that if you take a look at the running containers in the edge device you will only see the web browser game at port `8081` in the edge device:
+
+1. Run `podman ps` in the edge device as the non-root user (probably `ansible` if you didn't change in the lab deployment playbooks)
+
+```bash
+[ansible@edge-848bcd4d1537 ~]$ podman ps
+CONTAINER ID  IMAGE                            COMMAND     CREATED         STATUS         PORTS                          NAMES
+ef90da4894db  quay.io/luisarizmendi/2048:prod              35 minutes ago  Up 35 minutes  <edge device ip>:8081->8081/tcp  app1
+```
+
+The Serverless container will be created as soon as a request comes to the port `8080`.  Bear in mind that to prevent starting pulling the container image on the first request, there is a Systemd unit pre-configured in the server that pre-pulls that image, so when you query the Serverless service you get the answer instantaneously, without having to wait to get the Container image ready on the server.
+
+  >**Note**
+  >
+  > It's a good idea to run `podman image list` as the non-root user to double check that the image (`quay.io/<your registry>/simple-http`) is there and, if not, pull it manually before continuing with the steps below.
+
+
+At this point, we can query the Serverless service (on port 8080) and we'll see how the new container is launched:
+
+1. Run `watch podman ps` in the edge device as the non-root user. Keep this terminal visible to show how the new container is created automatically.
+
+```bash
+watch podman ps
+```
+2. Open the browser (where the SOCKS proxy is configured) in your laptop and query the Serverless application at `http://<edge device IP>:8080`. You will get a `v1 is working! ` message.
+
+3. Show what happened in the terminal where `watch podman ps` was running. The new container should be created now
+
+```bash
+[ansible@edge-848bcd4d1537 ~]$ podman ps
+CONTAINER ID  IMAGE                                   COMMAND               CREATED         STATUS         PORTS                          NAMES
+ef90da4894db  quay.io/luisarizmendi/2048:prod                               36 minutes ago  Up 36 minutes  <edge device ip>:8081->8081/tcp  app1
+823e10fa4a3c  quay.io/luisarizmendi/simple-http:prod  /usr/sbin/nginx -...  35 seconds ago  Up 35 seconds  127.0.0.1:8080->8080/tcp       httpd
+```
+
+4. (optional) You could wait 90 seconds and show how the Container is stopped automatically if no new request are made to the service
+
+
+
 
 
 ## (Optional) Podman "self-managing" features with Podman container image auto-update
@@ -109,49 +153,5 @@ CONTAINER ID  IMAGE                            COMMAND     CREATED         STATU
   >
   > If the image does not appear, be sure that you are not caching the page by opening the page in Private/Incognito mode.
 
-
-
-
-## (Optional) Example of Podman additional capabilities for edge: Serverless APP with just Podman and Systemd
-
-When deploying applications at Edge you need to save as much hardware resources as you can, so for some suitable applications it could be useful to deploy them as Serverless applications, so they will be only using resources when they are used.
-
-
-The "simple HTTP server" is deployed as a Serverless container at the port `8080`, which means that if you take a look at the running containers in the edge device you will only see the web browser game at port `8081` in the edge device:
-
-1. Run `podman ps` in the edge device as the non-root user (probably `ansible` if you didn't change in the lab deployment playbooks)
-
-```bash
-[ansible@edge-848bcd4d1537 ~]$ podman ps
-CONTAINER ID  IMAGE                            COMMAND     CREATED         STATUS         PORTS                          NAMES
-ef90da4894db  quay.io/luisarizmendi/2048:prod              35 minutes ago  Up 35 minutes  <edge device ip>:8081->8081/tcp  app1
-```
-
-The Serverless container will be created as soon as a request comes to the port `8080`.  Bear in mind that to prevent starting pulling the container image on the first request, there is a Systemd unit pre-configured in the server that pre-pulls that image, so when you query the Serverless service you get the answer instantaneously, without having to wait to get the Container image ready on the server.
-
-  >**Note**
-  >
-  > It's a good idea to run `podman image list` as the non-root user to double check that the image (`quay.io/<your registry>/simple-http`) is there and, if not, pull it manually before continuing with the steps below.
-
-
-At this point, we can query the Serverless service (on port 8080) and we'll see how the new container is launched:
-
-1. Run `watch podman ps` in the edge device as the non-root user. Keep this terminal visible to show how the new container is created automatically.
-
-```bash
-watch podman ps
-```
-2. Open the browser (where the SOCKS proxy is configured) in your laptop and query the Serverless application at `http://<edge device IP>:8080`. You will get a `v1 is working! ` message.
-
-3. Show what happened in the terminal where `watch podman ps` was running. The new container should be created now
-
-```bash
-[ansible@edge-848bcd4d1537 ~]$ podman ps
-CONTAINER ID  IMAGE                                   COMMAND               CREATED         STATUS         PORTS                          NAMES
-ef90da4894db  quay.io/luisarizmendi/2048:prod                               36 minutes ago  Up 36 minutes  <edge device ip>:8081->8081/tcp  app1
-823e10fa4a3c  quay.io/luisarizmendi/simple-http:prod  /usr/sbin/nginx -...  35 seconds ago  Up 35 seconds  127.0.0.1:8080->8080/tcp       httpd
-```
-
-4. (optional) You could wait 90 seconds and show how the Container is stopped automatically if no new request are made to the service
 
 

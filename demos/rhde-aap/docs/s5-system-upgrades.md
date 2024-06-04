@@ -98,7 +98,8 @@ echo "python3-inotify is installed."
 
   >**Note**
   >
-  > If you deployed Microshift you will find an auto-generated required script named `40_microshift_running_check.sh` to check the Microshift status.
+  > When you deploy Microshift additional auto-generated required script named `40_microshift_running_check.sh` is installed, but in order to minimize the time needed to run the auto-rollback use case demo, those have been removed (introducing `rm -rf /etc/greenboot/check/required.d/*microshift*` in the `onboard.sh` script), otherwise you need to wait up to 5 minutes to see Greenboot rebooting the machine. 
+
 
 
 5. Check "Jobs" page in AAP until the "Compose Image" Job finish. Then click the "New Edge Device Image" Workflow Job, click the "Publish Image Approval" box and finally click on "Approve" (button left) to let the workflow progress
