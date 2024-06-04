@@ -37,7 +37,7 @@ We need to update the image definition, we could, for example, include a new pac
   >
   > Since we are just modifying a single file, we could also use the Web UI to modify the file instead of cloning and pushing the repo, but the second option is more close to what you would be doing in production.
 
-    >**Note**
+  >**Note**
   >
   > If you have your Ansible Automation Platform locally (instead on a remote location or public cloud) you should remove the `libreswan` package from your image so the VPN is not configured in the edge device, otherwise you could find connectivity issues trying to access AAP after the first device onboarding.
 
@@ -138,7 +138,7 @@ The Ansible playbooks that installed the lab already enabled these repositories 
 For `production-kickstart.ks`:
 
 * The kickstart will launch the OSTree image deployment as you can see in the `ostreesetup` line at the beginning. That line points to where the OSTRee image will be published, in our case `http://<edge-management-server-ip>/user1/prod/repo`
-2
+
 * It will create a configuration file for VPN (if the libreswan package was installed as part of the image). AS part of this config you can see that there is a file containing the secrets...this is a great opportunity to show the benefit of using FIDO FDO instead of Kickstarts for onboarding the devices, since with FDO there will be no secrets delivered to the systems until they are authenticated with an external server (also preventing someone to steal the device and have access to those secrets). 
 
   >**Note**

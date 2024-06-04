@@ -4,14 +4,14 @@
   hosts:
     - all
   gather_facts: false
-  pre_tasks:
-    - name: print out message
-      ansible.builtin.debug:
-        msg: "Hello {{ gitea_user_name }}{{ user_number }}, I am a self aware playbook that will test connectivity to your nodes."
   tasks:
+    - name: Wait for system to become reachable 
+      ansible.builtin.wait_for_connection:
+        timeout: 180
+
     - name: test connectivity
       block:
-        - name: run the setup module (hopefully successfully
+        - name: run the setup module
           ansible.builtin.setup:
       rescue:
         - name: let the humans know I failed
