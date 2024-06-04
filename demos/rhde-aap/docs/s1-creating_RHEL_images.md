@@ -1,9 +1,9 @@
 # Section 1 - Creating RHEL Images the GitOps way
 
 ## Video
-<p align="center">
+
 [![Section 1 - Video](https://img.youtube.com/vi/GBNGv4zVuOY/0.jpg)](https://www.youtube.com/watch?v=GBNGv4zVuOY)
-</p>
+
 
 ## Steps
 
