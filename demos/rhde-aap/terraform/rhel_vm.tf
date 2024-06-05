@@ -19,7 +19,7 @@ variable "key_pair_name" {
 }
 
 variable "admin_user" {
-  description = "Name of admin userr"
+  description = "Name of admin user"
   default     = "admin"
 }
 
@@ -45,7 +45,6 @@ resource "aws_vpc" "edge_mgmt_vpc" {
   }
 }
 
-
 resource "aws_subnet" "edge_mgmt_subnet" {
   vpc_id            = aws_vpc.edge_mgmt_vpc.id
   cidr_block        = "10.0.0.0/24"
@@ -56,7 +55,6 @@ resource "aws_subnet" "edge_mgmt_subnet" {
   }
 }
 
-
 resource "aws_internet_gateway" "gw" {
   vpc_id = aws_vpc.edge_mgmt_vpc.id
 
@@ -64,7 +62,6 @@ resource "aws_internet_gateway" "gw" {
     Name = "InternetGateway"
   }
 }
-
 
 resource "aws_route_table" "public" {
   vpc_id = aws_vpc.edge_mgmt_vpc.id
@@ -74,7 +71,6 @@ resource "aws_route_table" "public" {
     gateway_id = aws_internet_gateway.gw.id
   }
 }
-
 
 resource "aws_route_table_association" "public_association" {
   subnet_id      = aws_subnet.edge_mgmt_subnet.id
@@ -122,6 +118,15 @@ resource "aws_instance" "edge_mgmt_vm" {
               sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
               sudo systemctl restart sshd
               EOF
+}
+
+resource "aws_eip" "edge_mgmt_eip" {
+  instance = aws_instance.edge_mgmt_vm.id
+  vpc      = true
+
+  tags = {
+    Name = "Edge_MGMT_EIP"
+  }
 }
 
 resource "aws_security_group" "edge_mgmt_sg" {
@@ -276,5 +281,5 @@ resource "aws_security_group_rule" "ipsec_protocol" {
 }
 
 output "public_ip" {
-  value = aws_instance.edge_mgmt_vm.public_ip
+  value = aws_eip.edge_mgmt_eip.public_ip
 }
