@@ -397,7 +397,7 @@ controller_templates:
     execution_environment: Device Edge Execution Environment
     become_enabled: true
 
-  - name: Wait for OpenShift to be UP
+  - name: Wait for Microshift to be UP
     organization: "{{ aap_user_name }}{% raw %}{{ user_number }}{% endraw %} Organization"
     ask_inventory_on_launch: true
     inventory: Edge Devices
@@ -536,9 +536,9 @@ controller_workflows:
       - identifier: Podman Quadlet APPs Deploy
         unified_job_template: Podman Quadlet APPs Deploy
         success_nodes:
-          -  Wait for OpenShift to be UP
-      - identifier:  Wait for OpenShift to be UP
-        unified_job_template:  Wait for OpenShift to be UP
+          -  Wait for Microshift to be UP
+      - identifier:  Wait for Microshift to be UP
+        unified_job_template:  Wait for Microshift to be UP
         success_nodes:
           - Microshift APPs Deploy - Manifest
       - identifier: Microshift APPs Deploy - Manifest
