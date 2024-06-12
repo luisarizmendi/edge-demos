@@ -3,8 +3,9 @@
 
 [![Section 2 - Video](https://img.youtube.com/vi/R64e_BaVtF0/0.jpg)](https://www.youtube.com/watch?v=R64e_BaVtF0)
 
-<br><br>
-<hr style="border:2px solid gray">
+
+---
+
 
 During this section you need to bear in mind one important thing, during the device onboarding you will need to see the edge device Console terminal to see the device booting. This terminal is not the SSH terminal but the actual video output of the system. If you are using VMs for your demo/workshop that's not an issue because you can just open the VM's console but if you are using physical servers you will need either an external (big) screen connected to your device or a Video Capture Card (as the one shown in the [Recommended Hardware Section](README.md#recommended-hardware) to show the Console output on your laptop.
 

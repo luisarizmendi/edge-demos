@@ -24,7 +24,7 @@
         - name: Mount the ISO
           mount:
             path: /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso
-            src: "{% raw %}{{ iso_standard }}{% endraw %}"
+            src: "{% raw %}{{ iso_base }}{% endraw %}"
             opts: loop
             state: mounted
             fstype: iso9660
@@ -33,7 +33,7 @@
           shell: cp -avRf /home/{{ gitea_user_name }}{{ user_number }}/mnt/rhel-iso/* /tmp/{{ gitea_user_name }}{{ user_number }}/rhel-iso
 
         - name: Get ISO label
-          shell: blkid "{% raw %}{{ iso_standard }}{% endraw %}" | awk -F 'LABEL="' '{print $2}' | cut -d '"' -f 1
+          shell: blkid "{% raw %}{{ iso_base }}{% endraw %}" | awk -F 'LABEL="' '{print $2}' | cut -d '"' -f 1
           register: iso_label
 
 

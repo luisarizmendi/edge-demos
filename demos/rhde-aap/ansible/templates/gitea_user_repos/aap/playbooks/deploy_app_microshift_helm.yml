@@ -26,7 +26,7 @@
 
     - name: Add stable chart repo
       delegate_to: localhost
-      community.kubernetes.helm_repository:
+      kubernetes.core.helm_repository:
         name: stable
         repo_url: "{{ helm_repo }}"
 
@@ -42,7 +42,7 @@
 
     - name: Deploy latest version of the chart
       delegate_to: localhost
-      community.kubernetes.helm:
+      kubernetes.core.helm:
         kubeconfig: "/files/{{ inventory_hostname }}/kubeconfig"
         create_namespace: true
         name: "{{ helm_chart_name }}"

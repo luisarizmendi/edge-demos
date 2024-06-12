@@ -26,6 +26,7 @@ GitOps principles enable a seamless and auditable approach to infrastructure and
   - [Section 3 - Consistent edge device configuration at scale](#section-3---consistent-edge-device-configuration-at-scale)
   - [Section 4 - Edge computing APPs lifecycle management](#section-4---edge-computing-apps-lifecycle-management)
   - [Section 5 - Bulletproof system upgrades](#section-5---bulletproof-system-upgrades)
+  - [Section 6 - Secure Onboarding with FDO](#section-6---secure-onboarding-with-fdo)
   - [Closing](#closing)
 
 
@@ -41,7 +42,11 @@ This is the architecture deployed thanks to the [Ansible Collection](https://gal
 
 ![demo-arch](docs/images/demo-arch.png)
 
+The VPN connection is optional, it's pre-configured and will be setup if you deploy your edge device with the `libreswan` package installed.
 
+  >**Note**
+  >
+  > In order to connect a machine in the local network to the remote node using the already pre-configured VPN, you will need to use a local subnet contained in `192.168.0.0/16` or `172.16.0.0/12`. It is *very important* that if you are deploying the edge management server locally and you are using a network in that range, that you do DON'T deploy the edge server with the VPN active (that means including the `libreswan` package in the image definition) because there will be routing issues in that case.
 
 ## Recommended Hardware
 
@@ -80,7 +85,7 @@ The lab architecture has been designed so you can deploy it where you don't have
 
   >**Note**
   >
-  > In order to connect a machine in the local network to the remote node you will need to use a local subnet contained in `192.168.0.0/16` or `172.16.0.0/12`
+  > REMEMBER: In order to connect a machine in the local network to the remote node using the already pre-configured VPN, you will need to use a local subnet contained in `192.168.0.0/16` or `172.16.0.0/12`. It is *very important* that if you are deploying the edge management server locally and you are using a network in that range, that you do DON'T deploy the edge server with the VPN active (that means including the `libreswan` package in the image definition) because there will be routing issues in that case.
 
 ## Pre-recorded video
 
@@ -103,6 +108,40 @@ You can find the steps to deploy the lab here:
 
 ## Summary and demo step guide
 
+The following concepts will be reviewed in this demo:
+
+* Create and publish an OSTree repository using a GitOps approach
+
+* Edge Device installation ISO generation:
+  * Injecting kickstart in a base ISO (standard RHEL ISO)
+  * Using Image Builder to create a Simplified installer
+
+* Device Onboarding customization using the following different methods:
+  * Kickstart
+  * Custom RPMs
+  * AAP post-automation
+  * Ignition files
+  * FDO process
+
+* Application deployment using:
+  * Podman
+    * Using shell scripting
+    * Using Quadlet descriptors (GitOps)
+  * Microshift
+    * Using Manifest (GitOps)
+    * Using Help
+  * Custom RPM
+
+* Edge Device Self-Healing
+  * Auto rollbacks in Operating System Upgrades
+  * Edge Device configuration enforcing (GitOps)
+  * Podman auto-update rollback
+
+* Extras:
+  * Serverless rootless container applications with just Podman
+
+
+
 This is the summarized list of the steps (below you will find the detailed description in each section):
 
 
@@ -118,7 +157,7 @@ Edge computing solutions often involve deploying and managing numerous small dev
 
 To address these challenges you need highly smart automated solutions that will enable you to manage these devices' lifecycle seamlessly, even without direct human intervention, ensuring consistent configuration and behavior across a large scale.
 
-During this demo/workshop will explore how to achieve this consistency using the GitOps approach and how you can simplify lifecycle management in edge locations with the help of features available in OSTree image-based RHEL systems such as Red Hat Device Edge.
+During this demo/workshop will explore how to achieve this consistency using the GitOps approach and how you can simplify lifecycle management in edge locations with the help of features available in OSTree image-based RHEL systems such as Red Hat Device Edge. If you want [to know more about OSTree images you can read this article](https://luisarizmendi.wordpress.com/2022/08/25/a-git-like-linux-operating-system/).
 
   >**Note**
   >
@@ -126,6 +165,17 @@ During this demo/workshop will explore how to achieve this consistency using the
 
 
 ## Section 1 - Creating RHEL Images the GitOps way
+
+In this Section we will cover the following topics:
+
+* Create and publish an OSTree repository using a GitOps approach
+
+* Device Onboarding customization using the following different methods:
+  * Kickstart
+  * Custom RPMs
+  * AAP post-automation
+
+---
 
 First, we want to create a new Red Hat Device Edge (RHDE) image, and we have two options for doing this. The first is through `console.redhat.com`, but we'll choose the other option, the self-provisioned image builder installed on a RHEL machine. 
 
@@ -147,6 +197,20 @@ By following this methodology, we benefit from GitOps features such as increased
 
 ## Section 2 - Automated device onboarding
 
+In this Section we will cover the following topics:
+
+* Edge Device installation ISO generation:
+  * Injecting kickstart in a base ISO (standard RHEL ISO)
+
+* Device Onboarding customization using the following different methods:
+  * Kickstart
+  * Custom RPMs
+  * AAP post-automation
+
+
+---
+
+
 In the first section we created the image and placed it on a web server. Now, we're going to deploy that image on the end device.
 
 In this demo/workshop we will be booting the device directly from the network (the local edge manager server will act as PXE server), eliminating the need for creating a USB with the ISO image, and creating a hands-off installation.
@@ -163,6 +227,18 @@ It's important to notice that this means you won't need to send specialized pers
 
 ## Section 3 - Consistent edge device configuration at scale
 
+In this Section we will cover the following topics:
+
+* Application deployment using:
+  * Custom RPM
+
+* Edge Device Self-Healing
+  * Edge Device configuration enforcing (GitOps)
+
+
+---
+
+
 Managing device configurations at scale is not easy. There is always a risk of config drifts between systems or config version mismatch. We need to enforce a consistency in our platform, otherwise we could head into situations where the behaviour of our solution is not the expected.
 
 By using GitOps, where we have a single source of truth for all our configurations, we can rest assure that a config drift won't happen in our environment, even in the case that someone manually misconfigure something on the end devices, let's see how it works.
@@ -175,6 +251,26 @@ The steps above shown how powerful is the usage of event driven automation, sinc
 
 
 ## Section 4 - Edge computing APPs lifecycle management
+
+In this Section we will cover the following topics:
+
+* Application deployment using:
+  * Podman
+    * Using shell scripting
+    * Using Quadlet descriptors (GitOps)
+  * Microshift
+    * Using Manifest (GitOps)
+    * Using Help
+  * Custom RPM
+
+* Edge Device Self-Healing
+  * Podman auto-update rollback
+
+ * Extras:
+   * Serverless rootless container applications with just Podman
+
+
+---
 
 When we consider the applications used in edge computing scenarios, we find a wide variety of options. However, for such applications, we need the platform to meet at least three key requirements:
 
@@ -225,6 +321,15 @@ In summary, it's all about deciding where to place your workload and how you wan
 
 ## Section 5 - Bulletproof system upgrades
 
+In this Section we will cover the following topics:
+
+* Edge Device Self-Healing
+  * Auto rollbacks in Operating System Upgrades
+
+
+---
+
+
 Imagine that you have a system running in a windmill in the middle of a mountain. You decide to upgrade you Operating System... and then in the process suddenly.. nothing works, you dont' even have access to the system to try to recover it...You will need to send someone to that remote mountain in an off-road truck who knows how to connect and fix the issue. That means a lot of time and money.
 
 What if you system detects the failure or that something is not working as expected and then, automatically rolls back to the previous version where things were working correctly? that's possible thanks to OSTree images and Greenboot.
@@ -239,6 +344,46 @@ This time we shown just with a simple script that checks OS packages, but you ca
 
 With Greenboot you can create a trully bulletproof system upgrades, you won't find again problems like the ones described before that imply high costs and delays in case of edge computing use cases.
 
+
+
+
+## Section 6 - Secure Onboarding with FDO
+
+In this Section we will cover the following topics:
+
+* Create and publish an OSTree repository using a GitOps approach
+
+* Edge Device installation ISO generation:
+  * Using Image Builder to create a Simplified installer
+
+* Device Onboarding customization using the following different methods:
+  * Ignition files
+  * FDO process
+
+---
+
+In the previous sections, different ways of performing automatic onboarding (kickstart, custom RPMs, automation from AAP) were demonstrated, but still there is one important point that needs to be reviewed: How to include secrets and sensitive data in your automatic onboarding process.
+
+So far, this demo has shown how the devices are being onboarded in AAP without authentication (check the AAP onboarding script in the kickstart file for example). Now imagine that you want to include a bearer token to include in the webhook, How would you include that secret information? Beyond AAP authentication there could be a lot of different use cases where you need to include passwords, certificates, keys, etc as part of the device onboarding (ie. if you deploy the edge management AAP server outside the edge device location you will need to setup a VPN that actually needs a Pre-shared key in this demo), so this is a critical point part of your onboarding process design.
+
+Think about the three methods to include customizations during the onboarding that we have seen so far:
+
+* Customizations with Kickstart: The secrets are either downloaded from a remote server or injected in the ISO but in both cases they will be in plain text. If you plan to encrypt those you will have the problem that you will also need to include the key as part of the onboarding so it won't be secure in any case.
+
+* Customizations with custom RPM: Same case than kickstart. The secrets must be readable by the automated onboarding script embedd in the RPM
+
+* Customizations from AAP: In this case you could inject the secret as a post-deployment step ("late binding") or split the encrypted secret from the key used to decrypt it, the problem comes when the secret that you would like to inject in the onboarding is the AAP authentication (that you need before launching automations from AAP) or while setting up the VPN to connect to the edge management server, in that case you still need to rely in other methods to include that "first secret" into the edge device.
+
+At the end of the day, you will need a system that brings secret "late binding" to the onboarding process. You could design your own solution that stores and shared the sensitive information in a secure way, but you can also take another alternative, use the [FIDO Device Onboarding specificication](https://fidoalliance.org/device-onboarding-overview/) to build it... or even better, use the already developed FDO servers provided by Red Hat. This is what we are going to see in this section.
+
+If you want [to know more about FDO you can read this article series](https://luisarizmendi.wordpress.com/2022/08/08/edge-computing-device-onboarding-part-i-introducing-the-challenge/).
+
+
+* [Secure Onboarding with FDO](docs/s6-secure-onboarding-with-fdo.md)
+
+This section reviewed how you can take advantage of the Red Hat implementation of the FDO specification, and how you can use [Ignition](https://coreos.github.io/ignition/) to inject onboarding customizations in the Simplified Installer ISO created by the image builder.
+
+Thanks to FDO, you can get a secure onboarding process, removing the risk of someone stealing your image or device and having access to sensitive data.
 
 
 

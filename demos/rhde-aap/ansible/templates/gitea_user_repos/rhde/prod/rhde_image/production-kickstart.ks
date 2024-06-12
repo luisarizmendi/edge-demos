@@ -24,9 +24,11 @@ set -x
 
 if rpm -q libreswan &> /dev/null; then
 
-conn_name=$(nmcli con show | grep -v UUID | head -n 1 | awk '{print $1}')
-IP_ADDRESS=$(nmcli conn show $conn_name | grep ip_address | awk '{print $4}')
-MAC_ADDRESS=$(ip addr | grep $conn_name -A 1 | grep link | awk '{print $2}' | sed 's/://g')
+conn_name=$(nmcli -t -f NAME con show | head -n 1)
+device_name=$(nmcli -t -f GENERAL.DEVICES con show "$conn_name" | head -n 1 | cut -d: -f2)
+IP_ADDRESS=$(nmcli -t -f IP4.ADDRESS con show "$conn_name" | head -n 1 | cut -d: -f2 | cut -d/ -f1)
+MAC_ADDRESS=$(nmcli -g GENERAL.HWADDR device show "$device_name" | tr -d '\\')
+MAC_ADDRESS_FORMAT=$(echo "$MAC_ADDRESS" | tr -d ':')
 IP_AAP_PRIVATE={{ aap_ip_private }}
 IP_AAP_PUBLIC={{ eda_ip | default(ansible_host) }}
 
@@ -42,10 +44,10 @@ conn %default
     keyexchange=ike
     ikev2=yes
 
-conn $MAC_ADDRESS
+conn $MAC_ADDRESS_FORMAT
     encapsulation=yes
     left=%defaultroute
-    leftid=$MAC_ADDRESS
+    leftid=$MAC_ADDRESS_FORMAT
     right=${IP_AAP_PUBLIC}
     rightid=${IP_AAP_PRIVATE}
     authby=secret
@@ -89,9 +91,11 @@ fi
 cat > /var/tmp/aap-auto-registration.sh <<EOF
 #!/bin/bash
 sleep 5
-conn_name=\$(nmcli con show | grep -v UUID | head -n 1 | awk '{print \$1}')
-IP_ADDRESS=\$(nmcli conn show \$conn_name | grep ip_address | awk '{print \$4}')
-MAC_ADDRESS=\$(ip addr | grep \$conn_name -A 1 | grep link | awk '{print \$2}' | sed 's/://g')
+conn_name=\$(nmcli -t -f NAME con show | head -n 1)
+device_name=\$(nmcli -t -f GENERAL.DEVICES con show "\$conn_name" | head -n 1 | cut -d: -f2)
+IP_ADDRESS=\$(nmcli -t -f IP4.ADDRESS con show "\$conn_name" | head -n 1 | cut -d: -f2 | cut -d/ -f1)
+MAC_ADDRESS=\$(nmcli -g GENERAL.HWADDR device show "\$device_name" | tr -d '\\')
+MAC_ADDRESS_FORMAT=\$(echo "\$MAC_ADDRESS" | tr -d ':')
 USER='{{  gitea_user_name }}{{ user_number }}'
 
 
@@ -103,7 +107,7 @@ fi
 JSON="{\
 \"ip_address\": \"\$IP_ADDRESS\", \
 \"user\": \"\$USER\", \
-\"nodename\": \"edge-\$MAC_ADDRESS\", \
+\"nodename\": \"edge-\$MAC_ADDRESS_FORMAT\", \
 \"env\": \"prod\" \
 }"
 

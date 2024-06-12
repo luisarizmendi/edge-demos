@@ -32,5 +32,6 @@ builder_compose_customizations:
     groups: ["users", "wheel"]
   services:
     enabled: ["microshift"]
-  firewall.services:
-    enabled: ["22/tcp", "80/tcp", "443/tcp", "6443/tcp", "5353:udp", "30000-32767:tcp", "30000-32767:udp"]
+  firewall:
+    ports: ["22:tcp", "80:tcp", "443:tcp", "6443:tcp", "5353:udp", "30000-32767:tcp", "30000-32767:udp"]
+

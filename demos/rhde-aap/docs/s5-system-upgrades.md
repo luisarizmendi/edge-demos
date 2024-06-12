@@ -4,8 +4,9 @@
 
 [![Section 5 - Video](https://img.youtube.com/vi/m1TdoDZRJAI/0.jpg)](https://www.youtube.com/watch?v=m1TdoDZRJAI)
 
-<br><br>
-<hr style="border:2px solid gray">
+
+---
+
 
 In this section we will modify the image that we created in Section 1 by removing and adding packages to the definition. We will demonstrate how the system will realize that we made "a mistake" excluding those packages and how it will rollback to the previous image version were those packages were present.
 
@@ -61,8 +62,8 @@ builder_compose_customizations:
     groups: ["users", "wheel"]
   services:
     enabled: ["microshift"]
-  firewall.services:
-    enabled: ["22/tcp", "80/tcp", "443/tcp", "6443/tcp", "5353:udp", "30000-32767:tcp", "30000-32767:udp"]
+  firewall:
+    ports: ["22:tcp", "80:tcp", "443:tcp", "6443:tcp", "5353:udp", "30000-32767:tcp", "30000-32767:udp"]
 ```
 
   >**Note**
@@ -284,14 +285,14 @@ builder_compose_customizations:
     groups: ["users", "wheel"]
   services:
     enabled: ["microshift"]
-  firewall.services:
-    enabled: ["22/tcp", "80/tcp", "443/tcp", "6443/tcp", "5353:udp", "30000-32767:tcp", "30000-32767:udp"]
+  firewall:
+    ports: ["22:tcp", "80:tcp", "443:tcp", "6443:tcp", "5353:udp", "30000-32767:tcp", "30000-32767:udp"]
 ```
 
 12. After creating and publishing the new image perform the system upgrade again (either with the CLI on the edge device or using the "	OSTree Upgrade" Job in AAP) and show how this time the system was sucesfully upgraded.
 
 
-## TIP: Reducing the demo/workshop time by pre-creating images in advance
+## TIP: Reducing the demo time by pre-creating images in advance
 
 [![Section 5 Bonus - Video](https://img.youtube.com/vi/_CVHUncDsq8/0.jpg)](https://www.youtube.com/watch?v=_CVHUncDsq8)
 

@@ -4,8 +4,8 @@
 
 [![Section 1 - Video](https://img.youtube.com/vi/GBNGv4zVuOY/0.jpg)](https://www.youtube.com/watch?v=GBNGv4zVuOY)
 
-<br><br>
-<hr style="border:2px solid gray">
+
+---
 
 
 1. Open Gitea in `http://<edge-management-server-ip>:3000` and use one of the configured users/passwords (by default `user1` to `user3` are created with `password1` to `password3`).
@@ -18,11 +18,13 @@ You will see two repositories: `aap`, with the AAP ansible playbooks, `rhde`, wi
 
 Inside `rhde` repository you will find that three directories have been created to host definitions and configurations for different environments (`prod`, `test`, `dev`). During this demo we will be using `prod`.
 
-The Image definitions are under `rhde_image` directory, there you will find three files: 
+The Image definitions are under `rhde_image` directory. If you review the `prod` directory, you will find three files:
 
 * `production-image-definition.yml`: This is the descriptor that will generate the image Blueprint and commit that Blueprint in the Image Builder service to generate the new Red Hat Device Edge image. The file is actually the vars for the [Osbuild Composer Ansible Collection](https://github.com/redhat-cop/infra.osbuild).
 
-* `production-image-deploy.yml`: This is a workaround to save some during Section 5. If you want to know more now about this just take a look at  [TIP: Reducing the demo/workshop time by pre-creating images in advance](s5-system-upgrades.md#tip-reducing-the-demoworkshop-time-by-pre-creating-images-in-advance). This is not needed at this moment.
+
+* `production-deploy_version.yml`: This is a workaround to save some during Section 5. If you want to know more now about this just take a look at  [TIP: Reducing the demo/workshop time by pre-creating images in advance](s5-system-upgrades.md#tip-reducing-the-demo-time-by-pre-creating-images-in-advance). This is not needed at this moment.
+
 
 * `production-kickstart.ks`: In this demo/workshop the onboarding is performed by running post-deployment steps launched by a Kickstart file. FIDO Device Onboarding Specification could be used for a more secure onboarding experience but that's out of the scope of the demo. If you want to play with FDO you can follow the [Secure Edge device onboarding with RHEL and FDO](https://github.com/luisarizmendi/edge-demos/blob/main/demos/rhel-fdo-onboarding/README.md) self-paced workshop or build the [Red Hat Device Edge - FDO Secure Onboarding and the Realtime Kernel](https://github.com/redhat-manufacturing/device-edge-workshops/tree/main/exercises/rhde_fdo_rtk) lab.
 
@@ -101,13 +103,21 @@ To http://<edge-management-server-ip>:3000/user1/rhde
 
 5. Right after the push, you will see in the AAP Jobs page a new "New Edge Device Image" Workflow and a "Compose Image" Job (which is actually launched by the "New Edge Device Image" Workflow as first step). 
 
-Open the "New Edge Device Image" Workflow and show the three steps:
+Open the "New Edge Device Image" Workflow and show the following steps:
 
 * "Compose Image": Build the image using the Image Builder service using the values provided in the files that we modified.
 
 * "Publish Image Approval": We introduced an approval step as part of the workflow, so you can create an image without "making it accessible" by the edge devices
 
 * "Publish Image": This will publish the image so the edge devices can use it.
+
+
+* "Compose Simplified Installer": If there is a file defining a simplified installer ISO in Gitea this step will generate the ISO (you can find an example in [Section 6 - Secure Onboarding with FDO](s6-secure-onboarding-with-fdo.md))
+
+* "Publish Kickstart": If there is any kickstart definition it will be published in the HTTP server
+
+* "Publish Ignition": If there is any [Butane](https://coreos.github.io/butane/) definition it will generate the associated [Ignition](https://coreos.github.io/ignition/) file and this will be published in the HTTP server (you can find an example in [Section 6 - Secure Onboarding with FDO](s6-secure-onboarding-with-fdo.md))
+
 
 
 ![rhde_gitops_image-step1workflow.png](images/rhde_gitops_image-step1workflow.png)

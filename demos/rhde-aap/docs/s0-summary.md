@@ -77,7 +77,7 @@ This is the summary of the demo steps:
             2. Run the "Create Quadlet APP" Template in AAP
             3. Run `podman ps` on the device
             4. Show the APP by visiting `http:<edge device IP>:<configured port>`
-            5. Change something in the `rhde/prod/rhde_config/apps/podman/quadlet/app_fuxa_scada.container` file and see the change in the APP
+            5. Change something in the `rhde/prod/rhde_config/apps/podman/quadlet/` app and see the change
 
 
         - (Optional) Podman "self-managing" features with Podman container image auto-update
@@ -133,6 +133,18 @@ This is the summary of the demo steps:
     11. Show with `rpm-ostree upgrade --check` that we still have pending the upgrade
     12. Create and publish the new Image by modifying the Image description in Gitea adding again the `python-inotify` package.
     13. Perform again the upgrade and check that this time the system is able to complete it.
+
+6. Section 6 - Secure Onboarding with FDO
+
+    1. Open Gitea and explain the files in `rhde_image/test` directory
+    2. Modify something in the `test-image-definition.yml` to trigger the build of a new image
+    3. Show the Workflow in AAP
+    4. Download the ISO from `http://<edge manager ip>/<user>/` and show the `test-ignition.ign` file
+    5. Prepare your Hardware or create the VM (with UEFI boot and a TPM module included) 
+    6. Open an SSH session in the Edge Management server and run `sudo watch /etc/fdo/stores`    
+    7. Boot from the ISO. While waiting explain FDO automations with the `/etc/fdo/serviceinfo-api-server.conf.d/serviceinfo-api-server.yml` file
+    8. SSH the edge device and show that both the Ignition and FDO customizations took place. Show `journalctl -u fdo-client-linuxapp` 
+    9. Show and explain how the FDO Vouchers where used during the onboarding (in this demo with auto-approval)
 
 
 

@@ -23,6 +23,7 @@
         gitea_admin_repos_template: ../templates/gitea_admin_repos
         gitea_user_repos_template: ../templates/gitea_user_repos
         aap_config_template: ../templates/aap_config.j2
+        fdo_template: ../templates/fdo
         aap_repo_name: aap
         include_image_builder: true
         include_fdo: true

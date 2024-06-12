@@ -4,8 +4,9 @@
 
 [![Section 3 - Video](https://img.youtube.com/vi/QIzlU79G4ko/0.jpg)](https://www.youtube.com/watch?v=QIzlU79G4ko)
 
-<br><br>
-<hr style="border:2px solid gray">
+
+---
+
 
 ## Configuration consistency across all devices
 
