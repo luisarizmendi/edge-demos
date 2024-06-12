@@ -4,32 +4,35 @@
 
 During this demo, the following features will be shown:
 
-* Usage of Ansible Event Driven Automation to trigger automations
+* Create and publish an OSTree repository using a GitOps approach
 
-* RHDE Image creation using Image Builder
+* Edge Device installation ISO generation:
+  * Injecting kickstart in a base ISO (standard RHEL ISO)
+  * Using Image Builder to create a Simplified installer
 
-* Zero Touch Provisioning
+* Device Onboarding customization using the following different methods:
+  * Kickstart
+  * Custom RPMs
+  * AAP post-automation
+  * Ignition files
+  * FDO process
 
-* Include customizations on RHDE during onboarding using:
-    + Kickstart
-    + Shell Script launched by AAP
-    + Custom RPM 
-    + AAP Workflows and Jobs
-    + Embedded Microshift Manifests
+* Application deployment using:
+  * Podman
+    * Using shell scripting
+    * Using Quadlet descriptors (GitOps)
+  * Microshift
+    * Using Manifest (GitOps)
+    * Using Help
+  * Custom RPM
 
-* APP deployment with:
-    * Custom RPMs
-    + Podman Quadlet files
-    + Podman APP deployed with script 
-    + Kubernetes Manifests
-    + Helm Charts
+* Edge Device Self-Healing
+  * Auto rollbacks in Operating System Upgrades
+  * Edge Device configuration enforcing (GitOps)
+  * Podman auto-update rollback
 
-* RHDE image rollback
-
-Other concepts included in the demo:
-* Podman Serverless App
-* Podman Auto-update
-* Python iNotify for GitOps
+* Extras:
+  * Serverless rootless container applications with just Podman
 
 ## Demo steps
 

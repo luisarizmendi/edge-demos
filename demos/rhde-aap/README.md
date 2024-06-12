@@ -378,6 +378,7 @@ At the end of the day, you will need a system that brings secret "late binding" 
 
 If you want [to know more about FDO you can read this article series](https://luisarizmendi.wordpress.com/2022/08/08/edge-computing-device-onboarding-part-i-introducing-the-challenge/).
 
+Continue with the detailed steps to demo this section:
 
 * [Secure Onboarding with FDO](docs/s6-secure-onboarding-with-fdo.md)
 
