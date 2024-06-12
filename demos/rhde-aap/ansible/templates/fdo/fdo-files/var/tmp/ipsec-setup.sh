@@ -4,8 +4,8 @@ set -x
 
 if rpm -q libreswan &> /dev/null; then
 
-    copy /var/opt/ipsec.secrets /etc/ipsec.secrets
+    cp /var/opt/ipsec.secrets /etc/ipsec.secrets
 
-    systemctl enable ipsec
-    systemctl start ipsec 
+    systemctl enable --now ipsec
+    systemctl restart ipsec
 fi

@@ -1,5 +1,14 @@
 # RHDE management with AAP Demo
 
+<br><br>
+<hr style="border:2px solid gray">
+
+# This demo has been moved to  [a dedicated `rhde-aap-gitops-demo` repository](https://github.com/luisarizmendi/rhde-aap-gitops-demo). This repo has now been moved into archive mode 
+
+<hr style="border:2px solid gray">
+<br><br>
+
+
 ## Background 
 
 In this technical demo, we showcase the power of Ansible Automation Platform and Event-Driven Automation in orchestrating and managing the Red Hat Device Edge ecosystem (RHEL and Microshift). Embracing the GitOps methodology, our demonstration highlights how organizations can efficiently manage both the platform and applications by treating infrastructure as code and leveraging version-controlled repositories. 
@@ -32,7 +41,7 @@ GitOps principles enable a seamless and auditable approach to infrastructure and
 
 ## Demo duration
 
-The demo takes at least 120 minutes with no breaks. If you have time, a break after each main section is recommended. 
+The demo takes at least 180 minutes with no breaks. If you have time, a break after each main section is recommended. 
 
 
 

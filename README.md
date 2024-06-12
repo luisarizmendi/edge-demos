@@ -1,5 +1,16 @@
 # Edge Computing demos with Red Hat Portfolio
 
+
+<br><br>
+<hr style="border:2px solid gray">
+
+# DEMOS in this repository have been consolidated under one single [big demo that you can find in the `rhde-aap-gitops-demo` repository](https://github.com/luisarizmendi/rhde-aap-gitops-demo) so this repo has been moved into archive mode 
+
+<hr style="border:2px solid gray">
+<br><br>
+
+
+
 This repository contains guided demos where you can see how Red Hat portfolio can help with different Edge Computing use cases.
 
 ## Available demos in this repo
